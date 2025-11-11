@@ -29,7 +29,8 @@ const Login = () => {
     
       
       const token = res.data.access_token;
-      localStorage.setItem("access_token", token);
+      document.cookie = `access_token=${token}; path=/; Secure; SameSite=Strict`;
+      // localStorage.setItem("access_token", token);
       setMessage(res.data.message);
       {/*alert("token: " + token);*/}
       router.push("/dashboard");

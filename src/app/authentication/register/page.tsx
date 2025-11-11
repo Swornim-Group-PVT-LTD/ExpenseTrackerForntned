@@ -34,7 +34,8 @@ const Register = () => {
     try {
       const res = await axios.post(`${BASE_URL}/api/register`, formData);
       const token = res.data.access_token;
-      localStorage.setItem("access_token", token);
+      document.cookie = `access_token=${token}; path=/; Secure; SameSite=Strict`;
+      // localStorage.setItem("access_token", token);
       setMessage(res.data.message);
       
       router.push("/dashboard");
