@@ -2,8 +2,14 @@
 import { useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+import BASE_URL from "@/app/urlConfig/urlConfig";
 
 const Register = () => {
+
+  const router = useRouter();
+  
   const [formData, setFormData] = useState({
     first_name: "",
     middle_name: "",
@@ -26,10 +32,15 @@ const Register = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post("/api/register", formData);
+      const res = await axios.post(`${BASE_URL}/api/register`, formData);
+      const token = res.data.access_token;
+      document.cookie = `access_token=${token}; path=/; Secure; SameSite=Strict`;
+      // localStorage.setItem("access_token", token);
       setMessage(res.data.message);
+      
+      router.push("/dashboard");
     } catch (error: any) {
-      setMessage(`${error.response?.data?.error || "Registration failed"}`);
+      setMessage(`${error.response?.data?.message || "Registration failed"}`);
     }
   };
 

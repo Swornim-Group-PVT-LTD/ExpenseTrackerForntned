@@ -23,6 +23,13 @@ export default function Topbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleLogout = () => {
+    // Clear the access token cookie
+    document.cookie = "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=Strict";
+    // Redirect to login page
+    window.location.href = "/authentication/login";
+  }
+
   return (
     <header className="w-full bg-[var(--color1)] shadow-sm px-4 sm:px-6 py-3 flex items-center justify-between">
       <div className="text-xl font-semibold text-gray-800"></div>
@@ -65,12 +72,12 @@ export default function Topbar() {
                 <HelpCircle className="h-4 w-4 mr-2" />
                 Help & Support
               </button>
-              <Link href="/authentication/login">
-                <button className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-[var(--color2)]">
+              
+                <button onClick={handleLogout} className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-[var(--color2)]">
                   <LogOut className="h-4 w-4 mr-2" />
                   Logout
                 </button>
-              </Link>
+             
             </div>
           )}
         </div>

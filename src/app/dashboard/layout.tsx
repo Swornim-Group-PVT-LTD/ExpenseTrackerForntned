@@ -24,8 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
+    <div
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Topbar />
@@ -33,7 +32,6 @@ export default function RootLayout({
         <div className=" bg-gray-50 dark:bg-gray-900 min-h-screen  p-4 sm:p-6 lg:px-20 xl:px-40 2xl:pl-80 transition-colors">
           {children}
         </div>
-      </body>
-    </html>
+      </div>
   );
 }

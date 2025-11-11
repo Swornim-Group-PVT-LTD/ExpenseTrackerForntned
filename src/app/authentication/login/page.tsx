@@ -16,23 +16,26 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
-        `${BASE_URL}/api/login`,
-        { email, password },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
+        const res = await axios.post(
+          `${BASE_URL}/api/login`,
+          { email, password },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
       );
-
-      const token = res.data.accessToken;
+    
+      
+      const token = res.data.access_token;
+      document.cookie = `access_token=${token}; path=/; Secure; SameSite=Strict`;
+      // localStorage.setItem("access_token", token);
       setMessage(res.data.message);
-      alert("token: " + token);
+      {/*alert("token: " + token);*/}
       router.push("/dashboard");
     } catch (error: any) {
-      setMessage(`${error.response?.data?.error || "Login failed"}`);
+      setMessage(`${error.response?.data?.message || "Login failed"}`);
     }
   };
 
