@@ -26,8 +26,9 @@ const Login = () => {
           withCredentials: true,
         }
       );
-
-      const token = res.data.accessToken;
+    
+      
+      const token = res.data.access_token;
       setMessage(res.data.message);
       alert("token: " + token);
       router.push("/dashboard");

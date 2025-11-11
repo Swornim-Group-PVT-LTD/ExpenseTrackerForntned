@@ -3,6 +3,8 @@ import { useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 
+import BASE_URL from "@/app/urlConfig/urlConfig";
+
 const Register = () => {
   const [formData, setFormData] = useState({
     first_name: "",
@@ -26,7 +28,7 @@ const Register = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post("/api/register", formData);
+      const res = await axios.post(`${BASE_URL}/api/register`, formData);
       setMessage(res.data.message);
     } catch (error: any) {
       setMessage(`${error.response?.data?.error || "Registration failed"}`);
