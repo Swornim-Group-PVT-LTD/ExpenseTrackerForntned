@@ -1,5 +1,7 @@
 "use client";
 
+import {useAuth} from "@/context/AuthContext";
+
 import { motion } from "framer-motion";
 import React, { useState } from "react";
 import {
@@ -101,12 +103,14 @@ export default function Dashboard() {
     setOpenModal(false);
   };
 
+  const {user} = useAuth();
+
   return (
     <main className="">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-          Welcome Back, <span className="text-[var(--color2)]">User</span>
+          Welcome Back, <span className="text-[var(--color2)]">{user?.first_name}</span>
         </h1>
         <Button
           style={{ backgroundColor: "#f7bc4c" }}

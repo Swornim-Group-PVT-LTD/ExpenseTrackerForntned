@@ -5,10 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import BASE_URL from "@/app/urlConfig/urlConfig";
 
+import { useAuth } from "@/context/AuthContext";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+
+  const { login } = useAuth();
 
   const router = useRouter();
 
@@ -29,10 +33,11 @@ const Login = () => {
     
       
       const token = res.data.access_token;
+      const userData = res.data.user;
+      
+      login(userData);
       document.cookie = `access_token=${token}; path=/; Secure; SameSite=Strict`;
-      // localStorage.setItem("access_token", token);
       setMessage(res.data.message);
-      {/*alert("token: " + token);*/}
       router.push("/dashboard");
     } catch (error: any) {
       setMessage(`${error.response?.data?.message || "Login failed"}`);

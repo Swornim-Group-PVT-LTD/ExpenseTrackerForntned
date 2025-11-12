@@ -4,10 +4,15 @@ import { useState, useRef, useEffect } from "react";
 import { Bell, Settings, HelpCircle, LogOut } from "lucide-react";
 import Link from "next/link";
 
+import { useAuth } from "@/context/AuthContext";
+
 export default function Topbar() {
   const [userImage] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const { logout } = useAuth();
+
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -26,6 +31,10 @@ export default function Topbar() {
   const handleLogout = () => {
     // Clear the access token cookie
     document.cookie = "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=Strict";
+
+    //remove from localstorage and context
+    logout();
+    
     // Redirect to login page
     window.location.href = "/authentication/login";
   }
