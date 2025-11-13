@@ -1,9 +1,8 @@
 "use client";
 import { useState } from "react";
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import BASE_URL from "@/app/urlConfig/urlConfig";
+import { loginService } from "../../services/loginService";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -16,36 +15,24 @@ const Login = () => {
     e.preventDefault();
 
     try {
-        const res = await axios.post(
-          `${BASE_URL}/api/login`,
-          { email, password },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            withCredentials: true,
-          }
-      );
-    
-      
-      const token = res.data.access_token;
-      document.cookie = `access_token=${token}; path=/; Secure; SameSite=Strict`;
-      // localStorage.setItem("access_token", token);
-      setMessage(res.data.message);
-      {/*alert("token: " + token);*/}
+      const res = await loginService({ email, password });
+
+      document.cookie = `access_token=${res.access_token}; path=/; Secure; SameSite=Strict`;
+      setMessage(res.message);
+
       router.push("/dashboard");
     } catch (error: any) {
-      setMessage(`${error.response?.data?.message || "Login failed"}`);
+      setMessage(error.message);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen  bg-gray-50 dark:bg-gray-900 px-5  sm-px-0">
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-5">
       <div className="bg-[var(--color1)] shadow-xl rounded-xl p-8 w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium ">Email</label>
+            <label className="block text-sm font-medium">Email</label>
             <input
               type="email"
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:outline-none"
@@ -55,7 +42,7 @@ const Login = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium ">Password</label>
+            <label className="block text-sm font-medium">Password</label>
             <input
               type="password"
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:outline-none"
@@ -72,10 +59,10 @@ const Login = () => {
           </button>
 
           <div className="font-bold text-center">
-            Don't have an account?
-            <Link href="/authentication/register">Register</Link>
+            Don't have an account? <Link href="/authentication/register">Register</Link>
           </div>
         </form>
+
         {message && (
           <p className="bg-red-500 mt-4 text-center text-md text-white p-2 rounded-lg">
             {message}
