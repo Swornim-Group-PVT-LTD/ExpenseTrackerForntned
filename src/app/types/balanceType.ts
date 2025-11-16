@@ -2,7 +2,7 @@ export interface AddBalancePayload {
   add_opening_balance: number;
 }
 
-export interface AddBalanceResponse {
+export interface BalanceResponse {
   id: number;
   sn: string;
   customerid: string;

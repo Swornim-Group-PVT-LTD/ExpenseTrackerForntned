@@ -1,33 +1,37 @@
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
-
-import { motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-
-import BASE_URL from "@/app/urlConfig/urlConfig";
+import { useEffect, useState } from "react";
+import { Home } from "lucide-react";
 
 import StatCard from "@/app/dashboard/components/statcard";
-import { Home } from "lucide-react";
 import MonthlyBarChart from "@/app/dashboard/components/MonthlyBarChart";
 import ExpensesPieChart from "@/app/dashboard/components/ExpensePieChart";
 import ExpensesLineChart from "@/app/dashboard/components/ExpensesLineChart";
 
+import { getBalancesService } from "../services/addBalanceService"; 
+import { BalanceResponse } from "../types/balanceType";
+
 export default function Dashboard() {
-  // useEffect(() => {
-  //   const fetchUserBalance = async () => {
-  //     try {
-  //       const response = await axios.get(`${BASE_URL}/api/balances`, {
-  //         withCredentials: true,
-  //       });
-  //       console.log("User Balance:", response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching user balance:", error);
-  //     }
-  //   };
-  //   fetchUserBalance();
-  // }, []);
+  const [balance, setBalance] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        const balances: BalanceResponse[] = await getBalancesService();
+        if (balances.length > 0) {
+          const latestBalance = balances[balances.length - 1].total_balance;
+          setBalance(latestBalance);
+        }
+      } catch (error) {
+        console.error("Error fetching balance:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBalance();
+  }, []);
 
   const dashboardData = [
     {
@@ -59,6 +63,7 @@ export default function Dashboard() {
       labelColor: "#FFA726",
     },
   ];
+
   return (
     <main className="">
       <div className="flex items-center gap-1 text-md mb-4">
@@ -75,7 +80,6 @@ export default function Dashboard() {
               <button
                 key={index}
                 style={{ backgroundColor: item.labelColor }}
-                
                 className={`bg-[${item.labelColor}] text-white text-lg font-bold py-2 px-3 rounded hover:bg-[${item.labelColor}]/90 transition-colors hover:cursor-pointer shadow-md`}
               >
                 {`Add ${item.title}`}
@@ -89,7 +93,7 @@ export default function Dashboard() {
             <StatCard
               icon="/balance-logo.svg"
               label="Balance"
-              value="NPR 5,00,000"
+              value={loading ? "Loading..." : `NPR ${balance?.toLocaleString() ?? 0}`}
               percentage="100%"
               labelColor="#000000"
             />
