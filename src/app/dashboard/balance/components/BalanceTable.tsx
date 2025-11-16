@@ -24,35 +24,33 @@ const balanceData = [
   },
 ];
 
-
-
-
-
-
-
 export default function Component() {
   return (
     <div className="overflow-x-auto">
       <Table striped>
         <TableHead className="text-lg">
-          <TableHeadCell >ID</TableHeadCell>
-          <TableHeadCell>Balance</TableHeadCell>
-          <TableHeadCell>Opening Balance</TableHeadCell>
-          <TableHeadCell>Closing Balance</TableHeadCell>
+          <TableRow>
+            <TableHeadCell>ID</TableHeadCell>
+            <TableHeadCell>Balance</TableHeadCell>
+            <TableHeadCell>Opening Balance</TableHeadCell>
+            <TableHeadCell>Closing Balance</TableHeadCell>
+          </TableRow>
         </TableHead>
+
         <TableBody className="divide-y">
           {balanceData.map((row, index) => (
-          <TableRow key={index} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-            <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-              {row.id}
-            </TableCell>
-            <TableCell>{row.balance}</TableCell>
-            <TableCell>{row.openingBalance}</TableCell>
-            <TableCell>{row.closingBalance}</TableCell>
-          </TableRow>
-          ))
-        }
-          
+            <TableRow
+              key={index}
+              className="bg-white dark:border-gray-700 dark:bg-gray-800"
+            >
+              <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                {row.id}
+              </TableCell>
+              <TableCell>{row.balance}</TableCell>
+              <TableCell>{row.openingBalance}</TableCell>
+              <TableCell>{row.closingBalance}</TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </div>

@@ -15,19 +15,19 @@ import ExpensesPieChart from "@/app/dashboard/components/ExpensePieChart";
 import ExpensesLineChart from "@/app/dashboard/components/ExpensesLineChart";
 
 export default function Dashboard() {
-  useEffect(() => {
-    const fetchUserBalance = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/api/balances`, {
-          withCredentials: true,
-        });
-        console.log("User Balance:", response.data);
-      } catch (error) {
-        console.error("Error fetching user balance:", error);
-      }
-    };
-    fetchUserBalance();
-  }, []);
+  // useEffect(() => {
+  //   const fetchUserBalance = async () => {
+  //     try {
+  //       const response = await axios.get(`${BASE_URL}/api/balances`, {
+  //         withCredentials: true,
+  //       });
+  //       console.log("User Balance:", response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching user balance:", error);
+  //     }
+  //   };
+  //   fetchUserBalance();
+  // }, []);
 
   const dashboardData = [
     {
