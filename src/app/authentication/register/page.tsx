@@ -4,6 +4,8 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { useAuth } from "@/context/AuthContext";
+
 import BASE_URL from "@/app/urlConfig/urlConfig";
 
 const Register = () => {
@@ -21,6 +23,8 @@ const Register = () => {
     address: "",
   });
 
+  const {login} = useAuth();
+
   const [message, setMessage] = useState("");
 
   const handleChange = (
@@ -34,8 +38,11 @@ const Register = () => {
     try {
       const res = await axios.post(`${BASE_URL}/api/register`, formData);
       const token = res.data.access_token;
+      const userData =  res.data.user;
+
+      login(userData);
       document.cookie = `access_token=${token}; path=/; Secure; SameSite=Strict`;
-      // localStorage.setItem("access_token", token);
+      
       setMessage(res.data.message);
       
       router.push("/dashboard");

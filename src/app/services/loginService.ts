@@ -1,6 +1,6 @@
 import axios from "axios";
 import BASE_URL from "@/app/urlConfig/urlConfig";
-import { LoginPayload, LoginResponse } from "../interface/loginType";
+import { LoginPayload, LoginResponse } from "../types/loginType";
 
 export const loginService = async (payload: LoginPayload): Promise<LoginResponse> => {
   try {
