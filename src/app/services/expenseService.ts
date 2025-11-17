@@ -35,13 +35,13 @@ export const addExpenseService = async (
 
 // Get all Expenses
 export const getExpenseService = async (): Promise<ExpenseResponse[]> => {
-    debugger;
   try {
     const token = getToken();
-    const response = await axios.get<ExpenseResponse[]>(`${BASE_URL}/api/expenses`, {
-    headers: { "Authorization": `Bearer ${token}` },
-  });
-    return response.data;
+    const response = await axios.get(`${BASE_URL}/api/expenses`, {
+      headers: { "Authorization": `Bearer ${token}` },
+    });
+    // response.data is the full API object; the array is in data
+    return response.data.data; 
   } catch (error: any) {
     throw new Error(error.response?.data?.message || error.message || "Failed to fetch expenses");
   }
