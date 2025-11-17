@@ -2,12 +2,50 @@ import React from "react";
 import { useEffect, useState } from "react";
 
 import { ChevronDown } from "lucide-react";
+import Swal from "sweetalert2";
+import { addExpenseService } from "../../../services/addExpenseService";
+import { AddExpensePayload } from "../../../types/expenseType";
 
 const ExpenseForm = () => {
   const [amount, setAmount] = useState<number>(400000);
   const [currency, setCurrency] = useState("$");
   const [remarks, setRemarks] = useState("Miscelaneous");
   const [loading, setLoading] = useState(false);
+
+  const handleAddExpense = async () => {
+      try {
+        setLoading(true);
+  
+        const payload: AddExpensePayload = {
+          add_expenses: amount,
+          expense_category: remarks,
+        };
+  
+        const response = await addExpenseService(payload);
+  
+        // Success SweetAlert
+        Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: `Balance of ${currency}${amount} added successfully.`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+  
+        // Optionally reset input
+        setAmount(0);
+  
+      } catch (error: any) {
+        // Error SweetAlert
+        Swal.fire({
+          icon: "error",
+          title: "Failed",
+          text: error.message || "Failed to add balance",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
 
   return (
     <div className="col-span-full lg:col-span-3 h-fit">
@@ -56,7 +94,7 @@ const ExpenseForm = () => {
 
           {/* Submit Button */}
           <button
-            // onClick={handleAddBalance}
+            onClick={handleAddExpense}
             disabled={loading}
             className="bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-8 h-12 rounded transition-colors disabled:opacity-50 w-full sm:w-auto"
           >
