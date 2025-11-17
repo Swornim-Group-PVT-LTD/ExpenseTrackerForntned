@@ -2,9 +2,8 @@ import React from 'react'
 
 import { useEffect, useState } from "react";
 
-import { getBalancesService } from "@/app/services/addBalanceService"; 
-import { BalanceResponse } from "@/app/types/balanceType";
-
+import { getBalancesService } from ".././../../services/balanceService"; 
+import { BalanceResponse } from "../../../types/balanceType";
 import StatCard from '@/app/dashboard/components/statcard';
 
 const BalanceCard = () => {

@@ -9,60 +9,71 @@ import ExpensesPieChart from "@/app/dashboard/components/ExpensePieChart";
 import ExpensesLineChart from "@/app/dashboard/components/ExpensesLineChart";
 
 import { getBalancesService } from "../services/balanceService";
+import { getExpenseService } from "../services/expenseService";
+
 import { BalanceResponse } from "../types/balanceType";
+import { ExpenseResponse } from "../types/expenseType";
 
 export default function Dashboard() {
   const [balance, setBalance] = useState<number>(0);
+  const [totalExpenses, setTotalExpenses] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  const fetchBalance = async () => {
-    setLoading(true);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Fetch balance and expenses in parallel
+        const [balances, expenses]: [BalanceResponse[], ExpenseResponse[]] =
+          await Promise.all([getBalancesService(), getExpenseService()]);
 
-    try {
-      const balances = await getBalancesService(); // now this is BalanceResponse[]
-      console.log("balances:", balances);
+        // Only one balance entry exists
+        setBalance(Number(balances?.[0]?.total_balance ?? 0));
 
-      const latestBalance = balances?.[0]?.total_balance ?? 0;
-      setBalance(latestBalance);
+        // Sum all expenses for total (convert strings to numbers)
+        const total = expenses.reduce(
+          (acc, exp) => acc + Number(exp.total_expenses || 0),
+          0
+        );
+        setTotalExpenses(total);
 
-    } catch (error) {
-      console.error("Error fetching balance:", error);
-      setBalance(0);
-    } finally {
-      setLoading(false);
-    }
-  };
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+        setBalance(0);
+        setTotalExpenses(0);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchBalance();
-}, []);
-
+    fetchData();
+  }, []);
 
   const dashboardData = [
     {
       title: "Income",
-      value: "NPR 5,00,000",
+      value: "NPR 5,00,000", // static for now
       percentage: "100%",
       icon: "/income-logo.svg",
       labelColor: "#5EAC24",
     },
     {
       title: "Expenses",
-      value: "NPR 5,00,000",
+      value: loading ? "Loading..." : `NPR ${totalExpenses.toLocaleString()}`,
       percentage: "100%",
       icon: "/expenses-logo.svg",
       labelColor: "#E63F32",
     },
     {
       title: "Saving",
-      value: "NPR 5,00,000",
+      value: "NPR 5,00,000", // static for now
       percentage: "100%",
       icon: "/saving-logo.svg",
       labelColor: "#4EA890",
     },
     {
       title: "Investment",
-      value: "NPR 5,00,000",
+      value: "NPR 5,00,000", // static for now
       percentage: "100%",
       icon: "/investment-logo.svg",
       labelColor: "#FFA726",
@@ -77,7 +88,6 @@ export default function Dashboard() {
       </div>
 
       <div className="space-y-3 md:space-y-4">
-        
         {/* Dashboard Title + Add Buttons */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
           <h1 className="text-2xl font-bold">Dashboard</h1>
@@ -104,7 +114,7 @@ export default function Dashboard() {
               value={
                 loading
                   ? "Loading..."
-                  : `NPR ${balance.toLocaleString()}`
+                  : `NPR ${Number(balance).toLocaleString()}`
               }
               percentage="100%"
               labelColor="#000000"
