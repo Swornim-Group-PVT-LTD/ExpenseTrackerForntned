@@ -1,17 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import Swal from "sweetalert2";
-import { addBalanceService } from "../../../services/addBalanceService";
-import { AddBalancePayload } from "../../../types/balanceType";
+import { addBalanceService, getBalancesService } from "../../../services/balanceService";
+import { AddBalancePayload, BalanceResponse } from "../../../types/balanceType";
 
 export default function BalanceForm() {
   const [amount, setAmount] = useState<number>(400000);
   const [currency, setCurrency] = useState("$");
   const [loading, setLoading] = useState(false);
+  const [balanceExists, setBalanceExists] = useState(false);
+
+  // Check if a balance already exists
+  useEffect(() => {
+    const checkBalance = async () => {
+      try {
+        const balances: BalanceResponse[] = await getBalancesService();
+        if (balances.length > 0) {
+          setBalanceExists(true);
+
+          Swal.fire({
+            icon: "info",
+            title: "Balance Already Added",
+            text: "Balance has been added. Now add the rest through Income.",
+            confirmButtonText: "OK",
+          });
+        }
+      } catch (error) {
+        console.error("Error checking balance:", error);
+      }
+    };
+
+    checkBalance();
+  }, []);
 
   const handleAddBalance = async () => {
+    if (balanceExists) {
+      Swal.fire({
+        icon: "warning",
+        title: "Cannot Add Balance",
+        text: "Opening balance has already been added. Please add remaining funds through Income.",
+      });
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -19,9 +52,8 @@ export default function BalanceForm() {
         add_opening_balance: amount,
       };
 
-      const response = await addBalanceService(payload);
+      await addBalanceService(payload);
 
-      // Success SweetAlert
       Swal.fire({
         icon: "success",
         title: "Success!",
@@ -30,11 +62,9 @@ export default function BalanceForm() {
         showConfirmButton: false,
       });
 
-      // Optionally reset input
       setAmount(0);
-
+      setBalanceExists(true); // mark that balance now exists
     } catch (error: any) {
-      // Error SweetAlert
       Swal.fire({
         icon: "error",
         title: "Failed",
@@ -48,7 +78,6 @@ export default function BalanceForm() {
   return (
     <div className="bg-white rounded-md p-4 mb-4 w-lg">
       <div className="flex gap-2 items-center">
-        
         {/* Currency Selector */}
         <div className="relative">
           <select

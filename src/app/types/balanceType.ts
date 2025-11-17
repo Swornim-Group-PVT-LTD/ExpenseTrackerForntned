@@ -9,6 +9,6 @@ export interface BalanceResponse {
   add_opening_balance: number;
   closing_balance: number;
   total_balance: number;
-  created_date: string; // or Date
-  updated_date: string; // or Date
+  created_date: string;
+  updated_date: string;
 }

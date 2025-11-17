@@ -35,14 +35,19 @@ export const addBalanceService = async (
 
 // Get all balances
 export const getBalancesService = async (): Promise<BalanceResponse[]> => {
-    debugger;
   try {
     const token = getToken();
-    const response = await axios.get<BalanceResponse[]>(`${BASE_URL}/api/balances`, {
-    headers: { "Authorization": `Bearer ${token}` },
-  });
-    return response.data;
+
+    const response = await axios.get(`${BASE_URL}/api/balances`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // Return only the data array, not the full object
+    return response.data.data as BalanceResponse[];
+
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || error.message || "Failed to fetch balances");
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to fetch balances"
+    );
   }
 };
