@@ -32,6 +32,9 @@ importers:
       recharts:
         specifier: ^3.1.2
         version: 3.3.0(@types/react@19.2.2)(react-dom@19.1.0(react@19.1.0))(react-is@19.2.0)(react@19.1.0)(redux@5.0.1)
+      sweetalert2:
+        specifier: ^11.26.3
+        version: 11.26.3
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4
@@ -993,6 +996,9 @@ packages:
       babel-plugin-macros:
         optional: true
 
+  sweetalert2@11.26.3:
+    resolution: {integrity: sha512-VU0hGw/WfI9h7Mh+SCsDlWgtxDwWZ6ccqS7QcO8zEeWnwplN1GptcLstq76OluUBSLUza6ldvKd3558OhjpJ9A==}
+
   tabbable@6.3.0:
     resolution: {integrity: sha512-EIHvdY5bPLuWForiR/AN2Bxngzpuwn1is4asboytXtpTgsArc+WmSJKVLlhdh71u7jFcryDqB2A8lQvj78MkyQ==}
 
@@ -1876,6 +1882,8 @@ snapshots:
     dependencies:
       client-only: 0.0.1
       react: 19.1.0
+
+  sweetalert2@11.26.3: {}
 
   tabbable@6.3.0: {}
 
