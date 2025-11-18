@@ -12,20 +12,13 @@ export default function BalanceForm() {
   const [loading, setLoading] = useState(false);
   const [balanceExists, setBalanceExists] = useState(false);
 
-  // Check if a balance already exists
+  // Check if balance exists but DO NOT show popup here
   useEffect(() => {
     const checkBalance = async () => {
       try {
         const balances: BalanceResponse[] = await getBalancesService();
         if (balances.length > 0) {
           setBalanceExists(true);
-
-          Swal.fire({
-            icon: "info",
-            title: "Balance Already Added",
-            text: "Balance has been added. Now add the rest through Income.",
-            confirmButtonText: "OK",
-          });
         }
       } catch (error) {
         console.error("Error checking balance:", error);
@@ -38,9 +31,10 @@ export default function BalanceForm() {
   const handleAddBalance = async () => {
     if (balanceExists) {
       Swal.fire({
-        icon: "warning",
-        title: "Cannot Add Balance",
-        text: "Opening balance has already been added. Please add remaining funds through Income.",
+        icon: "info",
+        title: "Balance Already Added",
+        text: "Balance has been added. Now add the rest through Income.",
+        confirmButtonText: "OK",
       });
       return;
     }
@@ -63,7 +57,7 @@ export default function BalanceForm() {
       });
 
       setAmount(0);
-      setBalanceExists(true); // mark that balance now exists
+      setBalanceExists(true);
     } catch (error: any) {
       Swal.fire({
         icon: "error",

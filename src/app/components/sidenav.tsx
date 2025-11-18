@@ -10,6 +10,7 @@ import {
   TrendingUp,
   Menu,
   LayoutDashboard,
+  Folder,
 } from "lucide-react";
 
 const dashboardData = [
@@ -47,6 +48,12 @@ const dashboardData = [
     title: "Investments",
     href: "/dashboard/investments",
     icon: <TrendingUp className="h-6 w-6" />,
+    color: "bg-blue-500",
+  },
+  {
+    title: "Catalogue",
+    href: "/dashboard/catalogue",
+    icon: <Folder className="h-6 w-6" />,
     color: "bg-blue-500",
   },
 ];

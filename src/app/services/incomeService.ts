@@ -3,19 +3,25 @@ import axios from "axios";
 import BASE_URL from "@/app/urlConfig/urlConfig";
 import { AddIncomePayload, IncomeResponse } from "../types/incomeType";
 
-// Helper to get token from cookies
+// ----------------------------
+// Get Token From Cookies
+// ----------------------------
 const getToken = (): string => {
-  const match = document.cookie.match(new RegExp('(^| )access_token=([^;]+)'));
+  // Handles: access_token=xxxx OR access_token="xxxx"
+  const match = document.cookie.match(/access_token="?([^";]+)"?/);
   if (!match) throw new Error("No access_token found in cookies. Please login first.");
-  return match[2];
+  return match[1];
 };
 
-// Add new income
+// ----------------------------
+// Add New Income
+// ----------------------------
 export const addIncomeService = async (
   payload: AddIncomePayload
 ): Promise<IncomeResponse> => {
   try {
     const token = getToken();
+
     const response = await axios.post<IncomeResponse>(
       `${BASE_URL}/api/incomes`,
       payload,
@@ -27,22 +33,34 @@ export const addIncomeService = async (
         withCredentials: true,
       }
     );
+
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || error.message || "Failed to add incomes");
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to add incomes"
+    );
   }
 };
 
-// Get all incomes
+// ----------------------------
+// Get All Incomes
+// ----------------------------
 export const getIncomeService = async (): Promise<IncomeResponse[]> => {
   try {
     const token = getToken();
+
     const response = await axios.get(`${BASE_URL}/api/incomes`, {
       headers: { "Authorization": `Bearer ${token}` },
+      withCredentials: true,
     });
-    // response.data is the full API object; the array is in data
-    return response.data.data; 
+
+    // If backend returns:
+    // { "data": [ ... ] }
+    // OR [ ... ]
+    return response.data.data ?? response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || error.message || "Failed to fetch income");
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to fetch income"
+    );
   }
 };
