@@ -7,6 +7,7 @@ import BalanceCard from "./components/BalanceCard";
 import ExpensesLineChart from "./components/ExpensesLineChart";
 import DateFilter from "./components/DateFilter";
 import ExpenseTable from "./components/ExpenseTable";
+import ExpensesBarChart from "./components/ExpensesBarChart";
 
 function Expenses() {
   return (
@@ -20,7 +21,11 @@ function Expenses() {
         <BalanceCard />
         <ExpenseForm />
       </div>
+      <div className="grid grid-cols-1 items-center lg:grid-cols-2 gap-4 my-4 h-70">
+
       <ExpensesLineChart />
+      <ExpensesBarChart />
+      </div>
       <DateFilter />
       <ExpenseTable />
     </div>

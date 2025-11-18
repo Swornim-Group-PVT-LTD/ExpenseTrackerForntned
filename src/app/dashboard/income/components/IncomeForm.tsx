@@ -1,0 +1,110 @@
+import React from "react";
+import { useEffect, useState } from "react";
+
+import { ChevronDown } from "lucide-react";
+import Swal from "sweetalert2";
+
+import { AddIncomePayload } from "@/app/types/incomeType";
+import { addIncomeService } from "@/app/services/incomeService";
+
+const IncomeForm = () => {
+  const [amount, setAmount] = useState<number>(400000);
+  const [currency, setCurrency] = useState("$");
+  const [remarks, setRemarks] = useState("Miscelaneous");
+  const [loading, setLoading] = useState(false);
+
+  const handleAddIncome = async () => {
+      try {
+        setLoading(true);
+  
+        const payload: AddIncomePayload = {
+          add_income: amount,
+          income_category: remarks,
+        };
+  
+        const response = await addIncomeService(payload);
+  
+        // Success SweetAlert
+        Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: `Income of ${currency}${amount} added successfully.`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+  
+        // Optionally reset input
+        setAmount(0);
+  
+      } catch (error: any) {
+        // Error SweetAlert
+        Swal.fire({
+          icon: "error",
+          title: "Failed",
+          text: error.message || "Failed to add income",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+  return (
+    <div className="col-span-full lg:col-span-3 h-fit">
+      {/* Add Incomes */}
+      <div className="bg-white rounded-md p-4 w-full">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
+          {/* Currency Selector */}
+          <div className="relative w-full sm:w-24">
+            <select
+              className="appearance-none w-full h-12 px-2 text-md font-bold text-[#716A6A] border border-[#574A4A]/50 rounded cursor-pointer bg-white"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+            >
+              <option>$</option>
+              <option>₹</option>
+              <option>€</option>
+            </select>
+            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A] font-bold pointer-events-none" />
+          </div>
+
+          {/* Amount Input */}
+          <input
+            type="number"
+            placeholder="400000"
+            className="flex-1 h-12 px-3 text-sm text-[#716A6A] border border-[#574A4A]/50 rounded outline-none focus:border-[#FFA726]"
+            value={amount}
+            onChange={(e) => setAmount(Number(e.target.value))}
+          />
+
+          {/* Remarks Selector */}
+          <div className="relative w-full sm:w-80">
+            <select
+              className="appearance-none w-full h-12 px-2 text-md font-bold text-[#716A6A] border border-[#574A4A]/50 rounded cursor-pointer bg-white"
+              value={remarks}
+              onChange={(e) => setRemarks(e.target.value)}
+            >
+              <option>Food</option>
+              <option>Clothes</option>
+              <option>Miscelaneous</option>
+              <option>Travel Incomes</option>
+              <option>Office Supplies</option>
+              <option>Add Remark</option>
+            </select>
+            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A] font-bold pointer-events-none" />
+          </div>
+
+          {/* Submit Button */}
+          <button
+            onClick={handleAddIncome}
+            disabled={loading}
+            className="bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-8 h-12 rounded transition-colors disabled:opacity-50 w-full sm:w-auto"
+          >
+            {loading ? "Saving..." : "Add"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default IncomeForm;

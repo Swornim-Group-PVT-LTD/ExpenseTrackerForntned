@@ -2,27 +2,28 @@
 
 import { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "flowbite-react";
-import { getExpenseService } from "../../../services/expenseService";
-import { ExpenseResponse } from "../../../types/expenseType";
 
-export default function ExpensesTable() {
-  const [expenses, setExpenses] = useState<ExpenseResponse[]>([]);
+import { getIncomeService } from "@/app/services/incomeService";
+import { IncomeResponse } from "@/app/types/incomeType";
+
+export default function IncomeTable() {
+  const [income, setIncome] = useState<IncomeResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchExpenses = async () => {
+    const fetchIncome = async () => {
       setLoading(true);
       try {
-        const data = await getExpenseService();
-        setExpenses(data);
+        const data = await getIncomeService();
+        setIncome(data);
       } catch (error) {
-        console.error("Error fetching expenses:", error);
+        console.error("Error fetching income:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchExpenses();
+    fetchIncome();
   }, []);
 
   return (
@@ -31,10 +32,10 @@ export default function ExpensesTable() {
         <TableHead className="text-lg">
           <TableRow>
             <TableHeadCell>ID</TableHeadCell>
-            <TableHeadCell>Expenses</TableHeadCell>
+            <TableHeadCell>Income</TableHeadCell>
             <TableHeadCell>Remarks</TableHeadCell>
-            <TableHeadCell>Total Expenses</TableHeadCell>
-            <TableHeadCell>Added Date</TableHeadCell>
+            <TableHeadCell>Total Income</TableHeadCell>
+            <TableHeadCell>Created Date</TableHeadCell>
             <TableHeadCell>Action</TableHeadCell>
           </TableRow>
         </TableHead>
@@ -46,14 +47,14 @@ export default function ExpensesTable() {
                 Loading...
               </TableCell>
             </TableRow>
-          ) : expenses.length === 0 ? (
+          ) : income.length === 0 ? (
             <TableRow>
               <TableCell colSpan={8} className="text-center font-medium text-gray-500">
-                No expenses found
+                No income found
               </TableCell>
             </TableRow>
           ) : (
-            expenses.map((row) => (
+            income.map((row) => (
               <TableRow
                 key={row.id}
                 className="bg-white dark:border-gray-700 dark:bg-gray-800"
@@ -61,9 +62,9 @@ export default function ExpensesTable() {
                 <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                   {row.id}
                 </TableCell>
-                <TableCell>NPR {row.add_expenses.toLocaleString()}</TableCell>
-                <TableCell>{row.expense_category}</TableCell>
-                <TableCell>NPR {row.total_expenses.toLocaleString()}</TableCell>
+                <TableCell>NPR {row.add_income.toLocaleString()}</TableCell>
+                <TableCell>{row.income_category}</TableCell>
+                <TableCell>NPR {row.total_income.toLocaleString()}</TableCell>
                 <TableCell>{row.created_date}</TableCell>
                 <TableCell>
                   <a

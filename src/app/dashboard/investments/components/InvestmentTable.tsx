@@ -2,27 +2,29 @@
 
 import { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "flowbite-react";
-import { getExpenseService } from "../../../services/expenseService";
-import { ExpenseResponse } from "../../../types/expenseType";
 
-export default function ExpensesTable() {
-  const [expenses, setExpenses] = useState<ExpenseResponse[]>([]);
+
+import { getInvestmentService } from "@/app/services/investmentService";
+import { InvestmentResponse } from "@/app/types/investmentType";
+
+export default function InvestmentTable() {
+  const [investment, setInvestment] = useState<InvestmentResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchExpenses = async () => {
+    const fetchInvestment = async () => {
       setLoading(true);
       try {
-        const data = await getExpenseService();
-        setExpenses(data);
+        const data = await getInvestmentService();
+        setInvestment(data);
       } catch (error) {
-        console.error("Error fetching expenses:", error);
+        console.error("Error fetching Investment:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchExpenses();
+    fetchInvestment();
   }, []);
 
   return (
@@ -31,10 +33,10 @@ export default function ExpensesTable() {
         <TableHead className="text-lg">
           <TableRow>
             <TableHeadCell>ID</TableHeadCell>
-            <TableHeadCell>Expenses</TableHeadCell>
+            <TableHeadCell>Investment</TableHeadCell>
             <TableHeadCell>Remarks</TableHeadCell>
-            <TableHeadCell>Total Expenses</TableHeadCell>
-            <TableHeadCell>Added Date</TableHeadCell>
+            <TableHeadCell>Total Investment</TableHeadCell>
+            <TableHeadCell>Created Date</TableHeadCell>
             <TableHeadCell>Action</TableHeadCell>
           </TableRow>
         </TableHead>
@@ -46,14 +48,14 @@ export default function ExpensesTable() {
                 Loading...
               </TableCell>
             </TableRow>
-          ) : expenses.length === 0 ? (
+          ) : investment.length === 0 ? (
             <TableRow>
               <TableCell colSpan={8} className="text-center font-medium text-gray-500">
-                No expenses found
+                No Investment found
               </TableCell>
             </TableRow>
           ) : (
-            expenses.map((row) => (
+            investment.map((row) => (
               <TableRow
                 key={row.id}
                 className="bg-white dark:border-gray-700 dark:bg-gray-800"
@@ -61,9 +63,9 @@ export default function ExpensesTable() {
                 <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                   {row.id}
                 </TableCell>
-                <TableCell>NPR {row.add_expenses.toLocaleString()}</TableCell>
-                <TableCell>{row.expense_category}</TableCell>
-                <TableCell>NPR {row.total_expenses.toLocaleString()}</TableCell>
+                <TableCell>NPR {row.add_investment.toLocaleString()}</TableCell>
+                <TableCell>{row.investment_category}</TableCell>
+                <TableCell>NPR {row.total_investment.toLocaleString()}</TableCell>
                 <TableCell>{row.created_date}</TableCell>
                 <TableCell>
                   <a
