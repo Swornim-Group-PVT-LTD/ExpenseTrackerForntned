@@ -10,37 +10,70 @@ import ExpensesLineChart from "@/app/dashboard/components/ExpensesLineChart";
 
 import { getBalancesService } from "../services/balanceService";
 import { getExpenseService } from "../services/expenseService";
+import { getSavingService } from "../services/savingService";
+import { getInvestmentService } from "../services/investmentService";
+import { getIncomeService } from "../services/incomeService";
 
 import { BalanceResponse } from "../types/balanceType";
 import { ExpenseResponse } from "../types/expenseType";
+import { SavingResponse } from "../types/savingType";
+import { InvestmentResponse } from "../types/investmentType";
+import { IncomeResponse } from "../types/incomeType";
 
 export default function Dashboard() {
   const [balance, setBalance] = useState<number>(0);
   const [totalExpenses, setTotalExpenses] = useState<number>(0);
+  const [totalSaving, setTotalSaving] = useState<number>(0);
+  const [totalInvestment, setTotalInvestment] = useState<number>(0);
+  const [totalIncome, setTotalIncome] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch balance and expenses in parallel
-        const [balances, expenses]: [BalanceResponse[], ExpenseResponse[]] =
-          await Promise.all([getBalancesService(), getExpenseService()]);
+        // Fetch in parallel
+        const [balances, expenses, saving, income,investment]: [BalanceResponse[], ExpenseResponse[],SavingResponse[],IncomeResponse[],InvestmentResponse[]] =
+          await Promise.all([getBalancesService(), getExpenseService(), getSavingService(), getIncomeService(), getInvestmentService()]);
 
         // Only one balance entry exists
         setBalance(Number(balances?.[0]?.total_balance ?? 0));
 
         // Sum all expenses for total (convert strings to numbers)
-        const total = expenses.reduce(
+        const expenseTotal = expenses.reduce(
           (acc, exp) => acc + Number(exp.total_expenses || 0),
           0
         );
-        setTotalExpenses(total);
+        setTotalExpenses(expenseTotal);
+
+        // Sum all savings for total (convert strings to numbers)
+        const savingTotal = saving.reduce(
+          (acc, exp) => acc + Number(exp.total_saving || 0),
+          0
+        );
+        setTotalSaving(savingTotal);
+
+        // Sum all income for total (convert strings to numbers)
+        const incomeTotal = income.reduce(
+          (acc, exp) => acc + Number(exp.total_income || 0),
+          0
+        );
+        setTotalIncome(incomeTotal);
+
+        // Sum all investments for total (convert strings to numbers)
+        const investmentTotal = investment.reduce(
+          (acc, exp) => acc + Number(exp.total_investment || 0),
+          0
+        );
+        setTotalInvestment(investmentTotal);
 
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
         setBalance(0);
         setTotalExpenses(0);
+        setTotalIncome(0);
+        setTotalSaving(0);
+        setTotalInvestment(0);
       } finally {
         setLoading(false);
       }
@@ -52,7 +85,7 @@ export default function Dashboard() {
   const dashboardData = [
     {
       title: "Income",
-      value: "NPR 5,00,000", // static for now
+      value: loading ? "Loading..." : `NPR ${totalIncome.toLocaleString()}`, // static for now
       percentage: "100%",
       icon: "/income-logo.svg",
       labelColor: "#5EAC24",
@@ -66,14 +99,14 @@ export default function Dashboard() {
     },
     {
       title: "Saving",
-      value: "NPR 5,00,000", // static for now
+      value: loading ? "Loading..." : `NPR ${totalSaving.toLocaleString()}`, // static for now
       percentage: "100%",
       icon: "/saving-logo.svg",
       labelColor: "#4EA890",
     },
     {
       title: "Investment",
-      value: "NPR 5,00,000", // static for now
+      value: loading ? "Loading..." : `NPR ${totalInvestment.toLocaleString()}`, // static for now
       percentage: "100%",
       icon: "/investment-logo.svg",
       labelColor: "#FFA726",

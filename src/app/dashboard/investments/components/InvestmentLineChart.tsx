@@ -42,7 +42,7 @@ const ExpensesLineChart = () => {
       <Line 
         type="monotone" 
         dataKey="amount" 
-        stroke="#ff4d4d"  
+        stroke="#FFA726"  
         strokeWidth={3}
         dot={{ r: 4 }}     // small dots at points
         activeDot={{ r: 6 }} 
