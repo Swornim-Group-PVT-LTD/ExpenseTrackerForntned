@@ -1,17 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { AddInvestmentPayload } from "@/app/types/investmentType";
 import { addInvestmentService } from "@/app/services/investmentService";
+import { getInvestmentCategoriesService } from "@/app/services/catalogueServices/investmentCatalogueService";
+import { InvestmentCategoryResponse } from "@/app/types/catalolgueType/investmentCatalogueType";
 
 const InvestmentForm = () => {
-  const [amount, setAmount] = useState<number>(400000);
+  const [amount, setAmount] = useState<number>(0);
   const [currency, setCurrency] = useState("$");
-  const [remarks, setRemarks] = useState("Miscelaneous");
+  const [remarks, setRemarks] = useState("");
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<InvestmentCategoryResponse[]>([]);
+
+  // Fetch investment categories once
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getInvestmentCategoriesService();
+        setCategories(data);
+
+        // Set default selected value if categories exist
+        if (data.length > 0) setRemarks(data[0].investment_category);
+      } catch (err) {
+        console.error("Failed to fetch investment categories:", err);
+        toast.error("Failed to fetch investment categories");
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleAddInvestment = async () => {
     try {
@@ -25,10 +46,9 @@ const InvestmentForm = () => {
       await addInvestmentService(payload);
 
       toast.success(`Investment of ${currency}${amount} added successfully!`);
-
-      setAmount(0);
+      setAmount(0); // Reset amount
     } catch (error: any) {
-      toast.error(error.message || "Failed to add Investment");
+      toast.error(error.message || "Failed to add investment");
     } finally {
       setLoading(false);
     }
@@ -50,7 +70,7 @@ const InvestmentForm = () => {
               <option>₹</option>
               <option>€</option>
             </select>
-            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A] font-bold pointer-events-none" />
+            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A]" />
           </div>
 
           {/* Amount Input */}
@@ -69,14 +89,13 @@ const InvestmentForm = () => {
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
             >
-              <option>Food</option>
-              <option>Clothes</option>
-              <option>Miscelaneous</option>
-              <option>Travel Investments</option>
-              <option>Office Supplies</option>
-              <option>Add Remark</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.investment_category}>
+                  {cat.investment_category}
+                </option>
+              ))}
             </select>
-            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A] font-bold pointer-events-none" />
+            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A]" />
           </div>
 
           {/* Submit Button */}

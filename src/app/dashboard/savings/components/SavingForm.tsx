@@ -1,18 +1,39 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { AddSavingPayload } from "@/app/types/savingType";
 import { addSavingService } from "@/app/services/savingService";
+import { getSavingCategoriesService } from "@/app/services/catalogueServices/savingCatalogueService";
+import { SavingCategoryResponse } from "@/app/types/catalolgueType/savingCatalogueType";
 
 const SavingForm = () => {
-  const [amount, setAmount] = useState<number>(400000);
+  const [amount, setAmount] = useState<number>(0);
   const [currency, setCurrency] = useState("$");
-  const [remarks, setRemarks] = useState("Miscelaneous");
+  const [remarks, setRemarks] = useState("");
   const [loading, setLoading] = useState(false);
   const [deductBalance, setDeductBalance] = useState(false);
+  const [categories, setCategories] = useState<SavingCategoryResponse[]>([]);
+
+  // Fetch saving categories once
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getSavingCategoriesService();
+        setCategories(data);
+
+        // Set default selected value if categories exist
+        if (data.length > 0) setRemarks(data[0].saving_category);
+      } catch (err) {
+        console.error("Failed to fetch saving categories:", err);
+        toast.error("Failed to fetch saving categories");
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleAddSaving = async () => {
     try {
@@ -24,8 +45,6 @@ const SavingForm = () => {
         want_to_deduct_from_balance: deductBalance,
       };
 
-      console.log("Payload being sent:", payload);
-
       await addSavingService(payload);
 
       toast.success(
@@ -36,7 +55,7 @@ const SavingForm = () => {
       setAmount(0);
       setDeductBalance(false);
     } catch (error: any) {
-      toast.error(error.message || "Failed to add Saving");
+      toast.error(error.message || "Failed to add saving");
     } finally {
       setLoading(false);
     }
@@ -58,7 +77,7 @@ const SavingForm = () => {
               <option>₹</option>
               <option>€</option>
             </select>
-            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A] font-bold pointer-events-none" />
+            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A]" />
           </div>
 
           {/* Amount Input */}
@@ -77,14 +96,13 @@ const SavingForm = () => {
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
             >
-              <option>Food</option>
-              <option>Clothes</option>
-              <option>Miscelaneous</option>
-              <option>Travel Savings</option>
-              <option>Office Supplies</option>
-              <option>Add Remark</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.saving_category}>
+                  {cat.saving_category}
+                </option>
+              ))}
             </select>
-            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A] font-bold pointer-events-none" />
+            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A]" />
           </div>
 
           {/* Submit Button */}

@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { Home } from "lucide-react";
 
-import StatCard from "@/app/dashboard/components/statcard";
-import MonthlyBarChart from "@/app/dashboard/components/MonthlyBarChart";
-import ExpensesPieChart from "@/app/dashboard/components/ExpensePieChart";
-import ExpensesLineChart from "@/app/dashboard/components/ExpensesLineChart";
+import StatCard from "@/app/components/statcard";
+import MonthlyBarChart from "@/app/components/MonthlyBarChart";
+import ExpensesPieChart from "@/app/components/ExpensePieChart";
+import ExpensesLineChart from "@/app/components/ExpensesLineChart";
 
 import { getBalancesService } from "../services/balanceService";
 import { getExpenseService } from "../services/expenseService";

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { getBalancesService } from ".././../../services/balanceService"; 
 import { BalanceResponse } from "../../../types/balanceType";
-import StatCard from '@/app/dashboard/components/statcard';
+import StatCard from '@/app/components/statcard';
 
 const BalanceCard = () => {
         const [balance, setBalance] = useState<number | null>(null);

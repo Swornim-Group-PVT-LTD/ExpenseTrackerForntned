@@ -1,15 +1,38 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { AddIncomePayload } from "@/app/types/incomeType";
 import { addIncomeService } from "@/app/services/incomeService";
+import { getIncomeCategoriesService } from "@/app/services/catalogueServices/incomeCatalogueService";
+import { IncomeCategoryResponse } from "@/app/types/catalolgueType/incomeCatalogueType";
 
 const IncomeForm = () => {
-  const [amount, setAmount] = useState<number>(400000);
+  const [amount, setAmount] = useState<number>(0);
   const [currency, setCurrency] = useState("$");
-  const [remarks, setRemarks] = useState("Miscelaneous");
+  const [remarks, setRemarks] = useState("");
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<IncomeCategoryResponse[]>([]);
+
+  // Fetch income categories once
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getIncomeCategoriesService();
+        setCategories(data);
+
+        // Set default selected value if data exists
+        if (data.length > 0) setRemarks(data[0].income_category);
+      } catch (err) {
+        console.error("Failed to fetch income categories:", err);
+        toast.error("Failed to fetch income categories");
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleAddIncome = async () => {
     try {
@@ -24,9 +47,7 @@ const IncomeForm = () => {
 
       toast.success(`Income of ${currency}${amount} added successfully.`);
 
-      // Reset amount or keep as needed
-      setAmount(0);
-
+      setAmount(0); // Reset amount
     } catch (error: any) {
       toast.error(error.message || "Failed to add income");
     } finally {
@@ -38,7 +59,7 @@ const IncomeForm = () => {
     <div className="col-span-full lg:col-span-3 h-fit">
       <div className="bg-white rounded-md p-4 w-full">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
-          
+
           {/* Currency Selector */}
           <div className="relative w-full sm:w-24">
             <select
@@ -69,12 +90,11 @@ const IncomeForm = () => {
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
             >
-              <option>Food</option>
-              <option>Clothes</option>
-              <option>Miscelaneous</option>
-              <option>Travel Incomes</option>
-              <option>Office Supplies</option>
-              <option>Add Remark</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.income_category}>
+                  {cat.income_category}
+                </option>
+              ))}
             </select>
             <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A] font-bold pointer-events-none" />
           </div>
