@@ -5,6 +5,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Sidebar from "../components/sidenav";
 import Topbar from "../components/topbar";
 import { SidebarProvider, useSidebar } from "@/context/SidebarContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,6 +40,7 @@ export default function RootLayout({
       <div className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Topbar />
         <Sidebar />
+        <ToastContainer position="top-right" autoClose={2000} />
         <DashboardContent>{children}</DashboardContent>
       </div>
     </SidebarProvider>

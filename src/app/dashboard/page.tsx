@@ -98,14 +98,14 @@ export default function Dashboard() {
       labelColor: "#E63F32",
     },
     {
-      title: "Saving",
+      title: "Savings",
       value: loading ? "Loading..." : `NPR ${totalSaving.toLocaleString()}`, // static for now
       percentage: "100%",
       icon: "/saving-logo.svg",
       labelColor: "#4EA890",
     },
     {
-      title: "Investment",
+      title: "Investments",
       value: loading ? "Loading..." : `NPR ${totalInvestment.toLocaleString()}`, // static for now
       percentage: "100%",
       icon: "/investment-logo.svg",

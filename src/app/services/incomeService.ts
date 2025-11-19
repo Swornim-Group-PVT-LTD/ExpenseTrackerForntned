@@ -50,17 +50,27 @@ export const getIncomeService = async (): Promise<IncomeResponse[]> => {
     const token = getToken();
 
     const response = await axios.get(`${BASE_URL}/api/incomes`, {
-      headers: { "Authorization": `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${token}` },
       withCredentials: true,
     });
 
-    // If backend returns:
-    // { "data": [ ... ] }
-    // OR [ ... ]
-    return response.data.data ?? response.data;
+    // Ensure we always have an array
+    const incomes: IncomeResponse[] = Array.isArray(response.data?.data)
+      ? response.data.data
+      : Array.isArray(response.data)
+      ? response.data
+      : [];
+
+    // Only sort if there are items
+    if (incomes.length > 0) {
+      incomes.sort((a, b) => a.id - b.id);
+    }
+
+    return incomes;
   } catch (error: any) {
     throw new Error(
-      error.response?.data?.message || error.message || "Failed to fetch income"
+      error.response?.data?.message || error.message || "Failed to fetch incomes"
     );
   }
 };
+

@@ -1,9 +1,8 @@
-import React from "react";
-import { useEffect, useState } from "react";
+"use client";
 
+import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import Swal from "sweetalert2";
-
+import { toast } from "react-toastify";
 
 import { AddSavingPayload } from "@/app/types/savingType";
 import { addSavingService } from "@/app/services/savingService";
@@ -16,49 +15,37 @@ const SavingForm = () => {
   const [deductBalance, setDeductBalance] = useState(false);
 
   const handleAddSaving = async () => {
-      try {
-        setLoading(true);
-  
-        const payload: AddSavingPayload = {
-          add_saving: amount,
-          saving_category: remarks,
-          want_to_deduct_from_balance: deductBalance,
-        };
-        
-        console.log('Payload being sent:', payload);
-        console.log('deductBalance value:', deductBalance);
-  
-        const response = await addSavingService(payload);
-  
-        // Success SweetAlert
-        Swal.fire({
-          icon: "success",
-          title: "Success!",
-          text: `Saving of ${currency}${amount} added successfully.`,
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        alert(deductBalance);
-  
-        // Optionally reset input
-        setAmount(0);
-  
-      } catch (error: any) {
-        // Error SweetAlert
-        Swal.fire({
-          icon: "error",
-          title: "Failed",
-          text: error.message || "Failed to add Saving",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+    try {
+      setLoading(true);
+
+      const payload: AddSavingPayload = {
+        add_saving: amount,
+        saving_category: remarks,
+        want_to_deduct_from_balance: deductBalance,
+      };
+
+      console.log("Payload being sent:", payload);
+
+      await addSavingService(payload);
+
+      toast.success(
+        `Saving of ${currency}${amount} added successfully!` +
+          (deductBalance ? " (Deducted from balance)" : "")
+      );
+
+      setAmount(0);
+      setDeductBalance(false);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to add Saving");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="col-span-full lg:col-span-3 h-fit">
-      {/* Add Savings */}
       <div className="bg-white rounded-md p-4 w-full flex flex-col gap-4">
+
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
           {/* Currency Selector */}
           <div className="relative w-full sm:w-24">
@@ -109,15 +96,21 @@ const SavingForm = () => {
             {loading ? "Saving..." : "Add"}
           </button>
         </div>
-        <div className="flex items-center gap-2"> 
 
-      <input
-      type="checkbox"
-      id="deductBalance"
-      value="duductBalance"
-      onChange={(e) => setDeductBalance(e.target.checked)} />
-    <label htmlFor="deductBalance">Deduct From Balance</label>
-      </div>
+        {/* Deduct from balance checkbox */}
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="deductBalance"
+            checked={deductBalance}
+            onChange={(e) => setDeductBalance(e.target.checked)}
+            className="h-4 w-4 accent-[#FFAA00]"
+          />
+          <label htmlFor="deductBalance" className="text-sm font-medium">
+            Deduct From Balance
+          </label>
+        </div>
+
       </div>
     </div>
   );

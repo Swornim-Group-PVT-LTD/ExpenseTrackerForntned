@@ -13,19 +13,19 @@ const catalogues = [
   {
     label: "Add Income Catalogue",
     icon: <ArrowUp size={32} />,
-    path: "/income",
+    path: "catalogue/incomeCatalogue",
     bgClass: "bg-green-600",
   },
   {
     label: "Add Saving Catalogue",
     icon: <PiggyBank size={32} />,
-    path: "/savings",
+    path: "catalogue/savingCatalogue",
     bgClass: "bg-[#f7bc4c]",
   },
   {
     label: "Add Investment Catalogue",
     icon: <Wallet size={32} />,
-    path: "/investments",
+    path: "catalogue/investmentCatalogue",
     bgClass: "bg-blue-500",
   },
 ];

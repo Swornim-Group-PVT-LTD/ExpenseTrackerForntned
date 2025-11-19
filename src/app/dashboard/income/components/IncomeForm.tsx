@@ -1,8 +1,6 @@
-import React from "react";
-import { useEffect, useState } from "react";
-
+import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 import { AddIncomePayload } from "@/app/types/incomeType";
 import { addIncomeService } from "@/app/services/incomeService";
@@ -14,45 +12,33 @@ const IncomeForm = () => {
   const [loading, setLoading] = useState(false);
 
   const handleAddIncome = async () => {
-      try {
-        setLoading(true);
-  
-        const payload: AddIncomePayload = {
-          add_income: amount,
-          income_category: remarks,
-        };
-  
-        const response = await addIncomeService(payload);
-  
-        // Success SweetAlert
-        Swal.fire({
-          icon: "success",
-          title: "Success!",
-          text: `Income of ${currency}${amount} added successfully.`,
-          timer: 2000,
-          showConfirmButton: false,
-        });
-  
-        // Optionally reset input
-        setAmount(0);
-  
-      } catch (error: any) {
-        // Error SweetAlert
-        Swal.fire({
-          icon: "error",
-          title: "Failed",
-          text: error.message || "Failed to add income",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+    try {
+      setLoading(true);
+
+      const payload: AddIncomePayload = {
+        add_income: amount,
+        income_category: remarks,
+      };
+
+      await addIncomeService(payload);
+
+      toast.success(`Income of ${currency}${amount} added successfully.`);
+
+      // Reset amount or keep as needed
+      setAmount(0);
+
+    } catch (error: any) {
+      toast.error(error.message || "Failed to add income");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="col-span-full lg:col-span-3 h-fit">
-      {/* Add Incomes */}
       <div className="bg-white rounded-md p-4 w-full">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
+          
           {/* Currency Selector */}
           <div className="relative w-full sm:w-24">
             <select
@@ -101,6 +87,7 @@ const IncomeForm = () => {
           >
             {loading ? "Saving..." : "Add"}
           </button>
+
         </div>
       </div>
     </div>

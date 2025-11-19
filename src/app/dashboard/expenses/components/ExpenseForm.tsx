@@ -1,10 +1,10 @@
-import React from "react";
-import { useEffect, useState } from "react";
+"use client";
 
+import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import Swal from "sweetalert2";
 import { addExpenseService } from "../../../services/expenseService";
 import { AddExpensePayload } from "../../../types/expenseType";
+import { toast } from "react-toastify";
 
 const ExpenseForm = () => {
   const [amount, setAmount] = useState<number>(400000);
@@ -13,46 +13,33 @@ const ExpenseForm = () => {
   const [loading, setLoading] = useState(false);
 
   const handleAddExpense = async () => {
-      try {
-        setLoading(true);
-  
-        const payload: AddExpensePayload = {
-          add_expenses: amount,
-          expense_category: remarks,
-        };
-  
-        const response = await addExpenseService(payload);
-  
-        // Success SweetAlert
-        Swal.fire({
-          icon: "success",
-          title: "Success!",
-          text: `Balance of ${currency}${amount} added successfully.`,
-          timer: 2000,
-          showConfirmButton: false,
-        });
-  
-        // Optionally reset input
-        setAmount(0);
-  
-      } catch (error: any) {
-        // Error SweetAlert
-        Swal.fire({
-          icon: "error",
-          title: "Failed",
-          text: error.message || "Failed to add balance",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+    try {
+      setLoading(true);
+
+      const payload: AddExpensePayload = {
+        add_expenses: amount,
+        expense_category: remarks,
+      };
+
+      await addExpenseService(payload);
+
+      toast.success(`Balance of ${currency}${amount} added successfully!`);
+
+      setAmount(0);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to add balance");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="col-span-full lg:col-span-3 h-fit">
-      {/* Add Expenses */}
+
       <div className="bg-white rounded-md p-4 w-full">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
-          {/* Currency Selector */}
+
+          {/* Currency selector */}
           <div className="relative w-full sm:w-24">
             <select
               className="appearance-none w-full h-12 px-2 text-md font-bold text-[#716A6A] border border-[#574A4A]/50 rounded cursor-pointer bg-white"
@@ -63,10 +50,10 @@ const ExpenseForm = () => {
               <option>₹</option>
               <option>€</option>
             </select>
-            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A] font-bold pointer-events-none" />
+            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A]" />
           </div>
 
-          {/* Amount Input */}
+          {/* Amount */}
           <input
             type="number"
             placeholder="400000"
@@ -75,7 +62,7 @@ const ExpenseForm = () => {
             onChange={(e) => setAmount(Number(e.target.value))}
           />
 
-          {/* Remarks Selector */}
+          {/* Remarks */}
           <div className="relative w-full sm:w-80">
             <select
               className="appearance-none w-full h-12 px-2 text-md font-bold text-[#716A6A] border border-[#574A4A]/50 rounded cursor-pointer bg-white"
@@ -89,10 +76,10 @@ const ExpenseForm = () => {
               <option>Office Supplies</option>
               <option>Add Remark</option>
             </select>
-            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A] font-bold pointer-events-none" />
+            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A]" />
           </div>
 
-          {/* Submit Button */}
+          {/* Submit button */}
           <button
             onClick={handleAddExpense}
             disabled={loading}
@@ -100,8 +87,10 @@ const ExpenseForm = () => {
           >
             {loading ? "Saving..." : "Add"}
           </button>
+
         </div>
       </div>
+
     </div>
   );
 };

@@ -1,9 +1,8 @@
-import React from "react";
-import { useEffect, useState } from "react";
+"use client";
 
+import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import Swal from "sweetalert2";
-
+import { toast } from "react-toastify";
 
 import { AddInvestmentPayload } from "@/app/types/investmentType";
 import { addInvestmentService } from "@/app/services/investmentService";
@@ -15,45 +14,31 @@ const InvestmentForm = () => {
   const [loading, setLoading] = useState(false);
 
   const handleAddInvestment = async () => {
-      try {
-        setLoading(true);
-  
-        const payload: AddInvestmentPayload = {
-          add_investment: amount,
-          investment_category: remarks,
-        };
-  
-        const response = await addInvestmentService(payload);
-  
-        // Success SweetAlert
-        Swal.fire({
-          icon: "success",
-          title: "Success!",
-          text: `Investment of ${currency}${amount} added successfully.`,
-          timer: 2000,
-          showConfirmButton: false,
-        });
-  
-        // Optionally reset input
-        setAmount(0);
-  
-      } catch (error: any) {
-        // Error SweetAlert
-        Swal.fire({
-          icon: "error",
-          title: "Failed",
-          text: error.message || "Failed to add Investment",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+    try {
+      setLoading(true);
+
+      const payload: AddInvestmentPayload = {
+        add_investment: amount,
+        investment_category: remarks,
+      };
+
+      await addInvestmentService(payload);
+
+      toast.success(`Investment of ${currency}${amount} added successfully!`);
+
+      setAmount(0);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to add Investment");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="col-span-full lg:col-span-3 h-fit">
-      {/* Add Investments */}
       <div className="bg-white rounded-md p-4 w-full">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
+
           {/* Currency Selector */}
           <div className="relative w-full sm:w-24">
             <select

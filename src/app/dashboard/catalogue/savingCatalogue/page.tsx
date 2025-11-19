@@ -2,28 +2,33 @@
 
 import { useRouter } from "next/navigation";
 import { Home } from "lucide-react";
-import ExpenseCatalogueForm from "./components/expenseCatalogueForm";
-import ExpenseCatalogueTable from "./components/expenseCatalogueTable";
+import SavingCatalogueForm from "../savingCatalogue/component/savingCatalogueForm";
+import SavingCatalogueTable from "../savingCatalogue/component/savingCatalogueTable";
 
-export default function ExpenseCatalogueUI() {
+export default function SavingCatalogueUI() {
   const router = useRouter();
+
   return (
     <div className="p-4">
       {/* Breadcrumb & Title */}
       <div className="mb-4">
         <div className="flex items-center gap-1 text-md mb-2">
           <Home className="w-4 h-4" />
-          <span>/ Add Expense Catalogue</span>
+          <span>/ Add Saving Catalogue</span>
         </div>
       </div>
+
       <div>
-        <h1 className="text-2xl font-bold mb-4">Add Expense Catalogue</h1>
+        <h1 className="text-2xl font-bold mb-4">Add Saving Catalogue</h1>
       </div>
+
       {/* Form */}
-      <ExpenseCatalogueForm />
+      <SavingCatalogueForm />
+
       <div className="mt-5 mb-10"></div>
+
       {/* Table */}
-      <ExpenseCatalogueTable />
+      <SavingCatalogueTable />
     </div>
   );
 }

@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { addExpenseCategoryService } from "../../../../services/catalogueServices/expenseCatalogueService";
-import { AddExpenseCategoryPayload } from "../../../../types/catalolgueType/expenseCatalogueType";
+import { addIncomeCategoryService } from "../../../../services/catalogueServices/incomeCatalogueService";
+import { AddIncomeCategoryPayload } from "../../../../types/catalolgueType/incomeCatalogueType";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function ExpenseCatalogueForm() {
+export default function IncomeCatalogueForm() {
   const [category, setCategory] = useState("");
   const [additional1, setAdditional1] = useState("");
   const [additional2, setAdditional2] = useState("");
@@ -17,10 +17,7 @@ export default function ExpenseCatalogueForm() {
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
-
-    if (!category.trim()) {
-      newErrors.category = "Please input category";
-    }
+    if (!category.trim()) newErrors.category = "Please input category";
 
     const numberFields = [
       { value: additional1, name: "additional1" },
@@ -41,22 +38,20 @@ export default function ExpenseCatalogueForm() {
 
   const handleAdd = async () => {
     if (!validate()) return;
-
     setLoading(true);
 
     try {
-      const payload: AddExpenseCategoryPayload = {
-        static_value: "EXPENSES",
-        expense_category: category,
+      const payload: AddIncomeCategoryPayload = {
+        static_value: "INCOME",
+        income_category: category,
         additional_value1: additional1 || null,
         additional_value2: additional2 || null,
         additional_value3: additional3 || null,
         additional_value4: additional4 || null,
       };
 
-      await addExpenseCategoryService(payload);
-
-      toast.success("Expense category added successfully!");
+      await addIncomeCategoryService(payload);
+      toast.success("Income category added successfully!");
 
       // Clear form
       setCategory("");
@@ -66,8 +61,8 @@ export default function ExpenseCatalogueForm() {
       setAdditional4("");
       setErrors({});
     } catch (err: any) {
-      setErrors({ form: err.message || "Failed to add expense category" });
-      toast.error(err.message || "Failed to add expense category");
+      setErrors({ form: err.message || "Failed to add income category" });
+      toast.error(err.message || "Failed to add income category");
     } finally {
       setLoading(false);
     }
@@ -90,20 +85,20 @@ export default function ExpenseCatalogueForm() {
           <label className="block mb-1 text-gray-700">Catalogue</label>
           <input
             type="text"
-            value="EXPENSES"
+            value="INCOME"
             readOnly
             className="w-full px-3 py-2 border rounded-md bg-gray-200 cursor-not-allowed"
           />
         </div>
 
-        {/* Expense Category */}
+        {/* Income Category */}
         <div className="flex-1 min-w-[150px]">
-          <label className="block mb-1 text-gray-700">Expense Category</label>
+          <label className="block mb-1 text-gray-700">Income Category</label>
           <input
             type="text"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            placeholder="e.g., Food"
+            placeholder="e.g., Salary"
             className={inputClass("category")}
           />
           {errors.category && (

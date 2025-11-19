@@ -1,0 +1,39 @@
+// services/investmentCatalogueService.ts
+import axios from "axios";
+import BASE_URL from "@/app/urlConfig/urlConfig";
+import { AddInvestmentCategoryPayload, InvestmentCategoryResponse } from "../../types/catalolgueType/investmentCatalogueType";
+
+// Helper to get token from cookies
+const getToken = (): string => {
+  const match = document.cookie.match(new RegExp('(^| )access_token=([^;]+)'));
+  if (!match) throw new Error("No access_token found in cookies. Please login first.");
+  return match[2];
+};
+
+// Add new investment category
+export const addInvestmentCategoryService = async (
+  payload: AddInvestmentCategoryPayload
+): Promise<InvestmentCategoryResponse> => {
+  const token = getToken();
+  const response = await axios.post(`${BASE_URL}/api/investmentCategory/add`, payload, {
+    headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+    withCredentials: true,
+  });
+  return response.data;
+};
+
+// Get all investment categories
+export const getInvestmentCategoriesService = async (): Promise<InvestmentCategoryResponse[]> => {
+  const token = getToken();
+  const response = await axios.get(`${BASE_URL}/api/investmentCategory/list`, {
+    headers: { "Authorization": `Bearer ${token}` },
+  });
+
+  const categories: InvestmentCategoryResponse[] = Array.isArray(response.data)
+    ? response.data
+    : response.data?.data ?? [];
+
+  if (categories.length > 0) categories.sort((a, b) => a.id - b.id);
+
+  return categories;
+};

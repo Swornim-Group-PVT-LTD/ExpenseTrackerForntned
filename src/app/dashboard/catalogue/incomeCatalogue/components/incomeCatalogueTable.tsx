@@ -1,20 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { getExpenseCategoriesService } from "../../../../services/catalogueServices/expenseCatalogueService";
-import { ExpenseCategoryResponse } from "../../../../types/catalolgueType/expenseCatalogueType";
+"use client";
 
-export default function ExpenseCatalogueTable() {
-  const [data, setData] = useState<ExpenseCategoryResponse[]>([]);
+import React, { useState, useEffect } from "react";
+import { getIncomeCategoriesService } from "../../../../services/catalogueServices/incomeCatalogueService";
+import { IncomeCategoryResponse } from "../../../../types/catalolgueType/incomeCatalogueType";
+
+export default function IncomeCatalogueTable() {
+  const [data, setData] = useState<IncomeCategoryResponse[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Fetch expense categories from API
+  // Fetch income categories from API
   const fetchData = async () => {
     try {
       setLoading(true);
-      const categories = await getExpenseCategoriesService();
+      const categories = await getIncomeCategoriesService();
+      console.log("Fetched income categories:", categories);
       setData(categories);
     } catch (err) {
-      console.error("Failed to fetch expense categories:", err);
+      console.error("Failed to fetch income categories:", err);
     } finally {
       setLoading(false);
     }
@@ -27,7 +30,7 @@ export default function ExpenseCatalogueTable() {
   // Filter data based on search input
   const filteredData = data.filter(
     (item) =>
-      item.expense_category.toLowerCase().includes(search.toLowerCase()) ||
+      item.income_category.toLowerCase().includes(search.toLowerCase()) ||
       item.static_value.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -51,7 +54,7 @@ export default function ExpenseCatalogueTable() {
             <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">ID</th>
             <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Added Date</th>
             <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Static Data</th>
-            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Expense Category</th>
+            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Income Category</th>
             <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Action</th>
           </tr>
         </thead>
@@ -68,7 +71,7 @@ export default function ExpenseCatalogueTable() {
                 <td className="px-4 py-2 text-sm text-gray-700">{item.id}</td>
                 <td className="px-4 py-2 text-sm text-gray-700">{item.created_date}</td>
                 <td className="px-4 py-2 text-sm text-gray-700">{item.sn}</td>
-                <td className="px-4 py-2 text-sm text-gray-700">{item.expense_category}</td>
+                <td className="px-4 py-2 text-sm text-gray-700">{item.income_category}</td>
                 <td className="px-4 py-2 text-sm">
                   <div className="flex justify-end gap-2">
                     <span className="text-green-500 cursor-pointer hover:underline">Update</span>

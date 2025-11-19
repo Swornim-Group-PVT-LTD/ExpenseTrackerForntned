@@ -38,11 +38,22 @@ export const getExpenseService = async (): Promise<ExpenseResponse[]> => {
   try {
     const token = getToken();
     const response = await axios.get(`${BASE_URL}/api/expenses`, {
-      headers: { "Authorization": `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${token}` },
     });
-    // response.data is the full API object; the array is in data
-    return response.data.data; 
+
+    // Safely extract array from response
+    const expenses: ExpenseResponse[] = response.data?.data || [];
+
+    // Sort by id ascending if array is not empty
+    if (expenses.length > 0) {
+      expenses.sort((a, b) => a.id - b.id);
+    }
+
+    return expenses;
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || error.message || "Failed to fetch expenses");
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to fetch expenses"
+    );
   }
 };
+

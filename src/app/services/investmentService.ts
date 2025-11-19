@@ -37,12 +37,24 @@ export const addInvestmentService = async (
 export const getInvestmentService = async (): Promise<InvestmentResponse[]> => {
   try {
     const token = getToken();
+
     const response = await axios.get(`${BASE_URL}/api/investments`, {
       headers: { "Authorization": `Bearer ${token}` },
     });
-    // response.data is the full API object; the array is in data
-    return response.data.data; 
+
+    // Extract array
+    const investments: InvestmentResponse[] = response.data.data;
+
+    // Sort by id ascending
+     // Sort only if there are items
+    if (investments.length > 0) {
+      investments.sort((a, b) => a.id - b.id);
+    }
+
+    return investments;
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || error.message || "Failed to fetch Investment");
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to fetch Investment"
+    );
   }
 };
