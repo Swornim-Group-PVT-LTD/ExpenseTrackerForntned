@@ -4,7 +4,10 @@ import React, { useState, useEffect } from "react";
 import { getIncomeCategoriesService } from "../../../../services/catalogueServices/incomeCatalogueService";
 import { IncomeCategoryResponse } from "../../../../types/catalolgueType/incomeCatalogueType";
 
-export default function IncomeCatalogueTable() {
+import {toast} from "react-toastify";
+import { deleteIncomeCategoryService } from "@/app/services/catalogueServices/incomeCatalogueService";
+
+export default function IncomeCatalogueTable({ refreshTrigger }: { refreshTrigger: number }) {
   const [data, setData] = useState<IncomeCategoryResponse[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
@@ -25,7 +28,7 @@ export default function IncomeCatalogueTable() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [refreshTrigger]);
 
   // Filter data based on search input
   const filteredData = data.filter(
@@ -33,6 +36,18 @@ export default function IncomeCatalogueTable() {
       item.income_category.toLowerCase().includes(search.toLowerCase()) ||
       item.static_value.toLowerCase().includes(search.toLowerCase())
   );
+
+
+  const handleDelete = async (id: number) => {
+    try{
+      if(!confirm("Are you sure you want to delete this income category?")) return;
+      await deleteIncomeCategoryService(id);
+      toast.success("Income category deleted successfully");
+      fetchData(); // Refresh data after deletion
+    }catch (err:any){ 
+      toast.error(err);
+    }
+  }
 
   return (
     <div className="overflow-x-auto w-full mt-4">
@@ -75,7 +90,7 @@ export default function IncomeCatalogueTable() {
                 <td className="px-4 py-2 text-sm">
                   <div className="flex justify-end gap-2">
                     <span className="text-green-500 cursor-pointer hover:underline">Update</span>
-                    <span className="text-red-500 cursor-pointer hover:underline">Delete</span>
+                    <span className="text-red-500 cursor-pointer hover:underline" onClick={() => handleDelete(item.id)}>Delete</span>
                   </div>
                 </td>
               </tr>

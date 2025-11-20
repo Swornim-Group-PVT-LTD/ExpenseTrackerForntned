@@ -60,3 +60,18 @@ export const getSavingCategoriesService = async (): Promise<SavingCategoryRespon
     );
   }
 };
+
+
+export const deleteSavingCategoryService = async (id: number): Promise<void> => {
+  try {
+    const token = getToken();
+    await axios.delete(`${BASE_URL}/api/savingCategory/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to delete saving category"
+    );
+  }
+};

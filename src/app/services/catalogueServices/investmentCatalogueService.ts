@@ -37,3 +37,17 @@ export const getInvestmentCategoriesService = async (): Promise<InvestmentCatego
 
   return categories;
 };
+
+export const deleteInvestmentCategoryService = async (id: number): Promise<void> => {
+  try {
+    const token = getToken();
+    await axios.delete(`${BASE_URL}/api/investmentCategory/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to delete investment category"
+    );
+  }
+};

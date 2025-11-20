@@ -7,7 +7,12 @@ import { AddInvestmentCategoryPayload } from "../../../../types/catalolgueType/i
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function InvestmentCatalogueForm() {
+
+interface InvestmentCatalogueFormProps {
+  onSuccess: () => void;
+}
+
+export default function InvestmentCatalogueForm({onSuccess}: InvestmentCatalogueFormProps) {
   const [category, setCategory] = useState("");
   const [additional1, setAdditional1] = useState("");
   const [additional2, setAdditional2] = useState("");
@@ -43,6 +48,7 @@ export default function InvestmentCatalogueForm() {
       };
 
       await addInvestmentCategoryService(payload);
+      onSuccess && onSuccess();
       toast.success("Investment category added successfully!");
 
       setCategory(""); setAdditional1(""); setAdditional2(""); setAdditional3(""); setAdditional4(""); setErrors({});

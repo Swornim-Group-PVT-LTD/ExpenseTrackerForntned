@@ -6,7 +6,11 @@ import { AddIncomeCategoryPayload } from "../../../../types/catalolgueType/incom
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function IncomeCatalogueForm() {
+interface IncomeCatalogueFormProps {
+  onSuccess?: () => void;
+}
+
+export default function IncomeCatalogueForm({ onSuccess }: IncomeCatalogueFormProps) {
   const [category, setCategory] = useState("");
   const [additional1, setAdditional1] = useState("");
   const [additional2, setAdditional2] = useState("");
@@ -51,6 +55,7 @@ export default function IncomeCatalogueForm() {
       };
 
       await addIncomeCategoryService(payload);
+      onSuccess && onSuccess();
       toast.success("Income category added successfully!");
 
       // Clear form

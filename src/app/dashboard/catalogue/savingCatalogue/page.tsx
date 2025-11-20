@@ -4,10 +4,14 @@ import { useRouter } from "next/navigation";
 import { Home } from "lucide-react";
 import SavingCatalogueForm from "../savingCatalogue/component/savingCatalogueForm";
 import SavingCatalogueTable from "../savingCatalogue/component/savingCatalogueTable";
+import { useState } from "react";
 
 export default function SavingCatalogueUI() {
   const router = useRouter();
-
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const refreshData = () => {
+    setRefreshTrigger((prev) => prev + 1);
+  };
   return (
     <div className="p-4">
       {/* Breadcrumb & Title */}
@@ -23,12 +27,12 @@ export default function SavingCatalogueUI() {
       </div>
 
       {/* Form */}
-      <SavingCatalogueForm />
+      <SavingCatalogueForm  onSuccess={refreshData}/>
 
       <div className="mt-5 mb-10"></div>
 
       {/* Table */}
-      <SavingCatalogueTable />
+      <SavingCatalogueTable refreshTrigger={refreshTrigger} />
     </div>
   );
 }
