@@ -5,7 +5,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 
 import { getExpenseService } from "../../../services/expenseService";
 import { ExpenseResponse } from "../../../types/expenseType";
 
-export default function ExpensesTable() {
+
+interface BalanceCardProps {
+  refreshTrigger: number
+}
+
+export default function ExpensesTable({refreshTrigger}: BalanceCardProps) {
   const [expenses, setExpenses] = useState<ExpenseResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,7 +28,7 @@ export default function ExpensesTable() {
     };
 
     fetchExpenses();
-  }, []);
+  }, [refreshTrigger]);
 
   return (
     <div className="overflow-x-auto">

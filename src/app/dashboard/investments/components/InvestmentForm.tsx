@@ -9,7 +9,13 @@ import { addInvestmentService } from "@/app/services/investmentService";
 import { getInvestmentCategoriesService } from "@/app/services/catalogueServices/investmentCatalogueService";
 import { InvestmentCategoryResponse } from "@/app/types/catalolgueType/investmentCatalogueType";
 
-const InvestmentForm = () => {
+
+interface InvestmentFormProps {
+  onSuccess?: () => void  
+}
+
+
+const InvestmentForm = ({onSuccess}: InvestmentFormProps) => {
   const [amount, setAmount] = useState<number>(0);
   const [currency, setCurrency] = useState("$");
   const [remarks, setRemarks] = useState("");
@@ -44,6 +50,7 @@ const InvestmentForm = () => {
       };
 
       await addInvestmentService(payload);
+      onSuccess && onSuccess();
 
       toast.success(`Investment of ${currency}${amount} added successfully!`);
       setAmount(0); // Reset amount

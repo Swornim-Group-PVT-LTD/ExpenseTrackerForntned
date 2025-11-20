@@ -9,7 +9,12 @@ import { addSavingService } from "@/app/services/savingService";
 import { getSavingCategoriesService } from "@/app/services/catalogueServices/savingCatalogueService";
 import { SavingCategoryResponse } from "@/app/types/catalolgueType/savingCatalogueType";
 
-const SavingForm = () => {
+
+interface SavingFormProps {
+  onSuccess?: () => void;
+} 
+
+const SavingForm = ({onSuccess}: SavingFormProps) => {
   const [amount, setAmount] = useState<number>(0);
   const [currency, setCurrency] = useState("$");
   const [remarks, setRemarks] = useState("");
@@ -46,6 +51,7 @@ const SavingForm = () => {
       };
 
       await addSavingService(payload);
+      onSuccess && onSuccess();
 
       toast.success(
         `Saving of ${currency}${amount} added successfully!` +

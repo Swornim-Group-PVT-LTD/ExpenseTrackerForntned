@@ -9,7 +9,13 @@ import { addIncomeService } from "@/app/services/incomeService";
 import { getIncomeCategoriesService } from "@/app/services/catalogueServices/incomeCatalogueService";
 import { IncomeCategoryResponse } from "@/app/types/catalolgueType/incomeCatalogueType";
 
-const IncomeForm = () => {
+
+interface IncomeFormProps {
+  onSuccess?: () => void  
+}
+
+
+const IncomeForm = ({onSuccess}: IncomeFormProps) => {
   const [amount, setAmount] = useState<number>(0);
   const [currency, setCurrency] = useState("$");
   const [remarks, setRemarks] = useState("");
@@ -44,6 +50,7 @@ const IncomeForm = () => {
       };
 
       await addIncomeService(payload);
+      onSuccess && onSuccess();
 
       toast.success(`Income of ${currency}${amount} added successfully.`);
 

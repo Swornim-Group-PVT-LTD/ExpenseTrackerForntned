@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 
 import { getSavingService } from "@/app/services/savingService";
 import { SavingResponse } from "@/app/types/savingType";
 
-export default function SavingTable() {
+export default function SavingTable(refreshTrigger: {refreshTrigger: number}) {
   const [saving, setSaving] = useState<SavingResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,7 +25,7 @@ export default function SavingTable() {
     };
 
     fetchSaving();
-  }, []);
+  }, [refreshTrigger]);
 
   return (
     <div className="overflow-x-auto">

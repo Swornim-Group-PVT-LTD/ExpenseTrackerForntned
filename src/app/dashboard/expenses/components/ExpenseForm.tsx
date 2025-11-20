@@ -9,7 +9,11 @@ import { addExpenseService } from "@/app/services/expenseService";
 import { getExpenseCategoriesService } from "@/app/services/catalogueServices/expenseCatalogueService";
 import { ExpenseCategoryResponse } from "@/app/types/catalolgueType/expenseCatalogueType";
 
-const ExpenseForm = () => {
+interface IncomeFormProps {
+  onSuccess?: () => void  
+}
+
+const ExpenseForm = ({onSuccess}: IncomeFormProps) => {
   const [amount, setAmount] = useState<number>(0);
   const [currency, setCurrency] = useState("$");
   const [remarks, setRemarks] = useState("");
@@ -43,6 +47,7 @@ const ExpenseForm = () => {
       };
 
       await addExpenseService(payload);
+      onSuccess && onSuccess();
 
       toast.success(`Expense of ${currency}${amount} added successfully!`);
 

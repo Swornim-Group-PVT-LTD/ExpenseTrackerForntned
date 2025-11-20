@@ -2,11 +2,15 @@ import React from 'react'
 
 import { useEffect, useState } from "react";
 
-import { getBalancesService } from ".././../../services/balanceService"; 
-import { BalanceResponse } from "../../../types/balanceType";
+import { getBalancesService } from "@/app/services/balanceService"; 
+import { BalanceResponse } from "@/app/types/balanceType";
 import StatCard from '@/app/components/statcard';
 
-const BalanceCard = () => {
+interface BalanceCardProps {
+  refreshTrigger: number
+}
+
+const BalanceCard = ({refreshTrigger}: BalanceCardProps) => {
         const [balance, setBalance] = useState<number | null>(null);
           const [loading, setLoading] = useState(true);
         
@@ -26,7 +30,7 @@ const BalanceCard = () => {
             };
         
             fetchBalance();
-          }, []);
+          }, [refreshTrigger]);
   return (
     <div>
       <div className="lg:col-span-1">
