@@ -5,22 +5,22 @@ import { ChevronDown } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { AddSavingPayload } from "@/app/types/savingType";
-import { addSavingService } from "@/app/services/savingService";
+import { addSavingService, getSavingService } from "@/app/services/savingService";
 import { getSavingCategoriesService } from "@/app/services/catalogueServices/savingCatalogueService";
 import { SavingCategoryResponse } from "@/app/types/catalolgueType/savingCatalogueType";
-
 
 interface SavingFormProps {
   onSuccess?: () => void;
 } 
 
-const SavingForm = ({onSuccess}: SavingFormProps) => {
+const SavingForm = ({ onSuccess }: SavingFormProps) => {
   const [amount, setAmount] = useState<number>(0);
   const [currency, setCurrency] = useState("$");
   const [remarks, setRemarks] = useState("");
   const [loading, setLoading] = useState(false);
   const [deductBalance, setDeductBalance] = useState(false);
   const [categories, setCategories] = useState<SavingCategoryResponse[]>([]);
+  const [totalSaving, setTotalSaving] = useState<number>(0);
 
   // Fetch saving categories once
   useEffect(() => {
@@ -28,31 +28,44 @@ const SavingForm = ({onSuccess}: SavingFormProps) => {
       try {
         const data = await getSavingCategoriesService();
         setCategories(data);
-
-        // Set default selected value if categories exist
         if (data.length > 0) setRemarks(data[0].saving_category);
       } catch (err) {
         console.error("Failed to fetch saving categories:", err);
         toast.error("Failed to fetch saving categories");
       }
     };
-
     fetchCategories();
   }, []);
+
+  // Load total saving
+  const loadTotalSaving = async () => {
+    try {
+      const res = await getSavingService(); // your API call
+      if (res.length > 0) {
+        const latest = res[res.length - 1]; // latest entry
+        setTotalSaving(latest.total_saving);
+      } else {
+        setTotalSaving(0);
+      }
+    } catch (err) {
+      console.error("Failed to fetch total saving:", err);
+      setTotalSaving(0);
+    }
+  };
+
+  useEffect(() => {
+    loadTotalSaving();
+  }, [onSuccess]);
 
   const handleAddSaving = async () => {
     try {
       setLoading(true);
-
       const payload: AddSavingPayload = {
         add_saving: amount,
         saving_category: remarks,
         want_to_deduct_from_balance: deductBalance,
       };
-
       await addSavingService(payload);
-      onSuccess && onSuccess();
-
       toast.success(
         `Saving of ${currency}${amount} added successfully!` +
           (deductBalance ? " (Deducted from balance)" : "")
@@ -60,6 +73,8 @@ const SavingForm = ({onSuccess}: SavingFormProps) => {
 
       setAmount(0);
       setDeductBalance(false);
+      onSuccess && onSuccess();
+      loadTotalSaving(); // refresh total saving after adding
     } catch (error: any) {
       toast.error(error.message || "Failed to add saving");
     } finally {
@@ -71,7 +86,16 @@ const SavingForm = ({onSuccess}: SavingFormProps) => {
     <div className="col-span-full lg:col-span-3 h-fit">
       <div className="bg-white rounded-md p-4 w-full flex flex-col gap-4">
 
+        {/* ⭐ Total Saving Display */}
+        <div className="mb-4 p-3 rounded-lg bg-[#44eeaa] border border-[#38A169]/30 flex items-center justify-between">
+          <span className="text-md font-semibold text-[#ffffff]">Total Saving</span>
+          <span className="text-xl font-bold text-[#ffffff]">
+            {currency}{totalSaving?.toLocaleString()}
+          </span>
+        </div>
+
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
+
           {/* Currency Selector */}
           <div className="relative w-full sm:w-24">
             <select
