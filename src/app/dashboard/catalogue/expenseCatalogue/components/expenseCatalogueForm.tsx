@@ -5,8 +5,13 @@ import { addExpenseCategoryService } from "../../../../services/catalogueService
 import { AddExpenseCategoryPayload } from "../../../../types/catalolgueType/expenseCatalogueType";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { on } from "events";
 
-export default function ExpenseCatalogueForm() {
+interface ExpenseCatalogueFormProps {
+  onSuccess?: () => void;
+}
+
+export default function ExpenseCatalogueForm({ onSuccess}: ExpenseCatalogueFormProps) {
   const [category, setCategory] = useState("");
   const [additional1, setAdditional1] = useState("");
   const [additional2, setAdditional2] = useState("");
@@ -14,6 +19,8 @@ export default function ExpenseCatalogueForm() {
   const [additional4, setAdditional4] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
+
+
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
@@ -55,6 +62,8 @@ export default function ExpenseCatalogueForm() {
       };
 
       await addExpenseCategoryService(payload);
+      onSuccess && onSuccess();
+      
 
       toast.success("Expense category added successfully!");
 

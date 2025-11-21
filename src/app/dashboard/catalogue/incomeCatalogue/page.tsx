@@ -4,9 +4,16 @@ import { useRouter } from "next/navigation";
 import { Home } from "lucide-react";
 import IncomeCatalogueForm from "./components/incomeCatalogueForm";
 import IncomeCatalogueTable from "./components/incomeCatalogueTable";
+import { useState } from "react";
+
 
 export default function IncomeCatalogueUI() {
   const router = useRouter();
+
+      const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const refreshData = () => {
+    setRefreshTrigger((prev) => prev + 1);
+  };
 
   return (
     <div className="p-4">
@@ -23,12 +30,12 @@ export default function IncomeCatalogueUI() {
       </div>
 
       {/* Form */}
-      <IncomeCatalogueForm />
+      <IncomeCatalogueForm onSuccess={refreshData} />
 
       <div className="mt-5 mb-10"></div>
 
       {/* Table */}
-      <IncomeCatalogueTable />
+      <IncomeCatalogueTable refreshTrigger={refreshTrigger} />
     </div>
   );
 }

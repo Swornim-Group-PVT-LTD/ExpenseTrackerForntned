@@ -7,7 +7,11 @@ import { AddSavingCategoryPayload } from "../../../../types/catalolgueType/savin
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function SavingCatalogueForm() {
+interface SavingCatalogueFormProps {
+  onSuccess?: () => void;
+}
+
+export default function SavingCatalogueForm({ onSuccess }: SavingCatalogueFormProps) {
   const [category, setCategory] = useState("");
   const [additional1, setAdditional1] = useState("");
   const [additional2, setAdditional2] = useState("");
@@ -43,6 +47,7 @@ export default function SavingCatalogueForm() {
       };
 
       await addSavingCategoryService(payload);
+      onSuccess && onSuccess();
       toast.success("Saving category added successfully!");
 
       setCategory(""); setAdditional1(""); setAdditional2(""); setAdditional3(""); setAdditional4(""); setErrors({});

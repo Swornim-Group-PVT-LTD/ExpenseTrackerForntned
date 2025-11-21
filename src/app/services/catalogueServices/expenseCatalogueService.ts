@@ -59,3 +59,18 @@ export const getExpenseCategoriesService = async (): Promise<ExpenseCategoryResp
   }
 };
 
+// Delete expense category by ID
+export const deleteExpenseCategoryService = async (id: number): Promise<void> => {
+  try {
+    const token = getToken();
+    await axios.delete(`${BASE_URL}/api/expenseCategory/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to delete expense category"
+    );
+  }
+};
+

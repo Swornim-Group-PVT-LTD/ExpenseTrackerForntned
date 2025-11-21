@@ -5,7 +5,10 @@ import React, { useState, useEffect } from "react";
 import { getSavingCategoriesService } from "../../../../services/catalogueServices/savingCatalogueService";
 import { SavingCategoryResponse } from "../../../../types/catalolgueType/savingCatalogueType";
 
-export default function SavingCatalogueTable() {
+import { deleteSavingCategoryService } from "@/app/services/catalogueServices/savingCatalogueService";
+import {toast} from 'react-toastify'
+
+export default function SavingCatalogueTable({refreshTrigger}: {refreshTrigger: number}) {
   const [data, setData] = useState<SavingCategoryResponse[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,13 +25,24 @@ export default function SavingCatalogueTable() {
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [refreshTrigger]);
 
   const filteredData = data.filter(
     item =>
       item.saving_category.toLowerCase().includes(search.toLowerCase()) ||
       item.static_value.toLowerCase().includes(search.toLowerCase())
   );
+
+  const handleDelete = async (id: number) => {
+    try {
+      if(!confirm("Are you sure you want to delete this saving category?")) return;
+      await deleteSavingCategoryService(id);
+      toast.success('Saving category deleted successfully');
+      fetchData();
+    } catch (error) {
+      toast.error('Failed to delete saving category');
+    }
+  };
 
   return (
     <div className="overflow-x-auto w-full mt-4">
@@ -61,7 +75,7 @@ export default function SavingCatalogueTable() {
                 <td className="px-4 py-2 text-sm">
                   <div className="flex justify-end gap-2">
                     <span className="text-green-500 cursor-pointer hover:underline">Update</span>
-                    <span className="text-red-500 cursor-pointer hover:underline">Delete</span>
+                    <span className="text-red-500 cursor-pointer hover:underline" onClick={() => handleDelete(item.id)}>Delete</span>
                   </div>
                 </td>
               </tr>

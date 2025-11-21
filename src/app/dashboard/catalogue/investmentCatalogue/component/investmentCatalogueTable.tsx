@@ -5,7 +5,10 @@ import React, { useState, useEffect } from "react";
 import { getInvestmentCategoriesService } from "../../../../services/catalogueServices/investmentCatalogueService";
 import { InvestmentCategoryResponse } from "../../../../types/catalolgueType/investmentCatalogueType";
 
-export default function InvestmentCatalogueTable() {
+import { deleteInvestmentCategoryService } from "@/app/services/catalogueServices/investmentCatalogueService";
+import {toast} from 'react-toastify'
+
+export default function InvestmentCatalogueTable({refreshTrigger}: {refreshTrigger: number}) {
   const [data, setData] = useState<InvestmentCategoryResponse[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,12 +19,23 @@ export default function InvestmentCatalogueTable() {
     finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [refreshTrigger]);
 
   const filteredData = data.filter(item =>
     item.investment_category.toLowerCase().includes(search.toLowerCase()) ||
     item.static_value.toLowerCase().includes(search.toLowerCase())
   );
+
+  const handleDelete = async (id: number) => {
+    try {
+      if(!confirm("Are you sure you want to delete this investment category?")) return;
+      await deleteInvestmentCategoryService(id);
+      toast.success('Investment category deleted successfully');
+      fetchData();
+    } catch (error) {
+      toast.error('Failed to delete investment category');
+    }
+  };
 
   return (
     <div className="overflow-x-auto w-full mt-4">
@@ -50,7 +64,7 @@ export default function InvestmentCatalogueTable() {
               <td className="px-4 py-2 text-sm">
                 <div className="flex justify-end gap-2">
                   <span className="text-green-500 cursor-pointer hover:underline">Update</span>
-                  <span className="text-red-500 cursor-pointer hover:underline">Delete</span>
+                  <span className="text-red-500 cursor-pointer hover:underline" onClick={() => handleDelete(item.id)}>Delete</span>
                 </div>
               </td>
             </tr>
