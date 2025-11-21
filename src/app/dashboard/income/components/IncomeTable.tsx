@@ -6,7 +6,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 
 import { getIncomeService } from "@/app/services/incomeService";
 import { IncomeResponse } from "@/app/types/incomeType";
 
-export default function IncomeTable() {
+interface BalanceCardProps {
+  refreshTrigger: number
+}
+
+export default function IncomeTable(refreshTrigger: BalanceCardProps) {
   const [income, setIncome] = useState<IncomeResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -24,7 +28,7 @@ export default function IncomeTable() {
     };
 
     fetchIncome();
-  }, []);
+  }, [refreshTrigger]);
 
   return (
     <div className="overflow-x-auto">

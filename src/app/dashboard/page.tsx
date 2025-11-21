@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Home } from "lucide-react";
+import ClipLoader from "react-spinners/ClipLoader";
 
 import StatCard from "@/app/components/statcard";
 import MonthlyBarChart from "@/app/components/MonthlyBarChart";
@@ -32,41 +33,34 @@ export default function Dashboard() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch in parallel
-        const [balances, expenses, saving, income,investment]: [BalanceResponse[], ExpenseResponse[],SavingResponse[],IncomeResponse[],InvestmentResponse[]] =
-          await Promise.all([getBalancesService(), getExpenseService(), getSavingService(), getIncomeService(), getInvestmentService()]);
+        const [
+          balances,
+          expenses,
+          saving,
+          income,
+          investment
+        ]: [
+          BalanceResponse[],
+          ExpenseResponse[],
+          SavingResponse[],
+          IncomeResponse[],
+          InvestmentResponse[]
+        ] = await Promise.all([
+          getBalancesService(),
+          getExpenseService(),
+          getSavingService(),
+          getIncomeService(),
+          getInvestmentService()
+        ]);
 
         // Only one balance entry exists
         setBalance(Number(balances?.[0]?.total_balance ?? 0));
 
-        // Sum all expenses for total (convert strings to numbers)
-        const expenseTotal = expenses.reduce(
-          (acc, exp) => acc + Number(exp.total_expenses || 0),
-          0
-        );
-        setTotalExpenses(expenseTotal);
-
-        // Sum all savings for total (convert strings to numbers)
-        const savingTotal = saving.reduce(
-          (acc, exp) => acc + Number(exp.total_saving || 0),
-          0
-        );
-        setTotalSaving(savingTotal);
-
-        // Sum all income for total (convert strings to numbers)
-        const incomeTotal = income.reduce(
-          (acc, exp) => acc + Number(exp.total_income || 0),
-          0
-        );
-        setTotalIncome(incomeTotal);
-
-        // Sum all investments for total (convert strings to numbers)
-        const investmentTotal = investment.reduce(
-          (acc, exp) => acc + Number(exp.total_investment || 0),
-          0
-        );
-        setTotalInvestment(investmentTotal);
-
+        // Latest values only
+        setTotalExpenses(Number(expenses?.[expenses.length - 1]?.total_expenses ?? 0));
+        setTotalSaving(Number(saving?.[saving.length - 1]?.total_saving ?? 0));
+        setTotalIncome(Number(income?.[income.length - 1]?.total_income ?? 0));
+        setTotalInvestment(Number(investment?.[investment.length - 1]?.total_investment ?? 0));
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
         setBalance(0);
@@ -83,34 +77,10 @@ export default function Dashboard() {
   }, []);
 
   const dashboardData = [
-    {
-      title: "Income",
-      value: loading ? "Loading..." : `NPR ${totalIncome.toLocaleString()}`, // static for now
-      percentage: "100%",
-      icon: "/income-logo.svg",
-      labelColor: "#5EAC24",
-    },
-    {
-      title: "Expenses",
-      value: loading ? "Loading..." : `NPR ${totalExpenses.toLocaleString()}`,
-      percentage: "100%",
-      icon: "/expenses-logo.svg",
-      labelColor: "#E63F32",
-    },
-    {
-      title: "Savings",
-      value: loading ? "Loading..." : `NPR ${totalSaving.toLocaleString()}`, // static for now
-      percentage: "100%",
-      icon: "/saving-logo.svg",
-      labelColor: "#4EA890",
-    },
-    {
-      title: "Investments",
-      value: loading ? "Loading..." : `NPR ${totalInvestment.toLocaleString()}`, // static for now
-      percentage: "100%",
-      icon: "/investment-logo.svg",
-      labelColor: "#FFA726",
-    },
+    { title: "Income", value: totalIncome, icon: "/income-logo.svg", labelColor: "#5EAC24" },
+    { title: "Expenses", value: totalExpenses, icon: "/expenses-logo.svg", labelColor: "#E63F32" },
+    { title: "Savings", value: totalSaving, icon: "/saving-logo.svg", labelColor: "#4EA890" },
+    { title: "Investments", value: totalInvestment, icon: "/investment-logo.svg", labelColor: "#FFA726" },
   ];
 
   return (
@@ -145,9 +115,7 @@ export default function Dashboard() {
               icon="/balance-logo.svg"
               label="Balance"
               value={
-                loading
-                  ? "Loading..."
-                  : `NPR ${Number(balance).toLocaleString()}`
+                loading ? <ClipLoader size={22} color="#000000" /> : `NPR ${balance.toLocaleString()}`
               }
               percentage="100%"
               labelColor="#000000"
@@ -159,15 +127,17 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Stats Cards */}
+        {/* Stats Cards with spinner */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {dashboardData.map((item, index) => (
             <StatCard
               key={index}
               icon={item.icon}
               label={item.title}
-              value={item.value}
-              percentage={item.percentage}
+              value={
+                loading ? <ClipLoader size={22} color={item.labelColor} /> : `NPR ${item.value.toLocaleString()}`
+              }
+              percentage="100%"
               labelColor={item.labelColor}
             />
           ))}

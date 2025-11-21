@@ -5,16 +5,21 @@ import { ChevronDown } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { AddExpensePayload } from "@/app/types/expenseType";
-import { addExpenseService } from "@/app/services/expenseService";
+import { addExpenseService, getExpenseService } from "@/app/services/expenseService";
 import { getExpenseCategoriesService } from "@/app/services/catalogueServices/expenseCatalogueService";
 import { ExpenseCategoryResponse } from "@/app/types/catalolgueType/expenseCatalogueType";
 
-const ExpenseForm = () => {
+interface ExpenseFormProps {
+  onSuccess?: () => void;
+}
+
+const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
   const [amount, setAmount] = useState<number>(0);
   const [currency, setCurrency] = useState("$");
   const [remarks, setRemarks] = useState("");
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<ExpenseCategoryResponse[]>([]);
+  const [totalExpense, setTotalExpense] = useState<number>(0);
 
   // Fetch expense categories once
   useEffect(() => {
@@ -33,6 +38,25 @@ const ExpenseForm = () => {
     fetchCategories();
   }, []);
 
+  // Load total expense
+  const loadTotalExpense = async () => {
+    try {
+      const res = await getExpenseService(); // your API call
+      if (res.length > 0) {
+      const latest = res[res.length - 1]; // get the last (latest) entry
+      setTotalExpense(latest.total_expenses);
+    } else {
+      setTotalExpense(0); 
+    }
+    } catch (err) {
+      console.error("Failed to fetch total expense:", err);
+    }
+  };
+
+  useEffect(() => {
+    loadTotalExpense();
+  }, [onSuccess]);
+
   const handleAddExpense = async () => {
     try {
       setLoading(true);
@@ -43,10 +67,11 @@ const ExpenseForm = () => {
       };
 
       await addExpenseService(payload);
-
       toast.success(`Expense of ${currency}${amount} added successfully!`);
 
       setAmount(0); // reset amount
+      onSuccess && onSuccess();
+      loadTotalExpense(); // refresh total expense after adding
     } catch (error: any) {
       toast.error(error.message || "Failed to add expense");
     } finally {
@@ -57,6 +82,15 @@ const ExpenseForm = () => {
   return (
     <div className="col-span-full lg:col-span-3 h-fit">
       <div className="bg-white rounded-md p-4 w-full">
+
+        {/* ⭐ Total Expense Display */}
+        <div className="mb-4 p-3 rounded-lg bg-[#ff4d4d] border border-[#E53E3E]/30 flex items-center justify-between">
+          <span className="text-md font-semibold text-[#ffffff]">Total Expense</span>
+          <span className="text-xl font-bold text-[#ffffff]">
+            {currency}{totalExpense?.toLocaleString()}
+          </span>
+        </div>
+
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
 
           {/* Currency selector */}

@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 
 import { getInvestmentService } from "@/app/services/investmentService";
 import { InvestmentResponse } from "@/app/types/investmentType";
 
-export default function InvestmentTable() {
+export default function InvestmentTable({refreshTrigger}: {refreshTrigger: number}) {
   const [investment, setInvestment] = useState<InvestmentResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,7 +25,7 @@ export default function InvestmentTable() {
     };
 
     fetchInvestment();
-  }, []);
+  }, [refreshTrigger]);
 
   return (
     <div className="overflow-x-auto">
