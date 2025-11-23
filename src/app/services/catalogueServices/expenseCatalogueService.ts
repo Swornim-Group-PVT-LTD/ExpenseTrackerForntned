@@ -74,3 +74,29 @@ export const deleteExpenseCategoryService = async (id: number): Promise<void> =>
   }
 };
 
+
+
+export const updateExpenseCategoryService = async (
+  id: number,
+  payload: AddExpenseCategoryPayload
+): Promise<ExpenseCategoryResponse> => {
+  try {
+    const token = getToken();
+    const response = await axios.put<ExpenseCategoryResponse>(
+      `${BASE_URL}/api/expenseCategory/${id}`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to update expense category"
+    );
+  }
+};

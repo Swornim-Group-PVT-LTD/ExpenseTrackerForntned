@@ -77,7 +77,7 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
 
   return (
     <div className="col-span-full lg:col-span-3 h-fit">
-      <div className="bg-white rounded-md p-4 w-full flex flex-col gap-4">
+      <div className="bg-white rounded-md p-4 h-full w-full flex flex-col gap-4">
 
         {/* ⭐ Total Investment Display */}
         <div className="mb-4 p-3 rounded-lg bg-[#ffa726] border border-[#3182CE]/30 flex items-center justify-between">

@@ -51,3 +51,28 @@ export const deleteInvestmentCategoryService = async (id: number): Promise<void>
     );
   }
 };
+
+export const updateInvestmentCategoryService = async (
+  id: number,
+  payload: Partial<AddInvestmentCategoryPayload>
+): Promise<InvestmentCategoryResponse> => {
+  try {
+    const token = getToken();
+    const response = await axios.put<InvestmentCategoryResponse>(
+      `${BASE_URL}/api/investmentCategory/${id}`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to update investment category"
+    );
+  }
+};

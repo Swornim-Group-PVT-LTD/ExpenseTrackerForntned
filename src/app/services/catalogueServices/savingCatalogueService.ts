@@ -75,3 +75,29 @@ export const deleteSavingCategoryService = async (id: number): Promise<void> => 
     );
   }
 };
+
+
+export const updateSavingCategoryService = async (
+  id: number,
+  payload: Partial<AddSavingCategoryPayload>
+): Promise<SavingCategoryResponse> => {
+  try {
+    const token = getToken();
+    const response = await axios.put<SavingCategoryResponse>(
+      `${BASE_URL}/api/savingCategory/${id}`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to update saving category"
+    );
+  }
+};

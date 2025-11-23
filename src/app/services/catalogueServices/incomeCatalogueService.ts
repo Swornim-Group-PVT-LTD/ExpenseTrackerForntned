@@ -76,3 +76,28 @@ export const deleteIncomeCategoryService = async (id: number): Promise<void> => 
   }
 };
 
+export const updateIncomeCategoryService = async (
+  id: number,
+  payload: AddIncomeCategoryPayload
+): Promise<IncomeCategoryResponse> => {
+  try {
+    const token = getToken();
+    const response = await axios.put<IncomeCategoryResponse>(
+      `${BASE_URL}/api/incomeCategory/${id}`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to update income category"
+    );
+  }
+};
+
