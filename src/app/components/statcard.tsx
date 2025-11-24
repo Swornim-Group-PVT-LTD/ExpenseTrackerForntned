@@ -25,7 +25,7 @@ export default function StatCard({
   return (
     <div
       onClick={handleClick}
-      className="bg-white rounded-lg shadow-md p-3 flex flex-col gap-4 h-36 mt-8 hover:shadow-lg transition-shadow hover:scale-[1.02] hover:cursor-pointer"
+      className="bg-white rounded-lg shadow-md p-3 flex flex-col gap-4 h-36 mt-2 hover:shadow-lg transition-shadow hover:scale-[1.02] hover:cursor-pointer"
     >
       <div className="relative flex items-start gap-2 mb-1">
         <img

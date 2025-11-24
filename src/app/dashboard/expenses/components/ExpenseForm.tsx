@@ -81,7 +81,7 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
 
   return (
     <div className="col-span-full lg:col-span-3 h-fit">
-      <div className="bg-white rounded-md p-4 w-full">
+      <div className="bg-white rounded-md p-4 w-full h-full flex flex-col gap-4">
 
         {/* ⭐ Total Expense Display */}
         <div className="mb-4 p-3 rounded-lg bg-[#ff4d4d] border border-[#E53E3E]/30 flex items-center justify-between">

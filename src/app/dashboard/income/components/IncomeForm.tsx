@@ -85,7 +85,7 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
 
   return (
     <div className="col-span-full lg:col-span-3 h-fit">
-      <div className="bg-white rounded-md p-4 w-full">
+      <div className="bg-white rounded-md p-4 w-full h-full flex flex-col gap-4">
         <div className="mb-4 p-3 rounded-lg bg-[#5eac24] border border-[#38A169]/30 flex items-center justify-between">
           <span className="text-md font-semibold text-[#FFFFFF]">
             Total Income
