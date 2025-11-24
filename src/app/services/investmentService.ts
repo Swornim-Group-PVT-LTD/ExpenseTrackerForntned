@@ -58,3 +58,43 @@ export const getInvestmentService = async (): Promise<InvestmentResponse[]> => {
     );
   }
 };
+
+
+export const deleteInvestmentService = async (sn:string): Promise<void> => {
+  try {
+    const token = getToken();
+    await axios.delete(`${BASE_URL}/api/investments/delete/${sn}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to delete Investment"
+    );
+  }
+};
+
+
+export const updateInvestmentService = async (
+  sn: string,
+  payload: Partial<AddInvestmentPayload>
+): Promise<InvestmentResponse> => {
+  try {
+    const token = getToken();
+    const response = await axios.put<InvestmentResponse>(
+      `${BASE_URL}/api/investments/update/${sn}`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to update Investment"
+    );
+  }
+};

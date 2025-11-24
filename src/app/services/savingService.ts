@@ -59,3 +59,44 @@ export const getSavingService = async (): Promise<SavingResponse[]> => {
   }
 };
 
+
+
+export const updateSavingService = async (
+  sn: string,
+  payload: Partial<AddSavingPayload>
+): Promise<SavingResponse[]> => {
+  try {
+    const token = getToken();
+    const response = await axios.put<SavingResponse[]>(
+      `${BASE_URL}/api/savings/update/${sn}`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to update saving"
+    );
+  }
+};
+
+
+export const deleteSavingService = async (sn:string): Promise<void> => {
+  try {
+    const token = getToken();
+    await axios.delete(`${BASE_URL}/api/savings/delete/${sn}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to delete saving"
+    );
+  }
+};
+

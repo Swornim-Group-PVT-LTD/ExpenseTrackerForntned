@@ -3,6 +3,7 @@ import axios from "axios";
 import BASE_URL from "@/app/urlConfig/urlConfig";
 import { AddExpensePayload, ExpenseResponse } from "../types/expenseType";
 
+
 // Helper to get token from cookies
 const getToken = (): string => {
   const match = document.cookie.match(new RegExp('(^| )access_token=([^;]+)'));
@@ -54,6 +55,41 @@ export const getExpenseService = async (): Promise<ExpenseResponse[]> => {
     throw new Error(
       error.response?.data?.message || error.message || "Failed to fetch expenses"
     );
+  }
+};
+
+
+export const deleteExpenseService = async (sn: string): Promise<void> => {
+  try {
+    const token = getToken();
+    await axios.delete(`${BASE_URL}/api/expenses/delete/${sn}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to delete expense"
+    );
+  }
+};
+
+
+export const updateExpenseService = async (sn: string, payload: AddExpensePayload): Promise<ExpenseResponse> => {
+  try {
+    const token = getToken();
+    const response = await axios.put<ExpenseResponse>(
+      `${BASE_URL}/api/expenses/update/${sn}`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || "Failed to update expense");
   }
 };
 
