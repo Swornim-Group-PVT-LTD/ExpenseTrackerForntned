@@ -1,17 +1,34 @@
 "use client";
 
+import { ClipLoader } from "react-spinners";
+import {toast} from "react-toastify";
 import { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "flowbite-react";
 
 
-import { getInvestmentService } from "@/app/services/investmentService";
+import { getInvestmentService, deleteInvestmentService,updateInvestmentService } from "@/app/services/investmentService";
 import { InvestmentResponse } from "@/app/types/investmentType";
+import { getInvestmentCategoriesService } from "@/app/services/catalogueServices/investmentCatalogueService";
+import { InvestmentCategoryResponse } from "@/app/types/catalolgueType/investmentCatalogueType";
 
 export default function InvestmentTable({refreshTrigger}: {refreshTrigger: number}) {
   const [investment, setInvestment] = useState<InvestmentResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const [editingSn, setEditingSn] = useState<string | null>(null);
+    const [editForm, setEditForm] = useState({add_investment:0, investment_category:""});
+    const [categories, setCategories] = useState<InvestmentCategoryResponse[]>([]);
+
+    const fetchCategories = async () => {
+      try {
+        const data = await getInvestmentCategoriesService();
+        setCategories(data);
+      } catch (err) {
+        console.error("Failed to fetch investment categories:", err);
+      }
+    };
+
+
     const fetchInvestment = async () => {
       setLoading(true);
       try {
@@ -23,9 +40,55 @@ export default function InvestmentTable({refreshTrigger}: {refreshTrigger: numbe
         setLoading(false);
       }
     };
+  useEffect(() => {
+    
 
     fetchInvestment();
+    fetchCategories();
   }, [refreshTrigger]);
+
+  // Start editing a row
+      const startEdit = (item: any) => {
+        setEditingSn(item.sn);
+        setEditForm({ add_investment: item.add_investment, investment_category: item.investment_category });
+      };
+    
+      // Cancel editing
+      const cancelEdit = () => {
+        setEditingSn(null);
+        setEditForm({ add_investment: 0, investment_category: "" });
+      };
+    
+      // Save update
+      const saveEdit = async (sn: string) => {
+        try {
+          await updateInvestmentService(sn, {
+            add_investment: editForm.add_investment,
+            investment_category: editForm.investment_category,
+          });
+    
+          fetchInvestment();
+    
+          cancelEdit();
+        } catch (err) {
+          console.error(err);
+          alert("Failed to update");
+        }
+      };
+    
+    
+    
+      const handleDelete = (sn: string) => {
+        if (!confirm("Are you sure you want to delete this investment?")) return;
+          try{
+            deleteInvestmentService(sn);
+            toast.success("investment deleted successfully");
+            setInvestment(investment.filter(investment => investment.sn !== sn));
+          }catch(error){
+            console.error("Error deleting investment:", error);
+          }
+      }
+      
 
   return (
     <div className="overflow-x-auto">
@@ -45,7 +108,7 @@ export default function InvestmentTable({refreshTrigger}: {refreshTrigger: numbe
           {loading ? (
             <TableRow>
               <TableCell colSpan={8} className="text-center font-medium text-gray-500">
-                Loading...
+                <ClipLoader size={22} color="#000000" />
               </TableCell>
             </TableRow>
           ) : investment.length === 0 ? (
@@ -63,21 +126,65 @@ export default function InvestmentTable({refreshTrigger}: {refreshTrigger: numbe
                 <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                   {row.id}
                 </TableCell>
-                <TableCell>NPR {row.add_investment.toLocaleString()}</TableCell>
-                <TableCell>{row.investment_category}</TableCell>
+                <TableCell>NPR {editingSn === row.sn ? (
+                <input
+                  className="border p-1"
+                  value={editForm.add_investment}
+                  onChange={e => setEditForm(prev => ({ ...prev, add_investment: Number(e.target.value) }))}
+                />
+              ) : (
+                row.add_investment
+              )}</TableCell>
+                <TableCell>{editingSn === row.sn ? (
+                    <select
+                      className="border p-1 rounded"
+                      value={editForm.investment_category}
+                      onChange={(e) =>
+                        setEditForm((prev) => ({
+                          ...prev,
+                          investment_category: e.target.value,
+                        }))
+                      }
+                    >
+                      {categories.map((cat) => (
+                        <option key={cat.id} value={cat.investment_category}>
+                          {cat.investment_category}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    row.investment_category
+                  )}</TableCell>
                 <TableCell>NPR {row.total_investment.toLocaleString()}</TableCell>
                 <TableCell>{row.created_date}</TableCell>
                 <TableCell>
-                  <a
-                    href="#"
-                    className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                  {editingSn === row.sn ? (
+                <>
+                  <button
+                    className="text-green-600 mr-2"
+                    onClick={() => saveEdit(row.sn)}
                   >
-                    Edit
-                  </a>{" "}
-                  /{" "}
+                    Save
+                  </button>
+                  <button
+                    className="text-gray-600"
+                    onClick={cancelEdit}
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button
+                  className="text-blue-600"
+                  onClick={() => startEdit(row)}
+                >
+                  Edit
+                </button>
+              )}
                   <a
                     href="#"
                     className="font-medium text-red-600 hover:underline dark:text-red-500"
+                    onClick={() => handleDelete(row.sn)}
                   >
                     Delete
                   </a>

@@ -74,3 +74,37 @@ export const getIncomeService = async (): Promise<IncomeResponse[]> => {
   }
 };
 
+
+export const deleteIncomeService = async (sn:string): Promise<void> => {
+  try {
+    const token = getToken();
+    await axios.delete(`${BASE_URL}/api/incomes/delete/${sn}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to delete income"
+    );
+  }
+};
+
+export const updateIncomeService = async (sn:string, payload: AddIncomePayload): Promise<IncomeResponse> => {
+  try {
+    const token = getToken();
+    const response = await axios.put<IncomeResponse>(
+      `${BASE_URL}/api/incomes/update/${sn}`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || "Failed to update income");
+  }
+};
+
