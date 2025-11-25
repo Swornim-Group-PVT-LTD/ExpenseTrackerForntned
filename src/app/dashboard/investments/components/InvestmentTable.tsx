@@ -10,8 +10,9 @@ import { getInvestmentService, deleteInvestmentService,updateInvestmentService }
 import { InvestmentResponse } from "@/app/types/investmentType";
 import { getInvestmentCategoriesService } from "@/app/services/catalogueServices/investmentCatalogueService";
 import { InvestmentCategoryResponse } from "@/app/types/catalolgueType/investmentCatalogueType";
+import { on } from "events";
 
-export default function InvestmentTable({refreshTrigger}: {refreshTrigger: number}) {
+export default function InvestmentTable({refreshTrigger,filteredData,onSuccess}: {refreshTrigger: number;filteredData?: InvestmentResponse[] | null;onSuccess: () => void;}) {
   const [investment, setInvestment] = useState<InvestmentResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,12 +41,16 @@ export default function InvestmentTable({refreshTrigger}: {refreshTrigger: numbe
         setLoading(false);
       }
     };
-  useEffect(() => {
-    
-
+useEffect(() => {
+  if (filteredData) {
+    setInvestment(filteredData);
+    setLoading(false);
+  }
+  else {
     fetchInvestment();
     fetchCategories();
-  }, [refreshTrigger]);
+  }
+}, [refreshTrigger, filteredData]);
 
   // Start editing a row
       const startEdit = (item: any) => {
@@ -66,8 +71,14 @@ export default function InvestmentTable({refreshTrigger}: {refreshTrigger: numbe
             add_investment: editForm.add_investment,
             investment_category: editForm.investment_category,
           });
+
+          onSuccess && onSuccess();
+          toast.success("Investment updated successfully");
     
-          fetchInvestment();
+                  setInvestment(prev => prev.map(item => 
+          item.sn === sn ? { ...item, add_investment: editForm.add_investment, investment_category: editForm.investment_category } : item
+        ));
+      
     
           cancelEdit();
         } catch (err) {
@@ -82,6 +93,7 @@ export default function InvestmentTable({refreshTrigger}: {refreshTrigger: numbe
         if (!confirm("Are you sure you want to delete this investment?")) return;
           try{
             deleteInvestmentService(sn);
+            onSuccess && onSuccess();
             toast.success("investment deleted successfully");
             setInvestment(investment.filter(investment => investment.sn !== sn));
           }catch(error){

@@ -98,3 +98,20 @@ export const updateInvestmentService = async (
     );
   }
 };
+
+
+//get investments by date range
+export const getInvestmentByDateRangeService = async (from: string, to: string): Promise<InvestmentResponse[]> => {
+  try {
+    const token = getToken();
+    const response = await axios.get(`${BASE_URL}/api/investments`, {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { start_date:from, end_date:to },
+    });
+    return response.data.data || [];
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to fetch expenses by date range"
+    );
+  }
+};

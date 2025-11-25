@@ -20,9 +20,18 @@ import {
 import { SavingResponse } from "@/app/types/savingType";
 import { SavingCategoryResponse } from "@/app/types/catalolgueType/savingCatalogueType";
 import { getSavingCategoriesService } from "@/app/services/catalogueServices/savingCatalogueService";
+import { on } from "events";
 
-export default function SavingTable(refreshTrigger: {
+
+
+export default function SavingTable({
+  refreshTrigger,
+  filteredData,
+  onSuccess
+}: {
   refreshTrigger: number;
+  filteredData?: SavingResponse[] | null;
+  onSuccess?: () => void;
 }) {
   const [saving, setSaving] = useState<SavingResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,10 +65,16 @@ export default function SavingTable(refreshTrigger: {
       setLoading(false);
     }
   };
+  
   useEffect(() => {
-    fetchSaving();
+    if (filteredData) {
+      setSaving(filteredData);
+      setLoading(false);
+    } else {
+      fetchSaving();
+    }
     fetchCategories();
-  }, [refreshTrigger]);
+  }, [refreshTrigger, filteredData]);
 
   // Start editing a row
   const startEdit = (item: any) => {
@@ -84,7 +99,12 @@ export default function SavingTable(refreshTrigger: {
         saving_category: editForm.saving_category,
       });
 
-      fetchSaving();
+      onSuccess && onSuccess();
+      toast.success("Saving updated successfully");
+        setSaving(prev => prev.map(item => 
+          item.sn === sn ? { ...item, add_saving: editForm.add_saving, saving_category: editForm.saving_category } : item
+        ));
+      
 
       cancelEdit();
     } catch (err) {
@@ -97,6 +117,7 @@ export default function SavingTable(refreshTrigger: {
     if (!confirm("Are you sure you want to delete this saving?")) return;
     try {
       deleteSavingService(sn);
+      onSuccess && onSuccess();
       toast.success("saving deleted successfully");
       setSaving(saving.filter((saving) => saving.sn !== sn));
     } catch (error) {
