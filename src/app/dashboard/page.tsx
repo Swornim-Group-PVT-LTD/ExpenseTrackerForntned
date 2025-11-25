@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Home } from "lucide-react";
 import ClipLoader from "react-spinners/ClipLoader";
+import { useRouter } from "next/navigation";
 
 import StatCard from "@/app/components/statcard";
 import MonthlyBarChart from "@/app/components/MonthlyBarChart";
@@ -83,6 +84,12 @@ export default function Dashboard() {
     { title: "Investments", value: totalInvestment, icon: "/investment-logo.svg", labelColor: "#FFA726" },
   ];
 
+  const router = useRouter();
+    const handleClick = (label:string) => {
+    router.push(`/dashboard/${label.toLowerCase()}`);
+  };
+
+
   return (
     <main>
       <div className="flex items-center gap-1 text-md mb-4">
@@ -100,7 +107,8 @@ export default function Dashboard() {
               <button
                 key={index}
                 style={{ backgroundColor: item.labelColor }}
-                className="text-white text-lg font-bold py-2 px-3 rounded hover:opacity-90 transition shadow-md"
+                className="text-white text-lg font-bold py-2 px-3 rounded hover:opacity-90 transition shadow-md cursor-pointer"
+                onClick={() => handleClick(item.title)}
               >
                 {`Add ${item.title}`}
               </button>
