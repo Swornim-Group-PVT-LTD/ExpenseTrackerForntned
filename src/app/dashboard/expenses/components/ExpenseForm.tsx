@@ -14,7 +14,7 @@ interface ExpenseFormProps {
 }
 
 const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<number|"">(0);
   const [currency, setCurrency] = useState("$");
   const [remarks, setRemarks] = useState("");
   const [loading, setLoading] = useState(false);
@@ -62,7 +62,7 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
       setLoading(true);
 
       const payload: AddExpensePayload = {
-        add_expenses: amount,
+        add_expenses: Number(amount),
         expense_category: remarks,
       };
 
@@ -113,7 +113,7 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
             placeholder="400000"
             className="flex-1 h-12 px-3 text-sm text-[#716A6A] border border-[#574A4A]/50 rounded outline-none focus:border-[#FFA726]"
             value={amount}
-            onChange={(e) => setAmount(Number(e.target.value))}
+            onChange={(e) => setAmount(e.target.value === "" ? "" : Number(e.target.value))}
           />
 
           {/* Remarks dropdown */}
