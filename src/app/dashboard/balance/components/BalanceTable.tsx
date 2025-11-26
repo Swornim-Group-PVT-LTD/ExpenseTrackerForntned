@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ClipLoader } from "react-spinners";
 import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "flowbite-react";
 import { getBalancesService } from "../../../services/balanceService";
 import { BalanceResponse } from "../../../types/balanceType";
 
-export default function BalanceTable() {
+export default function BalanceTable({refreshTrigger}:{refreshTrigger?:number}) {
   const [balances, setBalances] = useState<BalanceResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,7 +24,7 @@ export default function BalanceTable() {
     };
 
     fetchBalances();
-  }, []);
+  }, [refreshTrigger]);
 
   return (
     <div className="overflow-x-auto">
@@ -40,11 +41,19 @@ export default function BalanceTable() {
 
         <TableBody className="divide-y">
           {loading ? (
-            <TableRow>
-              <TableCell colSpan={5} className="text-center font-medium text-gray-500">
-                Loading...
+            
+                
+
+<TableRow>
+              <TableCell
+                colSpan={8}
+                className="text-center font-medium text-gray-500"
+              >
+                <ClipLoader size={22} color="#000000" />
               </TableCell>
             </TableRow>
+
+       
           ) : balances.length === 0 ? (
             <TableRow>
               <TableCell colSpan={5} className="text-center font-medium text-gray-500">

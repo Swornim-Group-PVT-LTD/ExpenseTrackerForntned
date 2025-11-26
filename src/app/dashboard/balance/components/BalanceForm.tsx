@@ -6,8 +6,8 @@ import Swal from "sweetalert2";
 import { addBalanceService, getBalancesService } from "../../../services/balanceService";
 import { AddBalancePayload, BalanceResponse } from "../../../types/balanceType";
 
-export default function BalanceForm() {
-  const [amount, setAmount] = useState<number>(400000);
+export default function BalanceForm({onSuccess}:{onSuccess?:()=>void}) {
+  const [amount, setAmount] = useState<number | "">(40000);
   const [currency, setCurrency] = useState("$");
   const [loading, setLoading] = useState(false);
   const [balanceExists, setBalanceExists] = useState(false);
@@ -43,7 +43,7 @@ export default function BalanceForm() {
       setLoading(true);
 
       const payload: AddBalancePayload = {
-        add_opening_balance: amount,
+        add_opening_balance: Number(amount),
       };
 
       await addBalanceService(payload);
@@ -57,6 +57,7 @@ export default function BalanceForm() {
       });
 
       setAmount(0);
+      onSuccess && onSuccess();
       setBalanceExists(true);
     } catch (error: any) {
       Swal.fire({
@@ -92,7 +93,7 @@ export default function BalanceForm() {
           placeholder="400000"
           className="flex-1 h-12 px-3 text-sm text-[#716A6A] border border-[#574A4A]/50 rounded outline-none focus:border-[#FFA726]"
           value={amount}
-          onChange={(e) => setAmount(Number(e.target.value))}
+          onChange={(e) => setAmount(e.target.value === "" ? "" : Number(e.target.value))}
         />
 
         {/* Submit Button */}

@@ -14,7 +14,7 @@ interface InvestmentFormProps {
 }
 
 const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<number|"">(0);
   const [currency, setCurrency] = useState("$");
   const [remarks, setRemarks] = useState("");
   const [loading, setLoading] = useState(false);
@@ -60,7 +60,7 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
     try {
       setLoading(true);
       const payload: AddInvestmentPayload = {
-        add_investment: amount,
+        add_investment: Number(amount),
         investment_category: remarks,
       };
       await addInvestmentService(payload);
@@ -109,7 +109,7 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
             placeholder="400000"
             className="flex-1 h-12 px-3 text-sm text-[#716A6A] border border-[#574A4A]/50 rounded outline-none focus:border-[#FFA726]"
             value={amount}
-            onChange={(e) => setAmount(Number(e.target.value))}
+            onChange={(e) => setAmount(e.target.value === "" ? "" : Number(e.target.value))}
           />
 
           {/* Remarks Selector */}
