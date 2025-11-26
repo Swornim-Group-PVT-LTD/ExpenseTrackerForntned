@@ -21,11 +21,12 @@ import { IncomeResponse } from "@/app/types/incomeType";
 import { getIncomeCategoriesService } from "@/app/services/catalogueServices/incomeCatalogueService";
 import { IncomeCategoryResponse } from "@/app/types/catalolgueType/incomeCatalogueType";
 
-interface BalanceCardProps {
-  refreshTrigger: number;
-}
 
-export default function IncomeTable(refreshTrigger: BalanceCardProps) {
+export default function IncomeTable({refreshTrigger,filteredData,onSuccess}: {
+  refreshTrigger: number;
+  filteredData?: IncomeResponse[] | null;
+  onSuccess?: () => void;
+}) {
   const [income, setIncome] = useState<IncomeResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -62,10 +63,17 @@ export default function IncomeTable(refreshTrigger: BalanceCardProps) {
     }
   };
 
-  useEffect(() => {
-    fetchIncome();
+ useEffect(() => {
+  
+    if (filteredData) {
+      setIncome(filteredData);
+      setLoading(false);
+      
+    } else {
+      fetchIncome();
+    }
     fetchCategories();
-  }, [refreshTrigger]);
+  }, [refreshTrigger, filteredData]);
 
   // Start editing a row
   const startEdit = (item: any) => {
@@ -89,8 +97,12 @@ export default function IncomeTable(refreshTrigger: BalanceCardProps) {
         add_income: editForm.add_income,
         income_category: editForm.income_category,
       });
-
-      fetchIncome();
+      toast.success("Income updated successfully");
+        onSuccess && onSuccess();
+        setIncome(prev => prev.map(item => 
+          item.sn === sn ? { ...item, add_income: editForm.add_income, income_category: editForm.income_category } : item
+        ));
+      
 
       cancelEdit();
     } catch (err) {
@@ -103,6 +115,7 @@ export default function IncomeTable(refreshTrigger: BalanceCardProps) {
     if (!confirm("Are you sure you want to delete this income?")) return;
     try {
       deleteIncomeService(sn);
+      onSuccess && onSuccess();
       toast.success("income deleted successfully");
       setIncome(income.filter((income) => income.sn !== sn));
     } catch (error) {

@@ -7,14 +7,31 @@ import{ useState }from "react";
 import IncomeForm from "./components/IncomeForm";
 import BalanceCard from "@/app/components/BalanceCard";
 import IncomeLineChart from "./components/IncomeLineChart";
-import DateFilter from "./components/DateFilter";
+import DateFilter from "@/app/components/DateFilter";
 import IncomeTable from "./components/IncomeTable";
 import IncomeBarChart from "./components/IncomeBarChart";
 
+import {getIncomeByDateRangeService} from "@/app/services/incomeService";
+import { IncomeResponse } from "@/app/types/incomeType";
+
+
 function Income() {
+
+  const [filteredData, setFilteredData] = useState<IncomeResponse[]>([]);
+    const [isFilterActive, setIsFilterActive] = useState(false);
 
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const handleRefresh = () => setRefreshTrigger(prev => prev + 1);
+
+    const handleFilter = (data: IncomeResponse[]) => {
+      setFilteredData(data);
+      setIsFilterActive(true);
+    }
+    const clearFilter = () => {
+      setFilteredData([]);
+      setIsFilterActive(false);
+    };
+
 
   return (
     <div className="">
@@ -32,8 +49,21 @@ function Income() {
       <IncomeLineChart />
       <IncomeBarChart />
       </div>
-      <DateFilter />
-      <IncomeTable  refreshTrigger={refreshTrigger}/>
+          <DateFilter fetchService={getIncomeByDateRangeService} onFilter={handleFilter} />
+            
+            {isFilterActive && (
+              <div className="mb-4 flex items-center gap-2">
+                
+                <span className="text-sm text-gray-600">Showing {filteredData.length} filtered results</span>
+                <button 
+                  onClick={clearFilter}
+                  className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded"
+                >
+                  Show All
+                </button>
+              </div>
+            )}
+      <IncomeTable  refreshTrigger={refreshTrigger} filteredData={isFilterActive ? filteredData : null} onSuccess={handleRefresh} />
     </div>
   );
 }

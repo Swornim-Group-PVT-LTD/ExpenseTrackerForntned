@@ -54,7 +54,7 @@ export default function TopNav() {
           <div className="relative" >
             <div className="w-12 h-12 rounded-full bg-[#EFF0F3] flex items-center justify-center" >
               <img
-                src="/default-avatar.png"
+                src="/user.svg"
                 alt="User"
                 className="w-8 h-8 object-cover"
               />

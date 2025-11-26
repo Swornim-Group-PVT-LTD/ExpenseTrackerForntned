@@ -1,64 +1,89 @@
 "use client";
 
 import { ClipLoader } from "react-spinners";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "flowbite-react";
-import { getExpenseService,deleteExpenseService,updateExpenseService } from "@/app/services/expenseService";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeadCell,
+  TableRow,
+} from "flowbite-react";
+import {
+  getExpenseService,
+  deleteExpenseService,
+  updateExpenseService,
+} from "@/app/services/expenseService";
 import { ExpenseResponse } from "../../../types/expenseType";
 
 import { getExpenseCategoriesService } from "@/app/services/catalogueServices/expenseCatalogueService";
 import { ExpenseCategoryResponse } from "@/app/types/catalolgueType/expenseCatalogueType";
 
-
 interface BalanceCardProps {
-  refreshTrigger: number
+  refreshTrigger: number;
 }
 
-export default function ExpensesTable({refreshTrigger}: BalanceCardProps) {
+export default function ExpensesTable({
+  refreshTrigger,
+  filteredData,
+  onSuccess,
+}: {
+  refreshTrigger: number;
+  filteredData?: ExpenseResponse[] | null;
+  onSuccess: () => void;
+}) {
   const [expenses, setExpenses] = useState<ExpenseResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [editingSn, setEditingSn] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState({add_expenses:0, expense_category:""});
+  const [editForm, setEditForm] = useState({
+    add_expenses: 0,
+    expense_category: "",
+  });
 
   const [categories, setCategories] = useState<ExpenseCategoryResponse[]>([]);
 
   const fetchExpenses = async () => {
-      setLoading(true);
-      try {
-        const data = await getExpenseService();
-        setExpenses(data);
-      } catch (error) {
-        console.error("Error fetching expenses:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setLoading(true);
+    try {
+      const data = await getExpenseService();
+      setExpenses(data);
+    } catch (error) {
+      console.error("Error fetching expenses:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const fetchCategories = async () => {
-        try {
-          const data = await getExpenseCategoriesService();
-          setCategories(data);
-    
-     
-        } catch (err) {
-          console.error("Failed to fetch expense categories:", err);
-          toast.error("Failed to fetch expense categories");
-        }
-      };
-    
+  const fetchCategories = async () => {
+    try {
+      const data = await getExpenseCategoriesService();
+      setCategories(data);
+    } catch (err) {
+      console.error("Failed to fetch expense categories:", err);
+      toast.error("Failed to fetch expense categories");
+    }
+  };
+
   useEffect(() => {
-    
-
-    fetchExpenses();
+    if (filteredData) {
+      setExpenses(filteredData);
+      setLoading(false);
+    } else {
+      fetchExpenses();
+    }
     fetchCategories();
-  }, [refreshTrigger]);
+  }, [refreshTrigger, filteredData]);
 
   // Start editing a row
   const startEdit = (item: any) => {
     setEditingSn(item.sn);
-    setEditForm({ add_expenses: item.add_expenses, expense_category: item.expense_category });
+    setEditForm({
+      add_expenses: item.add_expenses,
+      expense_category: item.expense_category,
+    });
   };
 
   // Cancel editing
@@ -74,8 +99,19 @@ export default function ExpensesTable({refreshTrigger}: BalanceCardProps) {
         add_expenses: editForm.add_expenses,
         expense_category: editForm.expense_category,
       });
-
-      fetchExpenses();
+      onSuccess && onSuccess();
+      toast.success("Expense updated successfully");
+      setExpenses((prev) =>
+        prev.map((item) =>
+          item.sn === sn
+            ? {
+                ...item,
+                add_expenses: editForm.add_expenses,
+                expense_category: editForm.expense_category,
+              }
+            : item
+        )
+      );
 
       cancelEdit();
     } catch (err) {
@@ -84,19 +120,17 @@ export default function ExpensesTable({refreshTrigger}: BalanceCardProps) {
     }
   };
 
-
-
   const handleDelete = (sn: string) => {
     if (!confirm("Are you sure you want to delete this expense?")) return;
-      try{
-        deleteExpenseService(sn);
-        toast.success("Expense deleted successfully");
-        setExpenses(expenses.filter(expense => expense.sn !== sn));
-      }catch(error){
-        console.error("Error deleting expense:", error);
-      }
-  }
-  
+    try {
+      deleteExpenseService(sn);
+      onSuccess && onSuccess();
+      toast.success("Expense deleted successfully");
+      setExpenses(expenses.filter((expense) => expense.sn !== sn));
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+    }
+  };
 
   return (
     <div className="overflow-x-auto">
@@ -115,19 +149,24 @@ export default function ExpensesTable({refreshTrigger}: BalanceCardProps) {
         <TableBody className="divide-y">
           {loading ? (
             <TableRow>
-              <TableCell colSpan={8} className="text-center font-medium text-gray-500">
+              <TableCell
+                colSpan={8}
+                className="text-center font-medium text-gray-500"
+              >
                 <ClipLoader size={22} color="#000000" />
               </TableCell>
             </TableRow>
           ) : expenses.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={8} className="text-center font-medium text-gray-500">
+              <TableCell
+                colSpan={8}
+                className="text-center font-medium text-gray-500"
+              >
                 No expenses found
               </TableCell>
             </TableRow>
           ) : (
             expenses.map((row) => (
-              
               <TableRow
                 key={row.id}
                 className="bg-white dark:border-gray-700 dark:bg-gray-800"
@@ -135,16 +174,25 @@ export default function ExpensesTable({refreshTrigger}: BalanceCardProps) {
                 <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                   {row.id}
                 </TableCell>
-                <TableCell>NPR {editingSn === row.sn ? (
-                <input
-                  className="border p-1"
-                  value={editForm.add_expenses}
-                  onChange={e => setEditForm(prev => ({ ...prev, add_expenses: Number(e.target.value) }))}
-                />
-              ) : (
-                row.add_expenses
-              )}</TableCell>
-                <TableCell>{editingSn === row.sn ? (
+                <TableCell>
+                  NPR{" "}
+                  {editingSn === row.sn ? (
+                    <input
+                      className="border p-1"
+                      value={editForm.add_expenses}
+                      onChange={(e) =>
+                        setEditForm((prev) => ({
+                          ...prev,
+                          add_expenses: Number(e.target.value),
+                        }))
+                      }
+                    />
+                  ) : (
+                    row.add_expenses
+                  )}
+                </TableCell>
+                <TableCell>
+                  {editingSn === row.sn ? (
                     <select
                       className="border p-1 rounded"
                       value={editForm.expense_category}
@@ -163,37 +211,39 @@ export default function ExpensesTable({refreshTrigger}: BalanceCardProps) {
                     </select>
                   ) : (
                     row.expense_category
-                  )}</TableCell>
-                <TableCell>NPR {row.total_expenses?.toLocaleString() || "0"}</TableCell>
+                  )}
+                </TableCell>
+                <TableCell>
+                  NPR {row.total_expenses?.toLocaleString() || "0"}
+                </TableCell>
                 <TableCell>{row.created_date}</TableCell>
                 <TableCell>
                   {editingSn === row.sn ? (
-                <>
-                  <button
-                    className="text-green-600 mr-2"
-                    onClick={() => saveEdit(row.sn)}
-                  >
-                    Save
-                  </button>
-                  <button
-                    className="text-gray-600"
-                    onClick={cancelEdit}
-                  >
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                <button
-                  className="text-blue-600"
-                  onClick={() => startEdit(row)}
-                >
-                  Edit
-                </button>
-              )}
+                    <>
+                      <button
+                        className="text-green-600 mr-2"
+                        onClick={() => saveEdit(row.sn)}
+                      >
+                        Save
+                      </button>
+                      <button className="text-gray-600" onClick={cancelEdit}>
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      className="text-blue-600"
+                      onClick={() => startEdit(row)}
+                    >
+                      Edit
+                    </button>
+                  )}
                   <a
                     href="#"
                     className="font-medium text-red-600 hover:underline dark:text-red-500"
-                    onClick={() => {handleDelete(row.sn)}}
+                    onClick={() => {
+                      handleDelete(row.sn);
+                    }}
                   >
                     Delete
                   </a>

@@ -5,14 +5,29 @@ import { useState } from "react";
 import SavingForm from "./components/SavingForm";
 import BalanceCard from "@/app/components/BalanceCard";
 import SavingLineChart from "./components/SavingLineChart";
-import DateFilter from "./components/DateFilter";
+import DateFilter from "@/app/components/DateFilter";
 import SavingTable from "./components/SavingTable";
 import SavingBarChart from "./components/SavingBarChart";
 
+import {getSavingByDateRangeService} from "@/app/services/savingService";
+import { SavingResponse } from "@/app/types/savingType";
+
 function Saving() {
 
+  const [filteredData, setFilteredData] = useState<SavingResponse[]>([]);
+  const [isFilterActive, setIsFilterActive] = useState(false);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const handleRefresh = () => setRefreshTrigger(prev => prev + 1);
+    
+    const handleFilter = (data: SavingResponse[]) => {
+      setFilteredData(data);
+      setIsFilterActive(true);
+    };
+    
+    const clearFilter = () => {
+      setFilteredData([]);
+      setIsFilterActive(false);
+    };
 
   return (
     <div className="">
@@ -30,8 +45,22 @@ function Saving() {
       <SavingLineChart />
       <SavingBarChart />
       </div>
-      <DateFilter />
-      <SavingTable refreshTrigger={refreshTrigger}/>
+      <DateFilter fetchService={getSavingByDateRangeService} onFilter={handleFilter} />
+      
+      {isFilterActive && (
+        <div className="mb-4 flex items-center gap-2">
+          
+          <span className="text-sm text-gray-600">Showing {filteredData.length} filtered results</span>
+          <button 
+            onClick={clearFilter}
+            className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded"
+          >
+            Show All
+          </button>
+        </div>
+      )}
+        
+      <SavingTable refreshTrigger={refreshTrigger} filteredData={isFilterActive ? filteredData : null} onSuccess={handleRefresh}/>
     </div>
   );
 }

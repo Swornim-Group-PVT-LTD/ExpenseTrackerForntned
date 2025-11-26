@@ -108,3 +108,19 @@ export const updateIncomeService = async (sn:string, payload: AddIncomePayload):
   }
 };
 
+
+//get income by date range
+export const getIncomeByDateRangeService = async (from: string, to: string): Promise<IncomeResponse[]> => {
+  try {
+    const token = getToken();
+    const response = await axios.get(`${BASE_URL}/api/incomes`, {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { start_date:from, end_date:to },
+    });
+    return response.data.data || [];
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to fetch expenses by date range"
+    );
+  }
+};
