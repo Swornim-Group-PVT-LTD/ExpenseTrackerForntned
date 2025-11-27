@@ -42,14 +42,15 @@ export default function InvestmentTable({refreshTrigger,filteredData,onSuccess}:
       }
     };
 useEffect(() => {
-  if (filteredData) {
+  // Only fetch all data if no filter is active
+  if (filteredData !== null) {
     setInvestment(filteredData);
     setLoading(false);
   }
   else {
     fetchInvestment();
-    fetchCategories();
   }
+  fetchCategories();
 }, [refreshTrigger, filteredData]);
 
   // Start editing a row

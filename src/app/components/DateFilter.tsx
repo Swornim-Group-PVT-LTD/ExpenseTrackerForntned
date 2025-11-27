@@ -24,21 +24,23 @@ export default function DateFilter({
   const handleSearch = async () => {
     setError("");
 
-    if (from && to && from > to) {
+    // Validate that both dates are selected
+    if (!from || !to) {
+      setError("Please select both 'From' and 'To' dates.");
+      return;
+    }
+
+    if (from > to) {
       setError("'From' date cannot be later than 'To' date.");
       return;
     }
 
-    const start_date = from ? formatLocalDate(from) : "";
-    const end_date = to ? formatLocalDate(to) : "";
-   
-
+    const start_date = formatLocalDate(from);
+    const end_date = formatLocalDate(to);
 
     try {
       const response = await fetchService(start_date, end_date);
-      onFilter(response);
-     
-      
+      onFilter(response, start_date, end_date);
     } catch (err: any) {
       setError(
         err.message || "Failed to fetch data for the selected date range."
