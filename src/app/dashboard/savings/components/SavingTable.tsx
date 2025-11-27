@@ -22,12 +22,10 @@ import { SavingCategoryResponse } from "@/app/types/catalolgueType/savingCatalog
 import { getSavingCategoriesService } from "@/app/services/catalogueServices/savingCatalogueService";
 import { on } from "events";
 
-
-
 export default function SavingTable({
   refreshTrigger,
   filteredData,
-  onSuccess
+  onSuccess,
 }: {
   refreshTrigger: number;
   filteredData?: SavingResponse[] | null;
@@ -40,6 +38,7 @@ export default function SavingTable({
   const [editForm, setEditForm] = useState({
     add_saving: 0,
     saving_category: "",
+    want_to_deduct_from_balance: false,
   });
 
   const [categories, setCategories] = useState<SavingCategoryResponse[]>([]);
@@ -65,7 +64,7 @@ export default function SavingTable({
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     if (filteredData) {
       setSaving(filteredData);
@@ -82,13 +81,18 @@ export default function SavingTable({
     setEditForm({
       add_saving: item.add_saving,
       saving_category: item.saving_category,
+      want_to_deduct_from_balance: item.want_to_deduct_from_balance,
     });
   };
 
   // Cancel editing
   const cancelEdit = () => {
     setEditingSn(null);
-    setEditForm({ add_saving: 0, saving_category: "" });
+    setEditForm({
+      add_saving: 0,
+      saving_category: "",
+      want_to_deduct_from_balance: false,
+    });
   };
 
   // Save update
@@ -97,14 +101,22 @@ export default function SavingTable({
       await updateSavingService(sn, {
         add_saving: editForm.add_saving,
         saving_category: editForm.saving_category,
+        want_to_deduct_from_balance: editForm.want_to_deduct_from_balance,
       });
 
       onSuccess && onSuccess();
       toast.success("Saving updated successfully");
-        setSaving(prev => prev.map(item => 
-          item.sn === sn ? { ...item, add_saving: editForm.add_saving, saving_category: editForm.saving_category } : item
-        ));
-      
+      setSaving((prev) =>
+        prev.map((item) =>
+          item.sn === sn
+            ? {
+                ...item,
+                add_saving: editForm.add_saving,
+                saving_category: editForm.saving_category,
+              }
+            : item
+        )
+      );
 
       cancelEdit();
     } catch (err) {
@@ -132,6 +144,7 @@ export default function SavingTable({
           <TableRow>
             <TableHeadCell>ID</TableHeadCell>
             <TableHeadCell>Saving</TableHeadCell>
+            {editingSn && <TableHeadCell>Deduct from balance</TableHeadCell>}
             <TableHeadCell>Remarks</TableHeadCell>
             <TableHeadCell>Total Saving</TableHeadCell>
             <TableHeadCell>Created Date</TableHeadCell>
@@ -184,6 +197,22 @@ export default function SavingTable({
                     row.add_saving
                   )}
                 </TableCell>
+
+                {editingSn && editingSn === row.sn && (
+                  <TableCell>
+                    <input
+                      type="checkbox"
+                      checked={editForm.want_to_deduct_from_balance}
+                      onChange={(e) =>
+                        setEditForm((prev) => ({
+                          ...prev,
+                          want_to_deduct_from_balance: e.target.checked,
+                        }))
+                      }
+                    />
+                  </TableCell>
+                )}
+
                 <TableCell>
                   {editingSn === row.sn ? (
                     <select
