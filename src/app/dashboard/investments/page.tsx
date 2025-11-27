@@ -16,17 +16,33 @@ import { InvestmentResponse } from "@/app/types/investmentType";
 function Investment() {
   const [filteredData, setFilteredData] = useState<InvestmentResponse[]>([]);
   const [isFilterActive, setIsFilterActive] = useState(false);
+  const [currentDateRange, setCurrentDateRange] = useState<{start: string, end: string} | null>(null);
 
     const [refreshTrigger, setRefreshTrigger] = useState(0);
-    const handleRefresh = () => setRefreshTrigger(prev => prev + 1);
+    const handleRefresh = async () => {
+      setRefreshTrigger(prev => prev + 1);
+      // Re-apply filter if one is active
+      if (isFilterActive && currentDateRange) {
+        try {
+          const response = await getInvestmentByDateRangeService(currentDateRange.start, currentDateRange.end);
+          setFilteredData(response);
+        } catch (error) {
+          console.error('Failed to re-apply filter:', error);
+        }
+      }
+    };
 
-    const handleFilter = (data: InvestmentResponse[]) => {
+    const handleFilter = (data: InvestmentResponse[], startDate?: string, endDate?: string) => {
       setFilteredData(data);
       setIsFilterActive(true);
+      if (startDate && endDate) {
+        setCurrentDateRange({ start: startDate, end: endDate });
+      }
     }
     const clearFilter = () => {
       setFilteredData([]);
       setIsFilterActive(false);
+      setCurrentDateRange(null);
     }
 
   return (

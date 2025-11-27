@@ -67,7 +67,8 @@ export default function SavingTable({
   };
   
   useEffect(() => {
-    if (filteredData) {
+    // Only fetch all data if no filter is active
+    if (filteredData !== null) {
       setSaving(filteredData);
       setLoading(false);
     } else {
