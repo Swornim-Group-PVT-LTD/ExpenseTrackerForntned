@@ -13,4 +13,5 @@ export interface SavingResponse {
   saving_category: string;
   created_date: string; // or Date
   updated_date: string; // or Date
+  want_to_deduct_from_balance: boolean;
 }

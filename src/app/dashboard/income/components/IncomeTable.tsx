@@ -168,7 +168,7 @@ export default function IncomeTable({refreshTrigger,filteredData,onSuccess}: {
                   NPR{" "}
                   {editingSn === row.sn ? (
                     <input
-                      className="border p-1"
+                      className="p-2 border rounded-md border-gray-300"
                       value={editForm.add_income}
                       onChange={(e) =>
                         setEditForm((prev) => ({
@@ -184,7 +184,7 @@ export default function IncomeTable({refreshTrigger,filteredData,onSuccess}: {
                 <TableCell>
                   {editingSn === row.sn ? (
                     <select
-                      className="border p-1 rounded"
+                      className="p-2 border rounded-md border-gray-300"
                       value={editForm.income_category}
                       onChange={(e) =>
                         setEditForm((prev) => ({
@@ -209,18 +209,18 @@ export default function IncomeTable({refreshTrigger,filteredData,onSuccess}: {
                   {editingSn === row.sn ? (
                     <>
                       <button
-                        className="text-green-600 mr-2"
+                        className="text-green-600 mr-2 cursor-pointer"
                         onClick={() => saveEdit(row.sn)}
                       >
                         Save
                       </button>
-                      <button className="text-gray-600" onClick={cancelEdit}>
+                      <button className="text-gray-600 cursor-pointer" onClick={cancelEdit}>
                         Cancel
                       </button>
                     </>
                   ) : (
                     <button
-                      className="text-blue-600"
+                      className="text-blue-600 cursor-pointer"
                       onClick={() => startEdit(row)}
                     >
                       Edit
