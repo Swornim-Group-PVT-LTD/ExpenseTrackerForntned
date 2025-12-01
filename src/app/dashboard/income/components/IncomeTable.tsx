@@ -65,7 +65,7 @@ export default function IncomeTable({refreshTrigger,filteredData,onSuccess}: {
 
  useEffect(() => {
     // Only fetch all data if no filter is active
-    if (filteredData !== null) {
+    if (filteredData) {
       setIncome(filteredData);
       setLoading(false);
     } else {

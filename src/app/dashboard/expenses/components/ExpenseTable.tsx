@@ -69,7 +69,7 @@ export default function ExpensesTable({
 
   useEffect(() => {
     // Only fetch all data if no filter is active
-    if (filteredData !== null) {
+    if (filteredData) {
       setExpenses(filteredData);
       setLoading(false);
     } else {

@@ -67,7 +67,7 @@ export default function SavingTable({
 
   useEffect(() => {
     // Only fetch all data if no filter is active
-    if (filteredData !== null) {
+    if (filteredData) {
       setSaving(filteredData);
       setLoading(false);
     } else {
@@ -199,20 +199,24 @@ export default function SavingTable({
                   )}
                 </TableCell>
 
-                {editingSn && editingSn === row.sn && (
-                  <TableCell>
-                    <input
-                      type="checkbox"
-                      checked={editForm.want_to_deduct_from_balance}
-                      onChange={(e) =>
-                        setEditForm((prev) => ({
-                          ...prev,
-                          want_to_deduct_from_balance: e.target.checked,
-                        }))
-                      }
-                    />
-                  </TableCell>
-                )}
+                {editingSn ? (
+                  editingSn === row.sn ? (
+                    <TableCell>
+                      <input
+                        type="checkbox"
+                        checked={editForm.want_to_deduct_from_balance}
+                        onChange={(e) =>
+                          setEditForm((prev) => ({
+                            ...prev,
+                            want_to_deduct_from_balance: e.target.checked,
+                          }))
+                        }
+                      />
+                    </TableCell>
+                  ) : (
+                    <TableCell></TableCell>
+                  )
+                ) : null}
 
                 <TableCell>
                   {editingSn === row.sn ? (

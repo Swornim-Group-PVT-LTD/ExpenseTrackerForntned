@@ -43,7 +43,7 @@ export default function InvestmentTable({refreshTrigger,filteredData,onSuccess}:
     };
 useEffect(() => {
   // Only fetch all data if no filter is active
-  if (filteredData !== null) {
+  if (filteredData) {
     setInvestment(filteredData);
     setLoading(false);
   }
