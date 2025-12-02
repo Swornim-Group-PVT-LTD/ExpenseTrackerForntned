@@ -17,7 +17,7 @@ export default function DateFilter() {
    
       
       
-      <button className="bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-4 h-12 rounded transition-colors">
+      <button className="bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-4 h-12 rounded transition-colors cursor-pointer">
         Search
       </button>
     </div>

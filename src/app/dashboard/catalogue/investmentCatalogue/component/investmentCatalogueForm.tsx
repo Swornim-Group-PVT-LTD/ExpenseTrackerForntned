@@ -90,7 +90,7 @@ export default function InvestmentCatalogueForm({onSuccess}: InvestmentCatalogue
         ))}
 
         <div className="flex-none">
-          <button onClick={handleAdd} disabled={loading} className={`px-6 py-2 bg-yellow-400 text-white font-semibold rounded-md hover:bg-yellow-600 transition ${loading ? "opacity-50 cursor-not-allowed" : ""}`}>
+          <button onClick={handleAdd} disabled={loading} className={`px-6 py-2 bg-yellow-400 text-white font-semibold rounded-md hover:bg-yellow-600 transition cursor-pointer ${loading ? "opacity-50 cursor-not-allowed" : ""}`}>
             {loading ? "Adding..." : "Add"}
           </button>
         </div>

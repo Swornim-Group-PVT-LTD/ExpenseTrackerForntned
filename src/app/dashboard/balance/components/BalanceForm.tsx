@@ -100,7 +100,7 @@ export default function BalanceForm({onSuccess}:{onSuccess?:()=>void}) {
         <button
           onClick={handleAddBalance}
           disabled={loading}
-          className="bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-6 h-12 rounded transition-colors disabled:opacity-50"
+          className="bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-6 h-12 rounded transition-colors disabled:opacity-50 cursor-pointer"
         >
           {loading ? "Saving..." : "Add"}
         </button>

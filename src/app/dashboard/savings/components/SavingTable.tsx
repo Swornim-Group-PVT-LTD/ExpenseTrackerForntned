@@ -67,7 +67,7 @@ export default function SavingTable({
 
   useEffect(() => {
     // Only fetch all data if no filter is active
-    if (filteredData !== null) {
+    if (filteredData) {
       setSaving(filteredData);
       setLoading(false);
     } else {
@@ -82,7 +82,7 @@ export default function SavingTable({
     setEditForm({
       add_saving: item.add_saving,
       saving_category: item.saving_category,
-      want_to_deduct_from_balance: item.want_to_deduct_from_balance,
+      want_to_deduct_from_balance: item.want_to_deduct_from_balance || false,
     });
   };
 
@@ -145,7 +145,7 @@ export default function SavingTable({
           <TableRow>
             <TableHeadCell>ID</TableHeadCell>
             <TableHeadCell>Saving</TableHeadCell>
-            {editingSn && <TableHeadCell>Deduct from balance</TableHeadCell>}
+            <TableHeadCell>Deduct from balance</TableHeadCell>
             <TableHeadCell>Remarks</TableHeadCell>
             <TableHeadCell>Total Saving</TableHeadCell>
             <TableHeadCell>Created Date</TableHeadCell>
@@ -157,7 +157,7 @@ export default function SavingTable({
           {loading ? (
             <TableRow>
               <TableCell
-                colSpan={8}
+                colSpan={7}
                 className="text-center font-medium text-gray-500"
               >
                 <ClipLoader size={22} color="#000000" />
@@ -166,7 +166,7 @@ export default function SavingTable({
           ) : saving.length === 0 ? (
             <TableRow>
               <TableCell
-                colSpan={8}
+                colSpan={7}
                 className="text-center font-medium text-gray-500"
               >
                 No Saving found
@@ -185,7 +185,7 @@ export default function SavingTable({
                   NPR{" "}
                   {editingSn === row.sn ? (
                     <input
-                      className="border p-1"
+                      className="p-2 border rounded-md border-gray-300"
                       value={editForm.add_saving}
                       onChange={(e) =>
                         setEditForm((prev) => ({
@@ -199,11 +199,11 @@ export default function SavingTable({
                   )}
                 </TableCell>
 
-                {editingSn && editingSn === row.sn && (
-                  <TableCell>
+                <TableCell>
+                  {editingSn === row.sn ? (
                     <input
                       type="checkbox"
-                      checked={editForm.want_to_deduct_from_balance}
+                      checked={editForm.want_to_deduct_from_balance || false}
                       onChange={(e) =>
                         setEditForm((prev) => ({
                           ...prev,
@@ -211,13 +211,15 @@ export default function SavingTable({
                         }))
                       }
                     />
-                  </TableCell>
-                )}
+                  ) : (
+                    <span>{row.want_to_deduct_from_balance ? "Yes" : "No"}</span>
+                  )}
+                </TableCell>
 
                 <TableCell>
                   {editingSn === row.sn ? (
                     <select
-                      className="border p-1 rounded"
+                      className="p-2 border rounded-md border-gray-300 "
                       value={editForm.saving_category}
                       onChange={(e) =>
                         setEditForm((prev) => ({
@@ -242,18 +244,18 @@ export default function SavingTable({
                   {editingSn === row.sn ? (
                     <>
                       <button
-                        className="text-green-600 mr-2"
+                        className="text-green-600 mr-2 cursor-pointer"
                         onClick={() => saveEdit(row.sn)}
                       >
                         Save
                       </button>
-                      <button className="text-gray-600" onClick={cancelEdit}>
+                      <button className="text-gray-600 cursor-pointer" onClick={cancelEdit}>
                         Cancel
                       </button>
                     </>
                   ) : (
                     <button
-                      className="text-blue-600"
+                      className="text-blue-600 cursor-pointer"
                       onClick={() => startEdit(row)}
                     >
                       Edit

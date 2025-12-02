@@ -136,7 +136,7 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
           <button
             onClick={handleAddExpense}
             disabled={loading}
-            className="bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-8 h-12 rounded transition-colors disabled:opacity-50 w-full sm:w-auto"
+            className={`bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-8 h-12 rounded transition-colors disabled:opacity-50 w-full sm:w-auto cursor-pointer ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             {loading ? "Saving..." : "Add"}
           </button>

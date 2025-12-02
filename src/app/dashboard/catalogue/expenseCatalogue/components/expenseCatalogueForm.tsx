@@ -148,7 +148,7 @@ export default function ExpenseCatalogueForm({ onSuccess}: ExpenseCatalogueFormP
           <button
             onClick={handleAdd}
             disabled={loading}
-            className={`px-6 py-2 bg-yellow-400 text-white font-semibold rounded-md hover:bg-yellow-600 transition ${
+            className={`px-6 py-2 bg-yellow-400 text-white font-semibold rounded-md hover:bg-yellow-600 transition cursor-pointer ${
               loading ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
