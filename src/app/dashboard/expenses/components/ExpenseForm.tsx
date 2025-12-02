@@ -5,7 +5,8 @@ import { ChevronDown } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { AddExpensePayload } from "@/app/types/expenseType";
-import { addExpenseService, getExpenseService } from "@/app/services/expenseService";
+import { addExpenseService } from "@/app/services/expenseService";
+import { getTotalExpenseService } from "@/app/services/expenseService";
 import { getExpenseCategoriesService } from "@/app/services/catalogueServices/expenseCatalogueService";
 import { ExpenseCategoryResponse } from "@/app/types/catalolgueType/expenseCatalogueType";
 
@@ -41,15 +42,11 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
   // Load total expense
   const loadTotalExpense = async () => {
     try {
-      const res = await getExpenseService(); // your API call
-      if (res.length > 0) {
-      const latest = res[res.length - 1]; // get the last (latest) entry
-      setTotalExpense(latest.total_expenses);
-    } else {
-      setTotalExpense(0); 
-    }
+      const total = await getTotalExpenseService();
+      setTotalExpense(total);
     } catch (err) {
       console.error("Failed to fetch total expense:", err);
+      setTotalExpense(0);
     }
   };
 

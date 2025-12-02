@@ -5,10 +5,8 @@ import { ChevronDown } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { AddIncomePayload } from "@/app/types/incomeType";
-import {
-  addIncomeService,
-  getIncomeService,
-} from "@/app/services/incomeService";
+import { addIncomeService } from "@/app/services/incomeService";
+import { getTotalIncomeService } from "@/app/services/incomeService";
 import { getIncomeCategoriesService } from "@/app/services/catalogueServices/incomeCatalogueService";
 import { IncomeCategoryResponse } from "@/app/types/catalolgueType/incomeCatalogueType";
 
@@ -44,14 +42,11 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
   // Fetch Total Income
   const loadTotalIncome = async () => {
     try {
-      const res = await getIncomeService(); // returns array
-      console.log(res);
-      if (res.length > 0) {
-        const latest = res[res.length - 1];
-        setTotalIncome(latest.total_income);
-      }
+      const total = await getTotalIncomeService();
+      setTotalIncome(total);
     } catch (error) {
       console.error("Failed to fetch total income:", error);
+      setTotalIncome(0);
     }
   };
 

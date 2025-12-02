@@ -13,3 +13,10 @@ export interface InvestmentResponse {
   created_date: string; // or Date
   updated_date: string; // or Date
 }
+
+export interface TotalInvestmentResponse {
+  message: string;
+  total_investment: number;
+  currency: string;
+  symbol: string;
+}

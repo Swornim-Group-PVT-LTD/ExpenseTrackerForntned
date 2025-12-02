@@ -1,7 +1,7 @@
 // services/incomeService.ts
 import axios from "axios";
 import BASE_URL from "@/app/urlConfig/urlConfig";
-import { AddIncomePayload, IncomeResponse } from "../types/incomeType";
+import { AddIncomePayload, IncomeResponse,TotalIncomeResponse } from "../types/incomeType";
 
 // ----------------------------
 // Get Token From Cookies
@@ -121,6 +121,27 @@ export const getIncomeByDateRangeService = async (from: string, to: string): Pro
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || error.message || "Failed to fetch expenses by date range"
+    );
+  }
+};
+
+
+// ----------------------------
+// Get Total Income
+// ----------------------------
+export const getTotalIncomeService = async (): Promise<number> => {
+  try {
+    const token = getToken();
+    const response = await axios.get<TotalIncomeResponse>(`${BASE_URL}/api/income/total`, {
+      headers: { Authorization: `Bearer ${token}` },
+      withCredentials: true,
+    });
+    
+    return Number(response.data.total_income || 0);
+  } catch (error: any) {
+    console.error("Failed to fetch total income:", error);
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to fetch total income"
     );
   }
 };

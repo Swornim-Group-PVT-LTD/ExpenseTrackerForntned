@@ -13,3 +13,11 @@ export interface ExpenseResponse {
   created_date: string; // or Date
   updated_date: string; // or Date
 }
+
+
+export interface TotalExpenseResponse {
+  message: string;
+  total_expenses: number;
+  currency: string;
+  symbol: string;
+}

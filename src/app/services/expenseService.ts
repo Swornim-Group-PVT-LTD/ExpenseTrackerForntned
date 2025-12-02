@@ -1,7 +1,7 @@
 // services/expenseService.ts
 import axios from "axios";
 import BASE_URL from "@/app/urlConfig/urlConfig";
-import { AddExpensePayload, ExpenseResponse } from "../types/expenseType";
+import { AddExpensePayload, ExpenseResponse,TotalExpenseResponse } from "../types/expenseType";
 
 
 // Helper to get token from cookies
@@ -110,3 +110,24 @@ export const getExpenseByDateRangeService = async (from: string, to: string): Pr
   }
 };
 
+
+
+// ----------------------------
+// Get Total Expenses
+// ----------------------------
+export const getTotalExpenseService = async (): Promise<number> => {
+  try {
+    const token = getToken();
+    const response = await axios.get<TotalExpenseResponse>(`${BASE_URL}/api/expenses/total`, {
+      headers: { Authorization: `Bearer ${token}` },
+      withCredentials: true,
+    });
+    
+    return Number(response.data.total_expenses || 0);
+  } catch (error: any) {
+    console.error("Failed to fetch total expenses:", error);
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to fetch total expenses"
+    );
+  }
+};

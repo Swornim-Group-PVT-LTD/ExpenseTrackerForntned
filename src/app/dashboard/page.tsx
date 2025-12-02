@@ -11,16 +11,24 @@ import ExpensesPieChart from "@/app/components/ExpensePieChart";
 import ExpensesLineChart from "@/app/components/ExpensesLineChart";
 
 import { getBalancesService } from "../services/balanceService";
-import { getExpenseService } from "../services/expenseService";
-import { getSavingService } from "../services/savingService";
-import { getInvestmentService } from "../services/investmentService";
-import { getIncomeService } from "../services/incomeService";
+import {
+  getTotalExpenseService,
+} from "../services/expenseService";
+import {
+  getTotalSavingService,
+} from "../services/savingService";
+import {
+  getTotalIncomeService,
+} from "../services/incomeService";
+import {
+  getTotalInvestmentService,
+} from "../services/investmentService";
 
 import { BalanceResponse } from "../types/balanceType";
-import { ExpenseResponse } from "../types/expenseType";
-import { SavingResponse } from "../types/savingType";
-import { InvestmentResponse } from "../types/investmentType";
-import { IncomeResponse } from "../types/incomeType";
+import { TotalExpenseResponse } from "../types/expenseType";
+import { TotalSavingResponse } from "../types/savingType";
+import { TotalIncomeResponse } from "../types/incomeType";
+import { TotalInvestmentResponse } from "../types/investmentType";
 
 export default function Dashboard() {
   const [balance, setBalance] = useState<number>(0);
@@ -36,32 +44,32 @@ export default function Dashboard() {
       try {
         const [
           balances,
-          expenses,
-          saving,
-          income,
-          investment
+          totalExpenses,
+          totalSaving,
+          totalIncome,
+          totalInvestment
         ]: [
           BalanceResponse[],
-          ExpenseResponse[],
-          SavingResponse[],
-          IncomeResponse[],
-          InvestmentResponse[]
+          number,
+          number,
+          number,
+          number
         ] = await Promise.all([
           getBalancesService(),
-          getExpenseService(),
-          getSavingService(),
-          getIncomeService(),
-          getInvestmentService()
+          getTotalExpenseService(),
+          getTotalSavingService(),
+          getTotalIncomeService(),
+          getTotalInvestmentService()
         ]);
 
         // Only one balance entry exists
         setBalance(Number(balances?.[0]?.total_balance ?? 0));
 
-        // Latest values only
-        setTotalExpenses(Number(expenses?.[expenses.length - 1]?.total_expenses ?? 0));
-        setTotalSaving(Number(saving?.[saving.length - 1]?.total_saving ?? 0));
-        setTotalIncome(Number(income?.[income.length - 1]?.total_income ?? 0));
-        setTotalInvestment(Number(investment?.[investment.length - 1]?.total_investment ?? 0));
+        // Set totals directly from the new API responses
+        setTotalExpenses(totalExpenses);
+        setTotalSaving(totalSaving);
+        setTotalIncome(totalIncome);
+        setTotalInvestment(totalInvestment);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
         setBalance(0);

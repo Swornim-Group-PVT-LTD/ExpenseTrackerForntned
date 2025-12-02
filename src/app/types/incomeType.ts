@@ -13,3 +13,11 @@ export interface IncomeResponse {
   created_date: string; // or Date
   updated_date: string; // or Date
 }
+
+export interface TotalIncomeResponse {
+  message: string;
+  total_income: number;
+  currency: string;
+  symbol: string;
+}
+

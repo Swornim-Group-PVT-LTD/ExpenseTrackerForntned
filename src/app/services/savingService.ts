@@ -2,7 +2,7 @@
 import axios from "axios";
 import BASE_URL from "@/app/urlConfig/urlConfig";
 
-import { AddSavingPayload, SavingResponse } from "@/app/types/savingType";
+import { AddSavingPayload, SavingResponse,TotalSavingResponse } from "@/app/types/savingType";
 
 // Helper to get token from cookies
 const getToken = (): string => {
@@ -115,6 +115,28 @@ export const getSavingByDateRangeService = async (from: string, to: string): Pro
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || error.message || "Failed to fetch savings by date range"
+    );
+  }
+};
+
+
+
+// ----------------------------
+// Get Total Saving
+// ----------------------------
+export const getTotalSavingService = async (): Promise<number> => {
+  try {
+    const token = getToken();
+    const response = await axios.get<TotalSavingResponse>(`${BASE_URL}/api/saving/total`, {
+      headers: { Authorization: `Bearer ${token}` },
+      withCredentials: true,
+    });
+    
+    return Number(response.data.total_saving || 0);
+  } catch (error: any) {
+    console.error("Failed to fetch total saving:", error);
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to fetch total saving"
     );
   }
 };

@@ -15,3 +15,11 @@ export interface SavingResponse {
   updated_date: string; // or Date
   want_to_deduct_from_balance: boolean;
 }
+
+export interface TotalSavingResponse {
+  message: string;
+  total_saving: number;
+  currency: string;
+  symbol: string;
+}
+
