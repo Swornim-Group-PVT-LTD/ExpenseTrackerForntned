@@ -139,7 +139,7 @@ useEffect(() => {
                 <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                   {row.id}
                 </TableCell>
-                <TableCell>NPR {editingSn === row.sn ? (
+                <TableCell>{row.symbol || "NPR"}{" "} {editingSn === row.sn ? (
                 <input
                   className="p-2 border rounded-md border-gray-300"
                   value={editForm.add_investment}
@@ -168,7 +168,7 @@ useEffect(() => {
                   ) : (
                     row.investment_category
                   )}</TableCell>
-                <TableCell>NPR {row.total_investment.toLocaleString()}</TableCell>
+                <TableCell>{row.symbol || "NPR"}{" "}{row.total_investment.toLocaleString()}</TableCell>
                 <TableCell>{row.created_date}</TableCell>
                 <TableCell>
                   {editingSn === row.sn ? (

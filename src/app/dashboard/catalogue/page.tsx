@@ -28,6 +28,12 @@ const catalogues = [
     path: "catalogue/investmentCatalogue",
     bgClass: "bg-blue-500",
   },
+    {
+    label: "Add Currency Catalogue",
+    icon: <Wallet size={32} />,
+    path: "catalogue/currencyCatalogue",
+    bgClass: "bg-green-400",
+  },
 ];
 
 export default function CatalogueUI() {

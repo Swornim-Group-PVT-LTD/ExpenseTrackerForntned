@@ -22,7 +22,7 @@ import { getIncomeCategoriesService } from "@/app/services/catalogueServices/inc
 import { IncomeCategoryResponse } from "@/app/types/catalolgueType/incomeCatalogueType";
 
 
-export default function IncomeTable({refreshTrigger,filteredData,onSuccess}: {
+export default function IncomeTable({ refreshTrigger, filteredData, onSuccess }: {
   refreshTrigger: number;
   filteredData?: IncomeResponse[] | null;
   onSuccess?: () => void;
@@ -37,7 +37,7 @@ export default function IncomeTable({refreshTrigger,filteredData,onSuccess}: {
   });
 
   const [categories, setCategories] = useState<IncomeCategoryResponse[]>([]);
-  
+
 
   const fetchIncome = async () => {
     setLoading(true);
@@ -56,14 +56,14 @@ export default function IncomeTable({refreshTrigger,filteredData,onSuccess}: {
       const data = await getIncomeCategoriesService();
       setCategories(data);
 
- 
+
     } catch (err) {
       console.error("Failed to fetch income categories:", err);
       toast.error("Failed to fetch income categories");
     }
   };
 
- useEffect(() => {
+  useEffect(() => {
     // Only fetch all data if no filter is active
     if (filteredData) {
       setIncome(filteredData);
@@ -97,11 +97,11 @@ export default function IncomeTable({refreshTrigger,filteredData,onSuccess}: {
         income_category: editForm.income_category,
       });
       toast.success("Income updated successfully");
-        onSuccess && onSuccess();
-        setIncome(prev => prev.map(item => 
-          item.sn === sn ? { ...item, add_income: editForm.add_income, income_category: editForm.income_category } : item
-        ));
-      
+      onSuccess && onSuccess();
+      setIncome(prev => prev.map(item =>
+        item.sn === sn ? { ...item, add_income: editForm.add_income, income_category: editForm.income_category } : item
+      ));
+
 
       cancelEdit();
     } catch (err) {
@@ -165,7 +165,7 @@ export default function IncomeTable({refreshTrigger,filteredData,onSuccess}: {
                   {row.id}
                 </TableCell>
                 <TableCell>
-                  NPR{" "}
+                  {row.symbol || "NPR"}{" "}
                   {editingSn === row.sn ? (
                     <input
                       className="p-2 border rounded-md border-gray-300"
@@ -203,7 +203,7 @@ export default function IncomeTable({refreshTrigger,filteredData,onSuccess}: {
                     row.income_category
                   )}
                 </TableCell>
-                <TableCell>NPR {row.total_income.toLocaleString()}</TableCell>
+                <TableCell>{row.symbol || "NPR"} {row.total_income.toLocaleString()}</TableCell>
                 <TableCell>{row.created_date}</TableCell>
                 <TableCell>
                   {editingSn === row.sn ? (

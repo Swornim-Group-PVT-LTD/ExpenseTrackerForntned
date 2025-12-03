@@ -44,6 +44,7 @@ export default function BalanceForm({onSuccess}:{onSuccess?:()=>void}) {
 
       const payload: AddBalancePayload = {
         add_opening_balance: Number(amount),
+        currency_id: 2,
       };
 
       await addBalanceService(payload);

@@ -29,6 +29,7 @@ export default function Dashboard() {
   const [totalInvestment, setTotalInvestment] = useState<number>(0);
   const [totalIncome, setTotalIncome] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const [currency, setCurrency] = useState("NPR");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,6 +57,7 @@ export default function Dashboard() {
 
         // Only one balance entry exists
         setBalance(Number(balances?.[0]?.total_balance ?? 0));
+        setCurrency(balances[balances.length - 1].currency?.symbol || "NPR");
 
         // Latest values only
         setTotalExpenses(Number(expenses?.[expenses.length - 1]?.total_expenses ?? 0));
@@ -123,7 +125,7 @@ export default function Dashboard() {
               icon="/balance-logo.svg"
               label="Balance"
               value={
-                loading ? <ClipLoader size={22} color="#000000" /> : `NPR ${balance.toLocaleString()}`
+                loading ? <ClipLoader size={22} color="#000000" /> : `${currency} ${balance.toLocaleString()}`
               }
               percentage="100%"
               labelColor="#000000"
@@ -143,7 +145,7 @@ export default function Dashboard() {
               icon={item.icon}
               label={item.title}
               value={
-                loading ? <ClipLoader size={22} color={item.labelColor} /> : `NPR ${item.value.toLocaleString()}`
+                loading ? <ClipLoader size={22} color={item.labelColor} /> : `${currency} ${item.value.toLocaleString()}`
               }
               percentage="100%"
               labelColor={item.labelColor}
