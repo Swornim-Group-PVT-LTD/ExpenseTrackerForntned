@@ -101,12 +101,22 @@ export const updateInvestmentService = async (
 
 
 //get investments by date range
-export const getInvestmentByDateRangeService = async (from: string, to: string): Promise<InvestmentResponse[]> => {
+export const getInvestmentByDateRangeService = async (from?: string, to?: string, category?: string): Promise<InvestmentResponse[]> => {
   try {
     const token = getToken();
+
+    const params: any = {};
+    if (from && to) {
+      params.start_date = from;
+      params.end_date = to;
+    }
+    if (category) {
+      params.investment_category = category;
+    }
+
     const response = await axios.get(`${BASE_URL}/api/investments`, {
       headers: { Authorization: `Bearer ${token}` },
-      params: { start_date:from, end_date:to },
+      params,
     });
     return response.data.data || [];
   } catch (error: any) {
