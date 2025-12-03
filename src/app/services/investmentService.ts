@@ -1,7 +1,7 @@
 // services/InvestmentService.ts
 import axios from "axios";
 import BASE_URL from "@/app/urlConfig/urlConfig";
-import { AddInvestmentPayload, InvestmentResponse } from "../types/investmentType";
+import { AddInvestmentPayload, InvestmentResponse,TotalInvestmentResponse } from "../types/investmentType";
 
 // Helper to get token from cookies
 const getToken = (): string => {
@@ -130,6 +130,26 @@ export const getInvestmentByDateRangeService = async (from?: string, to?: string
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || error.message || "Failed to fetch expenses by date range"
+    );
+  }
+};
+
+// ----------------------------
+// Get Total Investment
+// ----------------------------
+export const getTotalInvestmentService = async (): Promise<number> => {
+  try {
+    const token = getToken();
+    const response = await axios.get<TotalInvestmentResponse>(`${BASE_URL}/api/investment/total`, {
+      headers: { Authorization: `Bearer ${token}` },
+      withCredentials: true,
+    });
+    
+    return Number(response.data.total_investment || 0);
+  } catch (error: any) {
+    console.error("Failed to fetch total investment:", error);
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to fetch total investment"
     );
   }
 };

@@ -15,3 +15,10 @@ export interface InvestmentResponse {
   currency?: string;
   symbol?: string;
 }
+
+export interface TotalInvestmentResponse {
+  message: string;
+  total_investment: number;
+  currency: string;
+  symbol: string;
+}

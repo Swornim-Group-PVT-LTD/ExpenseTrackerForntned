@@ -17,3 +17,11 @@ export interface SavingResponse {
   currency?: string;
   symbol?: string;
 }
+
+export interface TotalSavingResponse {
+  message: string;
+  total_saving: number;
+  currency: string;
+  symbol: string;
+}
+

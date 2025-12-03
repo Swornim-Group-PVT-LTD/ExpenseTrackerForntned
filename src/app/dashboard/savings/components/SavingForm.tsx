@@ -5,7 +5,8 @@ import { ChevronDown } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { AddSavingPayload } from "@/app/types/savingType";
-import { addSavingService, getSavingService } from "@/app/services/savingService";
+import { addSavingService } from "@/app/services/savingService";
+import { getTotalSavingService } from "@/app/services/savingService";
 import { getSavingCategoriesService } from "@/app/services/catalogueServices/savingCatalogueService";
 import { SavingCategoryResponse } from "@/app/types/catalolgueType/savingCatalogueType";
 
@@ -40,13 +41,8 @@ const SavingForm = ({ onSuccess }: SavingFormProps) => {
   // Load total saving
   const loadTotalSaving = async () => {
     try {
-      const res = await getSavingService(); // your API call
-      if (res.length > 0) {
-        const latest = res[res.length - 1]; // latest entry
-        setTotalSaving(latest.total_saving);
-      } else {
-        setTotalSaving(0);
-      }
+      const total = await getTotalSavingService();
+      setTotalSaving(total);
     } catch (err) {
       console.error("Failed to fetch total saving:", err);
       setTotalSaving(0);

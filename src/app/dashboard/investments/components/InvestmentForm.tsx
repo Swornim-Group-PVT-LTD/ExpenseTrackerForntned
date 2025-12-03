@@ -5,7 +5,8 @@ import { ChevronDown } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { AddInvestmentPayload } from "@/app/types/investmentType";
-import { addInvestmentService, getInvestmentService } from "@/app/services/investmentService";
+import { addInvestmentService } from "@/app/services/investmentService";
+import { getTotalInvestmentService } from "@/app/services/investmentService";
 import { getInvestmentCategoriesService } from "@/app/services/catalogueServices/investmentCatalogueService";
 import { InvestmentCategoryResponse } from "@/app/types/catalolgueType/investmentCatalogueType";
 
@@ -39,13 +40,8 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
   // Load latest investment
   const loadTotalInvestment = async () => {
     try {
-      const res = await getInvestmentService(); // returns array
-      if (res.length > 0) {
-        const latest = res[res.length - 1]; // latest entry
-        setTotalInvestment(latest.total_investment);
-      } else {
-        setTotalInvestment(0);
-      }
+      const total = await getTotalInvestmentService();
+      setTotalInvestment(total);
     } catch (err) {
       console.error("Failed to fetch total investment:", err);
       setTotalInvestment(0);

@@ -15,3 +15,11 @@ export interface IncomeResponse {
   currency?: string;
   symbol?: string;
 }
+
+export interface TotalIncomeResponse {
+  message: string;
+  total_income: number;
+  currency: string;
+  symbol: string;
+}
+

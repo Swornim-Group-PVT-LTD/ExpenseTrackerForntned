@@ -15,3 +15,11 @@ export interface ExpenseResponse {
   currency?: string;
   symbol?: string;
 }
+
+
+export interface TotalExpenseResponse {
+  message: string;
+  total_expenses: number;
+  currency: string;
+  symbol: string;
+}
