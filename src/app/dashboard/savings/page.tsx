@@ -1,49 +1,78 @@
 "use client";
 
 import { Home } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SavingForm from "./components/SavingForm";
 import BalanceCard from "@/app/components/BalanceCard";
 import SavingLineChart from "./components/SavingLineChart";
 import DateFilter from "@/app/components/DateFilter";
 import SavingTable from "./components/SavingTable";
 import SavingBarChart from "./components/SavingBarChart";
-
+import {toast} from "react-toastify";
+import {getSavingCategoriesService} from "@/app/services/catalogueServices/savingCatalogueService";
+import {SavingCategoryResponse} from "@/app/types/catalolgueType/savingCatalogueType";
 import {getSavingByDateRangeService} from "@/app/services/savingService";
 import { SavingResponse } from "@/app/types/savingType";
 
 function Saving() {
 
+  const [categories, setCategories] = useState<SavingCategoryResponse[]>([]);
+  const [currentCategory, setCurrentCategory] = useState<string | null>(null);
   const [filteredData, setFilteredData] = useState<SavingResponse[]>([]);
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [currentDateRange, setCurrentDateRange] = useState<{start: string, end: string} | null>(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+
     const handleRefresh = async () => {
-      setRefreshTrigger(prev => prev + 1);
-      // Re-apply filter if one is active
-      if (isFilterActive && currentDateRange) {
-        try {
-          const response = await getSavingByDateRangeService(currentDateRange.start, currentDateRange.end);
-          setFilteredData(response);
-        } catch (error) {
-          console.error('Failed to re-apply filter:', error);
+        setRefreshTrigger(prev => prev + 1);
+        if (isFilterActive) {
+          try {
+            const response = await getSavingByDateRangeService(
+              currentDateRange?.start,
+              currentDateRange?.end,
+              currentCategory || undefined
+            );
+            setFilteredData(response);
+          } catch (error) {
+            console.error('Failed to re-apply filter:', error);
+          }
         }
-      }
-    };
+      };
     
-    const handleFilter = (data: SavingResponse[], startDate?: string, endDate?: string) => {
-      setFilteredData(data);
-      setIsFilterActive(true);
-      if (startDate && endDate) {
-        setCurrentDateRange({ start: startDate, end: endDate });
-      }
-    };
+  const handleFilter = (
+    data: SavingResponse[],
+    startDate?: string,
+    endDate?: string,
+    category?: string  // NEW
+  ) => {
+    setFilteredData(data);
+    setIsFilterActive(true);
+    setCurrentDateRange(startDate && endDate ? { start: startDate, end: endDate } : null);
+    setCurrentCategory(category || null);  // NEW state
+  }
     
     const clearFilter = () => {
       setFilteredData([]);
       setIsFilterActive(false);
       setCurrentDateRange(null);
     };
+
+
+    // Fetch income categories once
+      useEffect(() => {
+        const fetchCategories = async () => {
+          try {
+            const data = await getSavingCategoriesService();
+            setCategories(data);
+    
+          } catch (err) {
+    
+            toast.error("Failed to fetch income categories");
+          }
+        };
+    
+        fetchCategories();
+      }, []);
 
   return (
     <div className="">
@@ -61,7 +90,8 @@ function Saving() {
       <SavingLineChart />
       <SavingBarChart />
       </div>
-      <DateFilter fetchService={getSavingByDateRangeService} onFilter={handleFilter} />
+      <DateFilter fetchService={getSavingByDateRangeService} onFilter={handleFilter} categories={categories}
+        categoryKey="saving_category" />
       
       {isFilterActive && (
         <div className="mb-4 flex items-center gap-2">

@@ -1,7 +1,7 @@
 "use client";
 
 import { Home } from "lucide-react";
-import{ useState} from "react";
+import{ useState,useEffect} from "react";
 
 import InvestmentForm from "./components/InvestmentForm";
 import BalanceCard from "@/app/components/BalanceCard";
@@ -10,6 +10,9 @@ import DateFilter from "@/app/components/DateFilter";
 import InvestmentTable from "./components/InvestmentTable";
 import InvestmentBarChart from "./components/InvestmentBarChart";
 
+import { toast } from "react-toastify";
+import {getInvestmentCategoriesService} from "@/app/services/catalogueServices/investmentCatalogueService";
+import {InvestmentCategoryResponse} from "@/app/types/catalolgueType/investmentCatalogueType";
 import {getInvestmentByDateRangeService} from "@/app/services/investmentService";
 import { InvestmentResponse } from "@/app/types/investmentType";
 
@@ -17,33 +20,58 @@ function Investment() {
   const [filteredData, setFilteredData] = useState<InvestmentResponse[]>([]);
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [currentDateRange, setCurrentDateRange] = useState<{start: string, end: string} | null>(null);
+  const [currentCategory, setCurrentCategory] = useState<string | null>(null);
+  const [categories, setCategories] = useState<InvestmentCategoryResponse[]>([]);
 
     const [refreshTrigger, setRefreshTrigger] = useState(0);
-    const handleRefresh = async () => {
-      setRefreshTrigger(prev => prev + 1);
-      // Re-apply filter if one is active
-      if (isFilterActive && currentDateRange) {
-        try {
-          const response = await getInvestmentByDateRangeService(currentDateRange.start, currentDateRange.end);
-          setFilteredData(response);
-        } catch (error) {
-          console.error('Failed to re-apply filter:', error);
-        }
-      }
-    };
 
-    const handleFilter = (data: InvestmentResponse[], startDate?: string, endDate?: string) => {
-      setFilteredData(data);
-      setIsFilterActive(true);
-      if (startDate && endDate) {
-        setCurrentDateRange({ start: startDate, end: endDate });
-      }
-    }
+     const handleRefresh = async () => {
+        setRefreshTrigger(prev => prev + 1);
+        if (isFilterActive) {
+          try {
+            const response = await getInvestmentByDateRangeService(
+              currentDateRange?.start,
+              currentDateRange?.end,
+              currentCategory || undefined
+            );
+            setFilteredData(response);
+          } catch (error) {
+            console.error('Failed to re-apply filter:', error);
+          }
+        }
+      };
+
+ const handleFilter = (
+    data: InvestmentResponse[],
+    startDate?: string,
+    endDate?: string,
+    category?: string  // NEW
+  ) => {
+    setFilteredData(data);
+    setIsFilterActive(true);
+    setCurrentDateRange(startDate && endDate ? { start: startDate, end: endDate } : null);
+    setCurrentCategory(category || null);  // NEW state
+  }
     const clearFilter = () => {
       setFilteredData([]);
       setIsFilterActive(false);
       setCurrentDateRange(null);
     }
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+          try {
+            const data = await getInvestmentCategoriesService();
+            setCategories(data);
+    
+          } catch (err) {
+    
+            toast.error("Failed to fetch investment categories");
+          }
+        };
+    
+        fetchCategories();
+      }, []);
 
   return (
     <div className="">
@@ -61,7 +89,8 @@ function Investment() {
       <InvestmentLineChart />
       <InvestmentBarChart />
       </div>
-      <DateFilter fetchService={getInvestmentByDateRangeService} onFilter={handleFilter} />
+      <DateFilter fetchService={getInvestmentByDateRangeService} onFilter={handleFilter} categories={categories}
+        categoryKey="investment_category" />
             
             {isFilterActive && (
               <div className="mb-4 flex items-center gap-2">

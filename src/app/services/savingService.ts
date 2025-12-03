@@ -110,11 +110,22 @@ export const deleteSavingService = async (sn: string): Promise<void> => {
 
 
 //get saving by date range
-export const getSavingByDateRangeService = async (from: string, to: string): Promise<SavingResponse[]> => {
+export const getSavingByDateRangeService = async (from?: string, to?: string, category?: string): Promise<SavingResponse[]> => {
   try {
     const token = getToken();
+
+    const params: any = {};
+    if (from && to) {
+      params.start_date = from;
+      params.end_date = to;
+    }
+    if (category) {
+      params.saving_category = category;
+    }
+
     const response = await axios.get(`${BASE_URL}/api/savings`, {
       headers: { Authorization: `Bearer ${token}` },
+      params,
       params: { start_date: from, end_date: to },
     });
 

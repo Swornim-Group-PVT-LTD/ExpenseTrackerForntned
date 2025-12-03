@@ -102,11 +102,22 @@ export const updateExpenseService = async (sn: string, payload: AddExpensePayloa
 
 
 //get expense by date range
-export const getExpenseByDateRangeService = async (from: string, to: string): Promise<ExpenseResponse[]> => {
+export const getExpenseByDateRangeService = async (from?: string, to?: string, category?: string): Promise<ExpenseResponse[]> => {
   try {
     const token = getToken();
+
+    const params: any = {};
+    if (from && to) {
+      params.start_date = from;
+      params.end_date = to;
+    }
+    if (category) {
+      params.expense_category = category;
+    }
+
     const response = await axios.get(`${BASE_URL}/api/expenses`, {
       headers: { Authorization: `Bearer ${token}` },
+      params,
       params: { start_date: from, end_date: to },
     });
     return response.data.data || [];

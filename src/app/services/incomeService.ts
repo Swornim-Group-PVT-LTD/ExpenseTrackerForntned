@@ -118,11 +118,22 @@ export const updateIncomeService = async (sn: string, payload: AddIncomePayload)
 
 
 //get income by date range
-export const getIncomeByDateRangeService = async (from: string, to: string): Promise<IncomeResponse[]> => {
+export const getIncomeByDateRangeService = async (from?: string, to?: string, category?: string): Promise<IncomeResponse[]> => {
   try {
     const token = getToken();
+
+    const params: any = {};
+    if (from && to) {
+      params.start_date = from;
+      params.end_date = to;
+    }
+    if (category) {
+      params.income_category = category;
+    }
+
     const response = await axios.get(`${BASE_URL}/api/incomes`, {
       headers: { Authorization: `Bearer ${token}` },
+      params,
       params: { start_date: from, end_date: to },
     });
     return response.data.data || [];

@@ -33,7 +33,7 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
 
         if (data.length > 0) setRemarks(data[0].income_category);
       } catch (err) {
-        console.error("Failed to fetch income categories:", err);
+       
         toast.error("Failed to fetch income categories");
       }
     };
