@@ -13,6 +13,7 @@ interface BalanceCardProps {
 const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
   const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currency,setCurrency]=useState("NPR");
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -24,6 +25,7 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
           const latestBalance = Number(
             balances[balances.length - 1].total_balance || 0
           );
+          setCurrency(balances[balances.length - 1].currency?.symbol || "NPR");
           setBalance(latestBalance);
         }
       } catch (error) {
@@ -47,7 +49,7 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
             loading ? (
               <ClipLoader size={22} color="#000000" />
             ) : (
-              `NPR ${balance?.toLocaleString() ?? 0}`
+              `${currency} ${balance?.toLocaleString() ?? 0}`
             )
           }
           percentage="100%"

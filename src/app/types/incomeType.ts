@@ -12,4 +12,6 @@ export interface IncomeResponse {
   income_category: string;
   created_date: string; // or Date
   updated_date: string; // or Date
+  currency?: string;
+  symbol?: string;
 }
