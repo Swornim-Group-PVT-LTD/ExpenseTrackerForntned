@@ -23,3 +23,16 @@ export const addCurrencyService = async (payload: CurrencyPayload): Promise<Curr
     throw error;
   }
 };
+
+export const getCurrencyService = async (): Promise<CurrencyResponse[]> => {
+  try {
+    const response = await axios.get(`${BASE_URL}/api/currency/all`, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -8,28 +8,53 @@ import { AddExpensePayload } from "@/app/types/expenseType";
 import { addExpenseService } from "@/app/services/expenseService";
 import { getTotalExpenseService } from "@/app/services/expenseService";
 import { getExpenseCategoriesService } from "@/app/services/catalogueServices/expenseCatalogueService";
+import { getBalancesService } from "@/app/services/balanceService";
+
 import { ExpenseCategoryResponse } from "@/app/types/catalolgueType/expenseCatalogueType";
+import { BalanceResponse } from "@/app/types/balanceType";
 
 interface ExpenseFormProps {
   onSuccess?: () => void;
 }
 
 const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
-  const [amount, setAmount] = useState<number|"">(0);
-  const [currency, setCurrency] = useState("$");
+  const [amount, setAmount] = useState<number | "">(0);
+  const [currency, setCurrency] = useState(""); // auto from Balance API
   const [remarks, setRemarks] = useState("");
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<ExpenseCategoryResponse[]>([]);
   const [totalExpense, setTotalExpense] = useState<number>(0);
 
-  // Fetch expense categories once
+  // ============================================================
+  // 1️⃣ Fetch currency symbol from Balance API
+  // ============================================================
+  const loadCurrencySymbol = async () => {
+    try {
+      const balances: BalanceResponse[] = await getBalancesService();
+
+      if (balances.length > 0) {
+        setCurrency(balances[0].currency.symbol); // correct symbol path
+      }
+    } catch (error) {
+      console.error("Failed to load currency symbol:", error);
+      setCurrency("$"); // fallback
+    }
+  };
+
+  useEffect(() => {
+    loadCurrencySymbol();
+  }, []);
+
+  // ============================================================
+  // 2️⃣ Fetch expense categories
+  // ============================================================
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const data = await getExpenseCategoriesService();
         setCategories(data);
 
-        if (data.length > 0) setRemarks(data[0].expense_category); // default
+        if (data.length > 0) setRemarks(data[0].expense_category);
       } catch (err) {
         console.error("Failed to fetch expense categories:", err);
         toast.error("Failed to fetch expense categories");
@@ -39,7 +64,9 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
     fetchCategories();
   }, []);
 
-  // Load total expense
+  // ============================================================
+  // 3️⃣ Fetch Total Expense
+  // ============================================================
   const loadTotalExpense = async () => {
     try {
       const total = await getTotalExpenseService();
@@ -52,8 +79,11 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
 
   useEffect(() => {
     loadTotalExpense();
-  }, [onSuccess]);
+  }, []);
 
+  // ============================================================
+  // 4️⃣ Add Expense
+  // ============================================================
   const handleAddExpense = async () => {
     try {
       setLoading(true);
@@ -64,11 +94,12 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
       };
 
       await addExpenseService(payload);
-      toast.success(`Expense of ${currency}${amount} added successfully!`);
 
-      setAmount(0); // reset amount
+      toast.success(`Expense of ${currency}${amount} added successfully.`);
+
+      setAmount(0);
       onSuccess && onSuccess();
-      loadTotalExpense(); // refresh total expense after adding
+      loadTotalExpense();
     } catch (error: any) {
       toast.error(error.message || "Failed to add expense");
     } finally {
@@ -82,26 +113,24 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
 
         {/* ⭐ Total Expense Display */}
         <div className="mb-4 p-3 rounded-lg bg-[#ff4d4d] border border-[#E53E3E]/30 flex items-center justify-between">
-          <span className="text-md font-semibold text-[#ffffff]">Total Expense</span>
-          <span className="text-xl font-bold text-[#ffffff]">
+          <span className="text-md font-semibold text-white">Total Expense</span>
+          <span className="text-xl font-bold text-white">
             {currency}{totalExpense?.toLocaleString()}
           </span>
         </div>
 
+        {/* ⭐ Input Section */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
 
-          {/* Currency selector */}
+          {/* AUTO SYMBOL (from Balance API) */}
           <div className="relative w-full sm:w-24">
-            <select
-              className="appearance-none w-full h-12 px-2 text-md font-bold text-[#716A6A] border border-[#574A4A]/50 rounded cursor-pointer bg-white"
+            <input
+              type="text"
+              className="w-full h-12 px-2 text-md font-bold text-[#716A6A]
+                         border border-[#574A4A]/50 rounded bg-gray-100 cursor-not-allowed"
               value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-            >
-              <option>$</option>
-              <option>₹</option>
-              <option>€</option>
-            </select>
-            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A]" />
+              disabled
+            />
           </div>
 
           {/* Amount input */}
@@ -110,13 +139,16 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
             placeholder="400000"
             className="flex-1 h-12 px-3 text-sm text-[#716A6A] border border-[#574A4A]/50 rounded outline-none focus:border-[#FFA726]"
             value={amount}
-            onChange={(e) => setAmount(e.target.value === "" ? "" : Number(e.target.value))}
+            onChange={(e) =>
+              setAmount(e.target.value === "" ? "" : Number(e.target.value))
+            }
           />
 
           {/* Remarks dropdown */}
           <div className="relative w-full sm:w-80">
             <select
-              className="appearance-none w-full h-12 px-2 text-md font-bold text-[#716A6A] border border-[#574A4A]/50 rounded cursor-pointer bg-white"
+              className="appearance-none w-full h-12 px-2 text-md font-bold text-[#716A6A]
+                         border border-[#574A4A]/50 rounded cursor-pointer bg-white"
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
             >
@@ -133,12 +165,15 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
           <button
             onClick={handleAddExpense}
             disabled={loading}
-            className={`bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-8 h-12 rounded transition-colors disabled:opacity-50 w-full sm:w-auto cursor-pointer ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-8 h-12 rounded transition-colors disabled:opacity-50 
+            w-full sm:w-auto cursor-pointer ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             {loading ? "Saving..." : "Add"}
           </button>
-
         </div>
+
       </div>
     </div>
   );

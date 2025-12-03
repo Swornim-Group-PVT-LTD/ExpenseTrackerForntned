@@ -5,8 +5,14 @@ import { ChevronDown } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { AddInvestmentPayload } from "@/app/types/investmentType";
-import { addInvestmentService } from "@/app/services/investmentService";
-import { getTotalInvestmentService } from "@/app/services/investmentService";
+import {
+  addInvestmentService,
+  getTotalInvestmentService,
+} from "@/app/services/investmentService";
+
+import { getBalancesService } from "@/app/services/balanceService";
+import { BalanceResponse } from "@/app/types/balanceType";
+
 import { getInvestmentCategoriesService } from "@/app/services/catalogueServices/investmentCatalogueService";
 import { InvestmentCategoryResponse } from "@/app/types/catalolgueType/investmentCatalogueType";
 
@@ -15,29 +21,57 @@ interface InvestmentFormProps {
 }
 
 const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
-  const [amount, setAmount] = useState<number|"">(0);
-  const [currency, setCurrency] = useState("$");
-  const [remarks, setRemarks] = useState("");
+  const [amount, setAmount] = useState<number | "">(0);
+  const [currency, setCurrency] = useState("");
+  const [category, setCategory] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<InvestmentCategoryResponse[]>([]);
   const [totalInvestment, setTotalInvestment] = useState<number>(0);
 
-  // Fetch investment categories once
+  // ============================================================
+  // 1️⃣ Fetch currency symbol from Balance API
+  // ============================================================
+  const loadCurrencySymbol = async () => {
+    try {
+      const balances: BalanceResponse[] = await getBalancesService();
+
+      if (balances.length > 0) {
+        setCurrency(balances[0].currency.symbol);
+      }
+    } catch (error) {
+      console.error("Failed to load currency symbol:", error);
+      setCurrency("$");
+    }
+  };
+
+  useEffect(() => {
+    loadCurrencySymbol();
+  }, []);
+
+  // ============================================================
+  // 2️⃣ Fetch investment categories
+  // ============================================================
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const data = await getInvestmentCategoriesService();
         setCategories(data);
-        if (data.length > 0) setRemarks(data[0].investment_category);
+
+        if (data.length > 0) {
+          setCategory(data[0].investment_category);
+        }
       } catch (err) {
         console.error("Failed to fetch investment categories:", err);
         toast.error("Failed to fetch investment categories");
       }
     };
+
     fetchCategories();
   }, []);
 
-  // Load latest investment
+  // ============================================================
+  // 3️⃣ Fetch Total Investment
+  // ============================================================
   const loadTotalInvestment = async () => {
     try {
       const total = await getTotalInvestmentService();
@@ -50,20 +84,32 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
 
   useEffect(() => {
     loadTotalInvestment();
-  }, [onSuccess]);
+  }, []);
 
+  // ============================================================
+  // 4️⃣ Add Investment
+  // ============================================================
   const handleAddInvestment = async () => {
+    if (amount === "" || Number(amount) <= 0) {
+      toast.error("Enter a valid amount");
+      return;
+    }
+
     try {
       setLoading(true);
+
       const payload: AddInvestmentPayload = {
         add_investment: Number(amount),
-        investment_category: remarks,
+        investment_category: category,
       };
+
       await addInvestmentService(payload);
-      toast.success(`Investment of ${currency}${amount} added successfully!`);
+
+      toast.success(`Investment of ${currency}${amount} added successfully.`);
+
       setAmount(0);
       onSuccess && onSuccess();
-      loadTotalInvestment(); // refresh latest
+      loadTotalInvestment();
     } catch (error: any) {
       toast.error(error.message || "Failed to add investment");
     } finally {
@@ -73,47 +119,48 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
 
   return (
     <div className="col-span-full lg:col-span-3 h-fit">
-      <div className="bg-white rounded-md p-4 h-full w-full flex flex-col gap-4">
+      <div className="bg-white rounded-md p-4 w-full h-full flex flex-col gap-4">
 
         {/* ⭐ Total Investment Display */}
         <div className="mb-4 p-3 rounded-lg bg-[#ffa726] border border-[#3182CE]/30 flex items-center justify-between">
-          <span className="text-md font-semibold text-[#ffffff]">Total Investment</span>
-          <span className="text-xl font-bold text-[#ffffff]">
+          <span className="text-md font-semibold text-white">Total Investment</span>
+          <span className="text-xl font-bold text-white">
             {currency}{totalInvestment?.toLocaleString()}
           </span>
         </div>
 
+        {/* ⭐ Input Section */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
 
-          {/* Currency Selector */}
+          {/* AUTO SYMBOL (from Balance API) */}
           <div className="relative w-full sm:w-24">
-            <select
-              className="appearance-none w-full h-12 px-2 text-md font-bold text-[#716A6A] border border-[#574A4A]/50 rounded cursor-pointer bg-white"
+            <input
+              type="text"
+              className="w-full h-12 px-2 text-md font-bold text-[#716A6A]
+                         border border-[#574A4A]/50 rounded bg-gray-100 cursor-not-allowed"
               value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-            >
-              <option>$</option>
-              <option>₹</option>
-              <option>€</option>
-            </select>
-            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A]" />
+              disabled
+            />
           </div>
 
-          {/* Amount Input */}
+          {/* Amount input */}
           <input
             type="number"
             placeholder="400000"
             className="flex-1 h-12 px-3 text-sm text-[#716A6A] border border-[#574A4A]/50 rounded outline-none focus:border-[#FFA726]"
             value={amount}
-            onChange={(e) => setAmount(e.target.value === "" ? "" : Number(e.target.value))}
+            onChange={(e) =>
+              setAmount(e.target.value === "" ? "" : Number(e.target.value))
+            }
           />
 
-          {/* Remarks Selector */}
+          {/* Category dropdown */}
           <div className="relative w-full sm:w-80">
             <select
-              className="appearance-none w-full h-12 px-2 text-md font-bold text-[#716A6A] border border-[#574A4A]/50 rounded cursor-pointer bg-white"
-              value={remarks}
-              onChange={(e) => setRemarks(e.target.value)}
+              className="appearance-none w-full h-12 px-2 text-md font-bold text-[#716A6A]
+                         border border-[#574A4A]/50 rounded cursor-pointer bg-white"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
             >
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.investment_category}>
@@ -124,16 +171,19 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
             <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A]" />
           </div>
 
-          {/* Submit Button */}
+          {/* Submit button */}
           <button
             onClick={handleAddInvestment}
             disabled={loading}
-            className={`bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-8 h-12 rounded transition-colors disabled:opacity-50 w-full sm:w-auto cursor-pointer ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-8 h-12 rounded transition-colors disabled:opacity-50
+            w-full sm:w-auto cursor-pointer ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             {loading ? "Saving..." : "Add"}
           </button>
-
         </div>
+
       </div>
     </div>
   );

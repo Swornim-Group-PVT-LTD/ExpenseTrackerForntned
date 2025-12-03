@@ -124,7 +124,7 @@ export const getInvestmentByDateRangeService = async (from?: string, to?: string
     const response = await axios.get(`${BASE_URL}/api/investments`, {
       headers: { Authorization: `Bearer ${token}` },
       params,
-      params: { start_date: from, end_date: to },
+      //params: { start_date: from, end_date: to },
     });
     return response.data.data || [];
   } catch (error: any) {

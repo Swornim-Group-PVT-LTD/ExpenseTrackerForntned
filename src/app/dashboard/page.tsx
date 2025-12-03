@@ -25,10 +25,6 @@ import {
 } from "../services/investmentService";
 
 import { BalanceResponse } from "../types/balanceType";
-import { TotalExpenseResponse } from "../types/expenseType";
-import { TotalSavingResponse } from "../types/savingType";
-import { TotalIncomeResponse } from "../types/incomeType";
-import { TotalInvestmentResponse } from "../types/investmentType";
 
 export default function Dashboard() {
   const [balance, setBalance] = useState<number>(0);
@@ -37,18 +33,19 @@ export default function Dashboard() {
   const [totalInvestment, setTotalInvestment] = useState<number>(0);
   const [totalIncome, setTotalIncome] = useState<number>(0);
   const [loading, setLoading] = useState(true);
-  const [currency, setCurrency] = useState("NPR");
+  const [currency, setCurrency] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+
       try {
         const [
           balances,
           totalExpenses,
           totalSaving,
           totalIncome,
-          totalInvestment
+          totalInvestment,
         ]: [
           BalanceResponse[],
           number,
@@ -60,25 +57,32 @@ export default function Dashboard() {
           getTotalExpenseService(),
           getTotalSavingService(),
           getTotalIncomeService(),
-          getTotalInvestmentService()
+          getTotalInvestmentService(),
         ]);
 
-        // Only one balance entry exists
-        setBalance(Number(balances?.[0]?.total_balance ?? 0));
-        setCurrency(balances[balances.length - 1].currency?.symbol || "NPR");
+        // Balance
+        const bal = balances?.[0]?.total_balance ?? 0;
+        setBalance(Number(bal));
 
-        // Set totals directly from the new API responses
+        // Only set currency if defined
+        const detectedCurrency = balances?.[0]?.currency?.symbol;
+        setCurrency(detectedCurrency || "");
+
+        // Totals
         setTotalExpenses(totalExpenses);
         setTotalSaving(totalSaving);
         setTotalIncome(totalIncome);
         setTotalInvestment(totalInvestment);
       } catch (error) {
-        console.error("Error fetching dashboard data:", error);
+        console.error("Dashboard loading error:", error);
+
+        // Reset values if error
         setBalance(0);
         setTotalExpenses(0);
-        setTotalIncome(0);
         setTotalSaving(0);
+        setTotalIncome(0);
         setTotalInvestment(0);
+        setCurrency("");
       } finally {
         setLoading(false);
       }
@@ -95,10 +99,15 @@ export default function Dashboard() {
   ];
 
   const router = useRouter();
-    const handleClick = (label:string) => {
+  const handleClick = (label: string) => {
     router.push(`/dashboard/${label.toLowerCase()}`);
   };
 
+  // Format displayed currency safely
+  const formatCurrency = (value: number) => {
+    if (!currency) return value.toLocaleString(); // No currency → show only number
+    return `${currency} ${value.toLocaleString()}`;
+  };
 
   return (
     <main>
@@ -108,7 +117,8 @@ export default function Dashboard() {
       </div>
 
       <div className="space-y-3 md:space-y-4">
-        {/* Dashboard Title + Add Buttons */}
+
+        {/* Header + Add buttons */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
           <h1 className="text-2xl font-bold">Dashboard</h1>
 
@@ -117,7 +127,7 @@ export default function Dashboard() {
               <button
                 key={index}
                 style={{ backgroundColor: item.labelColor }}
-                className="text-white text-lg font-bold py-2 px-3 rounded hover:opacity-90 transition shadow-md cursor-pointer"
+                className="text-white text-lg font-bold py-2 px-3 rounded hover:opacity-90 transition shadow-md"
                 onClick={() => handleClick(item.title)}
               >
                 {`Add ${item.title}`}
@@ -128,12 +138,17 @@ export default function Dashboard() {
 
         {/* Balance + Line Chart */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+
           <div className="lg:col-span-1">
             <StatCard
               icon="/balance-logo.svg"
               label="Balance"
               value={
-                loading ? <ClipLoader size={22} color="#000000" /> : `${currency} ${balance.toLocaleString()}`
+                loading ? (
+                  <ClipLoader size={22} color="#000000" />
+                ) : (
+                  formatCurrency(balance)
+                )
               }
               percentage="100%"
               labelColor="#000000"
@@ -145,7 +160,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Stats Cards with spinner */}
+        {/* Four Stat Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {dashboardData.map((item, index) => (
             <StatCard
@@ -153,7 +168,11 @@ export default function Dashboard() {
               icon={item.icon}
               label={item.title}
               value={
-                loading ? <ClipLoader size={22} color={item.labelColor} /> : `${currency} ${item.value.toLocaleString()}`
+                loading ? (
+                  <ClipLoader size={22} color={item.labelColor} />
+                ) : (
+                  formatCurrency(item.value)
+                )
               }
               percentage="100%"
               labelColor={item.labelColor}
@@ -161,7 +180,7 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Bar + Pie Charts */}
+        {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <MonthlyBarChart />
           <ExpensesPieChart />

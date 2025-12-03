@@ -5,19 +5,19 @@ import { CurrencyPayload, CurrencyResponse } from "@/app/types/currencyType";
 import { toast } from "react-toastify";
 import { addCurrencyService } from "@/app/services/catalogueServices/currencyCatalogueService";
 
-
-export default function CurrencyCatalogueForm({onSuccess}: {onSuccess?: () => void}) {
-  const [country,setCountry] = useState("")
-const [symbol,setSymbol] = useState("")
-const [code,setCode] = useState("")
+export default function CurrencyCatalogueForm({
+  onSuccess,
+}: {
+  onSuccess?: () => void;
+}) {
+  const [country, setCountry] = useState("");
+  const [symbol, setSymbol] = useState("");
+  const [code, setCode] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
 
-
-
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
-
 
     if (!country.trim()) {
       newErrors.country = "Please input country";
@@ -30,7 +30,6 @@ const [code,setCode] = useState("")
     if (!code.trim()) {
       newErrors.code = "Please input code";
     }
-
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -47,10 +46,9 @@ const [code,setCode] = useState("")
         symbol: symbol,
         currency_code: code,
       };
-    
+
       await addCurrencyService(payload);
       onSuccess && onSuccess();
-      
 
       toast.success("Currency added successfully!");
 

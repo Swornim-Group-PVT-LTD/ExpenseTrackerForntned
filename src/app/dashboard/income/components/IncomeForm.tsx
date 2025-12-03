@@ -8,21 +8,47 @@ import { AddIncomePayload } from "@/app/types/incomeType";
 import { addIncomeService } from "@/app/services/incomeService";
 import { getTotalIncomeService } from "@/app/services/incomeService";
 import { getIncomeCategoriesService } from "@/app/services/catalogueServices/incomeCatalogueService";
+import { getBalancesService } from "@/app/services/balanceService";
+
 import { IncomeCategoryResponse } from "@/app/types/catalolgueType/incomeCatalogueType";
+import { BalanceResponse } from "@/app/types/balanceType";
 
 interface IncomeFormProps {
   onSuccess?: () => void;
 }
 
 const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
-  const [amount, setAmount] = useState<number|"">(0);
-  const [currency, setCurrency] = useState("$");
+  const [amount, setAmount] = useState<number | "">(0);
+  const [currency, setCurrency] = useState(""); // SYMBOL FROM BALANCE API
   const [remarks, setRemarks] = useState("");
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<IncomeCategoryResponse[]>([]);
   const [totalIncome, setTotalIncome] = useState<number>(0);
 
-  // Fetch income categories once
+  // ============================================================
+  // 1️⃣ Fetch currency SYMBOL from BALANCE API
+  // ============================================================
+  const loadCurrencySymbol = async () => {
+    try {
+      const balances: BalanceResponse[] = await getBalancesService();
+
+      if (balances.length > 0) {
+        // IMPORTANT — Correct symbol path
+        setCurrency(balances[0].currency.symbol);
+      }
+    } catch (error) {
+      console.error("Failed to load currency symbol:", error);
+      setCurrency("$"); // fallback
+    }
+  };
+
+  useEffect(() => {
+    loadCurrencySymbol();
+  }, []);
+
+  // ============================================================
+  // 2️⃣ Fetch income categories
+  // ============================================================
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -31,7 +57,6 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
 
         if (data.length > 0) setRemarks(data[0].income_category);
       } catch (err) {
-       
         toast.error("Failed to fetch income categories");
       }
     };
@@ -39,7 +64,9 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
     fetchCategories();
   }, []);
 
-  // Fetch Total Income
+  // ============================================================
+  // 3️⃣ Fetch Total Income
+  // ============================================================
   const loadTotalIncome = async () => {
     try {
       const total = await getTotalIncomeService();
@@ -54,6 +81,9 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
     loadTotalIncome();
   }, []);
 
+  // ============================================================
+  // 4️⃣ Add Income
+  // ============================================================
   const handleAddIncome = async () => {
     try {
       setLoading(true);
@@ -68,9 +98,8 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
       toast.success(`Income of ${currency}${amount} added successfully.`);
 
       setAmount(0);
-
       onSuccess && onSuccess();
-      loadTotalIncome(); // refresh total income after adding
+      loadTotalIncome();
     } catch (error: any) {
       toast.error(error.message || "Failed to add income");
     } finally {
@@ -81,6 +110,7 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
   return (
     <div className="col-span-full lg:col-span-3 h-fit">
       <div className="bg-white rounded-md p-4 w-full h-full flex flex-col gap-4">
+        {/* TOTAL INCOME */}
         <div className="mb-4 p-3 rounded-lg bg-[#5eac24] border border-[#38A169]/30 flex items-center justify-between">
           <span className="text-md font-semibold text-[#FFFFFF]">
             Total Income
@@ -90,19 +120,18 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
             {totalIncome?.toLocaleString()}
           </span>
         </div>
+
+        {/* INPUT ROW */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
-          {/* Currency Selector */}
+          {/* AUTO SYMBOL (from balance API) */}
           <div className="relative w-full sm:w-24">
-            <select
-              className="appearance-none w-full h-12 px-2 text-md font-bold text-[#716A6A] border border-[#574A4A]/50 rounded bg-white cursor-pointer"
+            <input
+              type="text"
+              className="w-full h-12 px-2 text-md font-bold text-[#716A6A]
+                         border border-[#574A4A]/50 rounded bg-gray-100 cursor-not-allowed"
               value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-            >
-              <option>$</option>
-              <option>₹</option>
-              <option>€</option>
-            </select>
-            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A]" />
+              disabled
+            />
           </div>
 
           {/* Amount Input */}
@@ -111,7 +140,9 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
             placeholder="400000"
             className="flex-1 h-12 px-3 text-sm text-[#716A6A] border border-[#574A4A]/50 rounded outline-none focus:border-[#FFA726]"
             value={amount}
-            onChange={(e) => setAmount(e.target.value === "" ? "" : Number(e.target.value))}
+            onChange={(e) =>
+              setAmount(e.target.value === "" ? "" : Number(e.target.value))
+            }
           />
 
           {/* Remarks Selector */}
@@ -134,7 +165,9 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
           <button
             onClick={handleAddIncome}
             disabled={loading}
-            className={`bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-8 h-12 rounded transition-colors disabled:opacity-50 w-full sm:w-auto cursor-pointer ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-8 h-12 rounded transition-colors disabled:opacity-50 w-full sm:w-auto cursor-pointer ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             {loading ? "Saving..." : "Add"}
           </button>
