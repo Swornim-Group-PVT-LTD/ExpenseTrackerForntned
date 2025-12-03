@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 
 import { getBalancesService } from "../../../services/balanceService";
 import { BalanceResponse } from "../../../types/balanceType";
 
-export default function BalanceTable({refreshTrigger}:{refreshTrigger?:number}) {
+export default function BalanceTable({ refreshTrigger }: { refreshTrigger?: number }) {
   const [balances, setBalances] = useState<BalanceResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,10 +41,7 @@ export default function BalanceTable({refreshTrigger}:{refreshTrigger?:number}) 
 
         <TableBody className="divide-y">
           {loading ? (
-            
-                
-
-<TableRow>
+            <TableRow>
               <TableCell
                 colSpan={8}
                 className="text-center font-medium text-gray-500"
@@ -52,8 +49,6 @@ export default function BalanceTable({refreshTrigger}:{refreshTrigger?:number}) 
                 <ClipLoader size={22} color="#000000" />
               </TableCell>
             </TableRow>
-
-       
           ) : balances.length === 0 ? (
             <TableRow>
               <TableCell colSpan={5} className="text-center font-medium text-gray-500">
@@ -69,9 +64,9 @@ export default function BalanceTable({refreshTrigger}:{refreshTrigger?:number}) 
                 <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                   {row.sn}
                 </TableCell>
-                <TableCell>NPR {row.total_balance?.toLocaleString()}</TableCell>
-                <TableCell>NPR {row.add_opening_balance?.toLocaleString()}</TableCell>
-                <TableCell>NPR {row.closing_balance?.toLocaleString()}</TableCell>
+                <TableCell>{row.currency?.symbol} {row.total_balance?.toLocaleString()}</TableCell>
+                <TableCell>{row.currency?.symbol} {row.add_opening_balance?.toLocaleString()}</TableCell>
+                <TableCell>{row.currency?.symbol} {row.closing_balance?.toLocaleString()}</TableCell>
                 <TableCell>{row.created_date}</TableCell>
               </TableRow>
             ))

@@ -44,13 +44,20 @@ export const getExpenseService = async (): Promise<ExpenseResponse[]> => {
 
     // Safely extract array from response
     const expenses: ExpenseResponse[] = response.data?.data || [];
+    const currencySymbol = response.data?.symbol || "NPR";
+
+    // Attach currency symbol to each expense
+    const expensesWithCurrency = expenses.map(expense => ({
+      ...expense,
+      symbol: currencySymbol
+    }));
 
     // Sort by id ascending if array is not empty
-    if (expenses.length > 0) {
-      expenses.sort((a, b) => a.id - b.id);
+    if (expensesWithCurrency.length > 0) {
+      expensesWithCurrency.sort((a, b) => a.id - b.id);
     }
 
-    return expenses;
+    return expensesWithCurrency;
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || error.message || "Failed to fetch expenses"
@@ -111,6 +118,7 @@ export const getExpenseByDateRangeService = async (from?: string, to?: string, c
     const response = await axios.get(`${BASE_URL}/api/expenses`, {
       headers: { Authorization: `Bearer ${token}` },
       params,
+      params: { start_date: from, end_date: to },
     });
     return response.data.data || [];
   } catch (error: any) {

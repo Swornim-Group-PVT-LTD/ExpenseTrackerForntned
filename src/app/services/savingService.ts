@@ -45,13 +45,20 @@ export const getSavingService = async (): Promise<SavingResponse[]> => {
 
     // Extract array
     const savings: SavingResponse[] = response.data.data;
-    
-     // Sort only if there are items
-    if (savings.length > 0) {
-      savings.sort((a, b) => a.id - b.id);
+    const currencySymbol = response.data?.symbol || "NPR";
+
+    // Attach currency symbol to each saving
+    const savingsWithCurrency = savings.map(saving => ({
+      ...saving,
+      symbol: currencySymbol
+    }));
+
+    // Sort only if there are items
+    if (savingsWithCurrency.length > 0) {
+      savingsWithCurrency.sort((a, b) => a.id - b.id);
     }
 
-    return savings;
+    return savingsWithCurrency;
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || error.message || "Failed to fetch saving"
@@ -87,7 +94,7 @@ export const updateSavingService = async (
 };
 
 
-export const deleteSavingService = async (sn:string): Promise<void> => {
+export const deleteSavingService = async (sn: string): Promise<void> => {
   try {
     const token = getToken();
     await axios.delete(`${BASE_URL}/api/savings/delete/${sn}`, {
@@ -119,8 +126,9 @@ export const getSavingByDateRangeService = async (from?: string, to?: string, ca
     const response = await axios.get(`${BASE_URL}/api/savings`, {
       headers: { Authorization: `Bearer ${token}` },
       params,
+      params: { start_date: from, end_date: to },
     });
-   
+
     return response.data.data || [];
   } catch (error: any) {
     throw new Error(

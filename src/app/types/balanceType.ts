@@ -1,5 +1,6 @@
 export interface AddBalancePayload {
   add_opening_balance: number;
+  currency_id: number;
 }
 
 export interface BalanceResponse {
@@ -11,4 +12,9 @@ export interface BalanceResponse {
   total_balance: number;
   created_date: string;
   updated_date: string;
+  currency: {
+    country: string;
+    currency: string;
+    symbol: string;
+  }
 }

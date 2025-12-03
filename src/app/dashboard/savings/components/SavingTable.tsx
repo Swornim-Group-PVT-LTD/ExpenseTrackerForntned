@@ -182,7 +182,7 @@ export default function SavingTable({
                   {row.id}
                 </TableCell>
                 <TableCell>
-                  NPR{" "}
+                  {row.symbol || "NPR"}{" "}
                   {editingSn === row.sn ? (
                     <input
                       className="p-2 border rounded-md border-gray-300"
@@ -238,7 +238,7 @@ export default function SavingTable({
                     row.saving_category
                   )}
                 </TableCell>
-                <TableCell>NPR {row.total_saving.toLocaleString()}</TableCell>
+                <TableCell>{row.symbol || "NPR"}{" "}{row.total_saving.toLocaleString()}</TableCell>
                 <TableCell>{row.created_date}</TableCell>
                 <TableCell>
                   {editingSn === row.sn ? (

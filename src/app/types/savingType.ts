@@ -14,4 +14,6 @@ export interface SavingResponse {
   created_date: string; // or Date
   updated_date: string; // or Date
   want_to_deduct_from_balance: boolean;
+  currency?: string;
+  symbol?: string;
 }

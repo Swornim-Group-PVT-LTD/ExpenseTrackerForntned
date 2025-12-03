@@ -106,10 +106,10 @@ export default function ExpensesTable({
         prev.map((item) =>
           item.sn === sn
             ? {
-                ...item,
-                add_expenses: editForm.add_expenses,
-                expense_category: editForm.expense_category,
-              }
+              ...item,
+              add_expenses: editForm.add_expenses,
+              expense_category: editForm.expense_category,
+            }
             : item
         )
       );
@@ -176,7 +176,7 @@ export default function ExpensesTable({
                   {row.id}
                 </TableCell>
                 <TableCell>
-                  NPR{" "}
+                  {row.symbol || "NPR"}{" "}
                   {editingSn === row.sn ? (
                     <input
                       className="p-2 border rounded-md border-gray-300"
@@ -215,7 +215,7 @@ export default function ExpensesTable({
                   )}
                 </TableCell>
                 <TableCell>
-                  NPR {row.total_expenses?.toLocaleString() || "0"}
+                  {row.symbol || "NPR"} {row.total_expenses?.toLocaleString() || "0"}
                 </TableCell>
                 <TableCell>{row.created_date}</TableCell>
                 <TableCell>

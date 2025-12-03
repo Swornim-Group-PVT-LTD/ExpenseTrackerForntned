@@ -58,15 +58,23 @@ export const getIncomeService = async (): Promise<IncomeResponse[]> => {
     const incomes: IncomeResponse[] = Array.isArray(response.data?.data)
       ? response.data.data
       : Array.isArray(response.data)
-      ? response.data
-      : [];
+        ? response.data
+        : [];
+
+    const currencySymbol = response.data?.symbol || "NPR";
+
+    // Attach currency symbol to each income
+    const incomesWithCurrency = incomes.map(income => ({
+      ...income,
+      symbol: currencySymbol
+    }));
 
     // Only sort if there are items
-    if (incomes.length > 0) {
-      incomes.sort((a, b) => a.id - b.id);
+    if (incomesWithCurrency.length > 0) {
+      incomesWithCurrency.sort((a, b) => a.id - b.id);
     }
 
-    return incomes;
+    return incomesWithCurrency;
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || error.message || "Failed to fetch incomes"
@@ -75,7 +83,7 @@ export const getIncomeService = async (): Promise<IncomeResponse[]> => {
 };
 
 
-export const deleteIncomeService = async (sn:string): Promise<void> => {
+export const deleteIncomeService = async (sn: string): Promise<void> => {
   try {
     const token = getToken();
     await axios.delete(`${BASE_URL}/api/incomes/delete/${sn}`, {
@@ -88,7 +96,7 @@ export const deleteIncomeService = async (sn:string): Promise<void> => {
   }
 };
 
-export const updateIncomeService = async (sn:string, payload: AddIncomePayload): Promise<IncomeResponse> => {
+export const updateIncomeService = async (sn: string, payload: AddIncomePayload): Promise<IncomeResponse> => {
   try {
     const token = getToken();
     const response = await axios.put<IncomeResponse>(
@@ -126,6 +134,7 @@ export const getIncomeByDateRangeService = async (from?: string, to?: string, ca
     const response = await axios.get(`${BASE_URL}/api/incomes`, {
       headers: { Authorization: `Bearer ${token}` },
       params,
+      params: { start_date: from, end_date: to },
     });
     return response.data.data || [];
   } catch (error: any) {

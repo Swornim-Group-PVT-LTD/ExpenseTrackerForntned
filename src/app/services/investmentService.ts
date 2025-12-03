@@ -44,14 +44,21 @@ export const getInvestmentService = async (): Promise<InvestmentResponse[]> => {
 
     // Extract array
     const investments: InvestmentResponse[] = response.data.data;
+    const currencySymbol = response.data?.symbol || "NPR";
+
+    // Attach currency symbol to each investment
+    const investmentsWithCurrency = investments.map(investment => ({
+      ...investment,
+      symbol: currencySymbol
+    }));
 
     // Sort by id ascending
-     // Sort only if there are items
-    if (investments.length > 0) {
-      investments.sort((a, b) => a.id - b.id);
+    // Sort only if there are items
+    if (investmentsWithCurrency.length > 0) {
+      investmentsWithCurrency.sort((a, b) => a.id - b.id);
     }
 
-    return investments;
+    return investmentsWithCurrency;
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || error.message || "Failed to fetch Investment"
@@ -60,7 +67,7 @@ export const getInvestmentService = async (): Promise<InvestmentResponse[]> => {
 };
 
 
-export const deleteInvestmentService = async (sn:string): Promise<void> => {
+export const deleteInvestmentService = async (sn: string): Promise<void> => {
   try {
     const token = getToken();
     await axios.delete(`${BASE_URL}/api/investments/delete/${sn}`, {
@@ -117,6 +124,7 @@ export const getInvestmentByDateRangeService = async (from?: string, to?: string
     const response = await axios.get(`${BASE_URL}/api/investments`, {
       headers: { Authorization: `Bearer ${token}` },
       params,
+      params: { start_date: from, end_date: to },
     });
     return response.data.data || [];
   } catch (error: any) {
