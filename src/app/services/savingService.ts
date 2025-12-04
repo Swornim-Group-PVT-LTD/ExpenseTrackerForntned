@@ -126,7 +126,6 @@ export const getSavingByDateRangeService = async (from?: string, to?: string, ca
     const response = await axios.get(`${BASE_URL}/api/savings`, {
       headers: { Authorization: `Bearer ${token}` },
       params,
-      params: { start_date: from, end_date: to },
     });
 
     return response.data.data || [];

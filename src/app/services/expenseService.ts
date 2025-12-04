@@ -118,7 +118,6 @@ export const getExpenseByDateRangeService = async (from?: string, to?: string, c
     const response = await axios.get(`${BASE_URL}/api/expenses`, {
       headers: { Authorization: `Bearer ${token}` },
       params,
-      //params: { start_date: from, end_date: to },
     });
     return response.data.data || [];
   } catch (error: any) {
