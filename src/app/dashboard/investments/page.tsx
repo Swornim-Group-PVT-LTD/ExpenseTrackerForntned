@@ -15,9 +15,11 @@ import {getInvestmentCategoriesService} from "@/app/services/catalogueServices/i
 import {InvestmentCategoryResponse} from "@/app/types/catalolgueType/investmentCatalogueType";
 import {getInvestmentByDateRangeService} from "@/app/services/investmentService";
 import { InvestmentResponse } from "@/app/types/investmentType";
+import { downloadService } from "@/app/services/downloadService";
 
 function Investment() {
   const [filteredData, setFilteredData] = useState<InvestmentResponse[]>([]);
+  const [allData, setAllData] = useState<InvestmentResponse[]>([]);
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [currentDateRange, setCurrentDateRange] = useState<{start: string, end: string} | null>(null);
   const [currentCategory, setCurrentCategory] = useState<string | null>(null);
@@ -89,8 +91,48 @@ function Investment() {
       <InvestmentLineChart />
       <InvestmentBarChart />
       </div>
-      <DateFilter fetchService={getInvestmentByDateRangeService} onFilter={handleFilter} categories={categories}
-        categoryKey="investment_category" />
+      <DateFilter 
+        fetchService={getInvestmentByDateRangeService} 
+        onFilter={handleFilter} 
+        categories={categories}
+        categoryKey="investment_category"
+        onDownloadPDF={() => {
+          const data = isFilterActive ? filteredData : allData;
+          if (data.length === 0) {
+            toast.warning("No data to download. Please apply filters or wait for data to load.");
+            return;
+          }
+          downloadService.downloadPDF(
+            data,
+            [
+              { header: "ID", field: "id" },
+              { header: "Investment", field: "add_investment" },
+              { header: "Category", field: "investment_category" },
+              { header: "Total Investment", field: "total_investment" },
+              { header: "Date", field: "created_date" },
+            ],
+            "Investment_Report"
+          );
+        }}
+        onDownloadExcel={() => {
+          const data = isFilterActive ? filteredData : allData;
+          if (data.length === 0) {
+            toast.warning("No data to download. Please apply filters or wait for data to load.");
+            return;
+          }
+          downloadService.downloadExcel(
+            data,
+            [
+              { header: "ID", field: "id" },
+              { header: "Investment", field: "add_investment" },
+              { header: "Category", field: "investment_category" },
+              { header: "Total Investment", field: "total_investment" },
+              { header: "Date", field: "created_date" },
+            ],
+            "Investment_Report"
+          );
+        }}
+      />
             
             {isFilterActive && (
               <div className="mb-4 flex items-center gap-2">
@@ -104,7 +146,7 @@ function Investment() {
                 </button>
               </div>
             )}
-      <InvestmentTable refreshTrigger={refreshTrigger} filteredData={isFilterActive ? filteredData : null} onSuccess={handleRefresh}  />
+      <InvestmentTable refreshTrigger={refreshTrigger} filteredData={isFilterActive ? filteredData : null} onSuccess={handleRefresh} onDataLoad={setAllData} />
     </div>
   );
 }

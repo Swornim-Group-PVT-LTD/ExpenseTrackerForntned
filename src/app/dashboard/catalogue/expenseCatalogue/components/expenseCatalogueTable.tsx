@@ -4,7 +4,7 @@ import { ExpenseCategoryResponse } from "../../../../types/catalolgueType/expens
 
 import { deleteExpenseCategoryService, getExpenseCategoriesService, updateExpenseCategoryService } from "@/app/services/catalogueServices/expenseCatalogueService";
 
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 
 export default function ExpenseCatalogueTable({ refreshTrigger }: { refreshTrigger: number }) {
   const [data, setData] = useState<ExpenseCategoryResponse[]>([]);
@@ -12,7 +12,7 @@ export default function ExpenseCatalogueTable({ refreshTrigger }: { refreshTrigg
   const [loading, setLoading] = useState(false);
 
   const [editingId, setEditingId] = useState<number | null>(null);
-    const [editForm, setEditForm] = useState({ expense_category: "" });
+  const [editForm, setEditForm] = useState({ expense_category: "" });
 
   // Fetch expense categories from API
   const fetchData = async () => {
@@ -40,50 +40,50 @@ export default function ExpenseCatalogueTable({ refreshTrigger }: { refreshTrigg
 
 
   const handleDelete = async (id: number) => {
-    try{
-      if(!confirm("Are you sure you want to delete this expense category?")) return;
+    try {
+      if (!confirm("Are you sure you want to delete this expense category?")) return;
       await deleteExpenseCategoryService(id);
       toast.success("Expense category deleted successfully");
       fetchData(); // Refresh data after deletion
-    }catch (err:any){ 
+    } catch (err: any) {
       toast.error(err);
     }
 
   }
 
-    // Start editing a row
-    const startEdit = (item: any) => {
-      setEditingId(item.id);
-      setEditForm({ expense_category: item.expense_category });
-    };
-  
-    // Cancel editing
-    const cancelEdit = () => {
-      setEditingId(null);
-      setEditForm({ expense_category: "" });
-    };
-  
-    // Save update
-    const saveEdit = async (id: number) => {
-      try {
-        const updated = await updateExpenseCategoryService(id, {
-          static_value: "EXPENSE",
-          expense_category: editForm.expense_category,
-          additional_value1: null,
-          additional_value2: null,
-          additional_value3: null,
-          additional_value4: null,
-        });
-  
-        fetchData(); // Refresh data after update
-        toast.success("Expense category updated successfully");
-  
-        cancelEdit();
-      } catch (err) {
-        console.error(err);
-        alert("Failed to update");
-      }
-    };
+  // Start editing a row
+  const startEdit = (item: any) => {
+    setEditingId(item.id);
+    setEditForm({ expense_category: item.expense_category });
+  };
+
+  // Cancel editing
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditForm({ expense_category: "" });
+  };
+
+  // Save update
+  const saveEdit = async (id: number) => {
+    try {
+      const updated = await updateExpenseCategoryService(id, {
+        static_value: "EXPENSE",
+        expense_category: editForm.expense_category,
+        additional_value1: null,
+        additional_value2: null,
+        additional_value3: null,
+        additional_value4: null,
+      });
+
+      fetchData(); // Refresh data after update
+      toast.success("Expense category updated successfully");
+
+      cancelEdit();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update");
+    }
+  };
 
   return (
     <div className="overflow-x-auto w-full mt-4">
@@ -107,15 +107,15 @@ export default function ExpenseCatalogueTable({ refreshTrigger }: { refreshTrigg
             <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Static Data</th>
             <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Expense Category</th>
             <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Action</th>
-          </tr>
-        </thead>
+          </tr >
+        </thead >
         <tbody className="bg-white divide-y divide-gray-200">
           {loading ? (
             <tr>
-                          <td colSpan={100} className="text-center py-4">
-                            <ClipLoader size={22} color="#000000" />
-                          </td>
-                        </tr>
+              <td colSpan={100} className="text-center py-4">
+                <ClipLoader size={22} color="#000000" />
+              </td>
+            </tr>
           ) : filteredData.length > 0 ? (
             filteredData.map((item) => (
               <tr key={item.id}>
@@ -179,7 +179,7 @@ export default function ExpenseCatalogueTable({ refreshTrigger }: { refreshTrigg
             </tr>
           )}
         </tbody>
-      </table>
-    </div>
+      </table >
+    </div >
   );
 }

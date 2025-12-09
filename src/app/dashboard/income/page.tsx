@@ -17,11 +17,13 @@ import { getIncomeCategoriesService } from "@/app/services/catalogueServices/inc
 import { IncomeCategoryResponse } from "@/app/types/catalolgueType/incomeCatalogueType";
 import { getIncomeByDateRangeService } from "@/app/services/incomeService";
 import { IncomeResponse } from "@/app/types/incomeType";
+import { downloadService } from "@/app/services/downloadService";
 
 
 function Income() {
 
   const [filteredData, setFilteredData] = useState<IncomeResponse[]>([]);
+  const [allData, setAllData] = useState<IncomeResponse[]>([]);
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [currentDateRange, setCurrentDateRange] = useState<{ start: string, end: string } | null>(null);
   const [currentCategory, setCurrentCategory] = useState<string | null>(null);
@@ -97,8 +99,48 @@ function Income() {
         <IncomeLineChart />
         <IncomeBarChart />
       </div>
-      <DateFilter fetchService={getIncomeByDateRangeService} onFilter={handleFilter} categories={categories}
-        categoryKey="income_category" />
+      <DateFilter 
+        fetchService={getIncomeByDateRangeService} 
+        onFilter={handleFilter} 
+        categories={categories}
+        categoryKey="income_category"
+        onDownloadPDF={() => {
+          const data = isFilterActive ? filteredData : allData;
+          if (data.length === 0) {
+            toast.warning("No data to download. Please apply filters or wait for data to load.");
+            return;
+          }
+          downloadService.downloadPDF(
+            data,
+            [
+              { header: "ID", field: "id" },
+              { header: "Income", field: "add_income" },
+              { header: "Category", field: "income_category" },
+              { header: "Total Income", field: "total_income" },
+              { header: "Date", field: "created_date" },
+            ],
+            "Income_Report"
+          );
+        }}
+        onDownloadExcel={() => {
+          const data = isFilterActive ? filteredData : allData;
+          if (data.length === 0) {
+            toast.warning("No data to download. Please apply filters or wait for data to load.");
+            return;
+          }
+          downloadService.downloadExcel(
+            data,
+            [
+              { header: "ID", field: "id" },
+              { header: "Income", field: "add_income" },
+              { header: "Category", field: "income_category" },
+              { header: "Total Income", field: "total_income" },
+              { header: "Date", field: "created_date" },
+            ],
+            "Income_Report"
+          );
+        }}
+      />
 
       {isFilterActive && (
         <div className="mb-4 flex items-center gap-2">
@@ -112,7 +154,7 @@ function Income() {
           </button>
         </div>
       )}
-      <IncomeTable refreshTrigger={refreshTrigger} filteredData={isFilterActive ? filteredData : null} onSuccess={handleRefresh} />
+      <IncomeTable refreshTrigger={refreshTrigger} filteredData={isFilterActive ? filteredData : null} onSuccess={handleRefresh} onDataLoad={setAllData} />
     </div>
   );
 }
