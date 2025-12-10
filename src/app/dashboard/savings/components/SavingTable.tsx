@@ -26,10 +26,12 @@ export default function SavingTable({
   refreshTrigger,
   filteredData,
   onSuccess,
+  onDataLoad,
 }: {
   refreshTrigger: number;
   filteredData?: SavingResponse[] | null;
   onSuccess?: () => void;
+  onDataLoad?: (data: SavingResponse[]) => void;
 }) {
   const [saving, setSaving] = useState<SavingResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,6 +60,7 @@ export default function SavingTable({
     try {
       const data = await getSavingService();
       setSaving(data);
+      onDataLoad && onDataLoad(data);
     } catch (error) {
       console.error("Error fetching Saving:", error);
     } finally {

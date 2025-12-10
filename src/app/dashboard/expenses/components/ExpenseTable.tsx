@@ -29,10 +29,12 @@ export default function ExpensesTable({
   refreshTrigger,
   filteredData,
   onSuccess,
+  onDataLoad,
 }: {
   refreshTrigger: number;
   filteredData?: ExpenseResponse[] | null;
   onSuccess: () => void;
+  onDataLoad?: (data: ExpenseResponse[]) => void;
 }) {
   const [expenses, setExpenses] = useState<ExpenseResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,6 +52,7 @@ export default function ExpensesTable({
     try {
       const data = await getExpenseService();
       setExpenses(data);
+      onDataLoad && onDataLoad(data);
     } catch (error) {
       console.error("Error fetching expenses:", error);
     } finally {
