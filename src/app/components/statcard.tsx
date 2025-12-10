@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 
 interface StatCardProps {
   icon: string;
@@ -25,7 +26,7 @@ export default function StatCard({
   return (
     <div
       onClick={handleClick}
-      className="bg-white rounded-lg shadow-md p-3 flex flex-col gap-4 h-36 mt-2 hover:shadow-lg transition-shadow hover:scale-[1.02] hover:cursor-pointer"
+      className="bg-white rounded-lg shadow-md p-3 flex flex-col gap-2 h-36 mt-2 hover:shadow-lg transition-shadow hover:scale-[1.02] hover:cursor-pointer"
     >
       <div className="relative flex items-start gap-2 mb-1">
         <img
@@ -40,9 +41,21 @@ export default function StatCard({
           <div className="text-2xl font-bold text-[#07371B] mb-1">{value}</div>
         </div>
       </div>
-      <div className="text-xl text-right">
-        <span className="font-bold text-[#07371B]">{percentage}</span>
-        <span className="text-black/70"> than the last week</span>
+      <div className="text-xl flex justify-between">
+        <span className="font-bold text-[#07371B]">Your {label}</span>
+        <div className="relative w-32" onClick={(e) => e.stopPropagation()}>
+          <select
+            name=""
+            id=""
+            className="appearance-none w-full  py-1 px-2 text-md font-bold text-[#716A6A] border border-[#574A4A]/50 rounded-lg bg-white cursor-pointer"
+          >
+            <option value="yearly">Yearly</option>
+            <option value="monthly">Monthly</option>
+            <option value="weekly">Weekly</option>
+            <option value="daily">Daily</option>
+          </select>
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-[#716A6A] pointer-events-none" />
+        </div>
       </div>
     </div>
   );

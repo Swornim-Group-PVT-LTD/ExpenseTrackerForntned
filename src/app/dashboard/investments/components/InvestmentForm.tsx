@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
 import { toast } from "react-toastify";
+import SearchInput from "@/app/components/SearchInput";
 
 import { AddInvestmentPayload } from "@/app/types/investmentType";
 import {
@@ -57,9 +57,7 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
         const data = await getInvestmentCategoriesService();
         setCategories(data);
 
-        if (data.length > 0) {
-          setCategory(data[0].investment_category);
-        }
+        // Keep field empty for search input
       } catch (err) {
         console.error("Failed to fetch investment categories:", err);
         toast.error("Failed to fetch investment categories");
@@ -155,21 +153,13 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
           />
 
           {/* Category dropdown */}
-          <div className="relative w-full sm:w-80">
-            <select
-              className="appearance-none w-full h-12 px-2 text-md font-bold text-[#716A6A]
-                         border border-[#574A4A]/50 rounded cursor-pointer bg-white"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.investment_category}>
-                  {cat.investment_category}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A]" />
-          </div>
+          <SearchInput
+            options={categories.map(cat => ({ id: cat.id, value: cat.investment_category }))}
+            value={category}
+            onChange={setCategory}
+            placeholder="Type investment category..."
+            className="w-full sm:w-80"
+          />
 
           {/* Submit button */}
           <button

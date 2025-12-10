@@ -9,6 +9,7 @@ import StatCard from "@/app/components/statcard";
 import MonthlyBarChart from "@/app/components/MonthlyBarChart";
 import ExpensesPieChart from "@/app/components/ExpensePieChart";
 import ExpensesLineChart from "@/app/components/ExpensesLineChart";
+import BalanceCard from "@/app/components/BalanceCard";
 
 import { getBalancesService } from "../services/balanceService";
 import {
@@ -19,7 +20,7 @@ import {
 } from "../services/savingService";
 import {
   getTotalIncomeService,
-} from "../services/incomeService";
+} from "../services/incomeService";                                                                                                         
 import {
   getTotalInvestmentService,
 } from "../services/investmentService";
@@ -35,6 +36,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [currency, setCurrency] = useState<string>("");
 
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -127,7 +129,7 @@ export default function Dashboard() {
               <button
                 key={index}
                 style={{ backgroundColor: item.labelColor }}
-                className="text-white text-lg font-bold py-2 px-3 rounded hover:opacity-90 transition shadow-md"
+                className="text-white text-lg font-bold py-2 px-3 rounded hover:opacity-90 transition shadow-md cursor-pointer"
                 onClick={() => handleClick(item.title)}
               >
                 {`Add ${item.title}`}
@@ -140,19 +142,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
 
           <div className="lg:col-span-1">
-            <StatCard
-              icon="/balance-logo.svg"
-              label="Balance"
-              value={
-                loading ? (
-                  <ClipLoader size={22} color="#000000" />
-                ) : (
-                  formatCurrency(balance)
-                )
-              }
-              percentage="100%"
-              labelColor="#000000"
-            />
+            <BalanceCard refreshTrigger={refreshTrigger} />
           </div>
 
           <div className="lg:col-span-3 rounded-xl">

@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
 import { toast } from "react-toastify";
+import SearchInput from "@/app/components/SearchInput";
 
 import { AddExpensePayload } from "@/app/types/expenseType";
 import { addExpenseService } from "@/app/services/expenseService";
@@ -54,7 +54,7 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
         const data = await getExpenseCategoriesService();
         setCategories(data);
 
-        if (data.length > 0) setRemarks(data[0].expense_category);
+        // Keep field empty for search input
       } catch (err) {
         console.error("Failed to fetch expense categories:", err);
         toast.error("Failed to fetch expense categories");
@@ -145,21 +145,13 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
           />
 
           {/* Remarks dropdown */}
-          <div className="relative w-full sm:w-80">
-            <select
-              className="appearance-none w-full h-12 px-2 text-md font-bold text-[#716A6A]
-                         border border-[#574A4A]/50 rounded cursor-pointer bg-white"
-              value={remarks}
-              onChange={(e) => setRemarks(e.target.value)}
-            >
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.expense_category}>
-                  {cat.expense_category}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 w-3 h-3 text-[#716A6A]" />
-          </div>
+          <SearchInput
+            options={categories.map(cat => ({ id: cat.id, value: cat.expense_category }))}
+            value={remarks}
+            onChange={setRemarks}
+            placeholder="Type expense category..."
+            className="w-full sm:w-80"
+          />
 
           {/* Submit button */}
           <button
