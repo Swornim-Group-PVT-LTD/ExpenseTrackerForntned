@@ -21,8 +21,12 @@ import { IncomeResponse } from "@/app/types/incomeType";
 import { getIncomeCategoriesService } from "@/app/services/catalogueServices/incomeCatalogueService";
 import { IncomeCategoryResponse } from "@/app/types/catalolgueType/incomeCatalogueType";
 
-
-export default function IncomeTable({ refreshTrigger, filteredData, onSuccess, onDataLoad }: {
+export default function IncomeTable({
+  refreshTrigger,
+  filteredData,
+  onSuccess,
+  onDataLoad,
+}: {
   refreshTrigger: number;
   filteredData?: IncomeResponse[] | null;
   onSuccess?: () => void;
@@ -38,7 +42,6 @@ export default function IncomeTable({ refreshTrigger, filteredData, onSuccess, o
   });
 
   const [categories, setCategories] = useState<IncomeCategoryResponse[]>([]);
-
 
   const fetchIncome = async () => {
     setLoading(true);
@@ -57,8 +60,6 @@ export default function IncomeTable({ refreshTrigger, filteredData, onSuccess, o
     try {
       const data = await getIncomeCategoriesService();
       setCategories(data);
-
-
     } catch (err) {
       console.error("Failed to fetch income categories:", err);
       toast.error("Failed to fetch income categories");
@@ -100,10 +101,17 @@ export default function IncomeTable({ refreshTrigger, filteredData, onSuccess, o
       });
       toast.success("Income updated successfully");
       onSuccess && onSuccess();
-      setIncome(prev => prev.map(item =>
-        item.sn === sn ? { ...item, add_income: editForm.add_income, income_category: editForm.income_category } : item
-      ));
-
+      setIncome((prev) =>
+        prev.map((item) =>
+          item.sn === sn
+            ? {
+                ...item,
+                add_income: editForm.add_income,
+                income_category: editForm.income_category,
+              }
+            : item
+        )
+      );
 
       cancelEdit();
     } catch (err) {
@@ -142,7 +150,7 @@ export default function IncomeTable({ refreshTrigger, filteredData, onSuccess, o
           {loading ? (
             <TableRow>
               <TableCell
-                colSpan={8}
+                colSpan={6}
                 className="text-center font-medium text-gray-500"
               >
                 <ClipLoader size={22} color="#000000" />
@@ -151,7 +159,7 @@ export default function IncomeTable({ refreshTrigger, filteredData, onSuccess, o
           ) : income.length === 0 ? (
             <TableRow>
               <TableCell
-                colSpan={8}
+                colSpan={6}
                 className="text-center font-medium text-gray-500"
               >
                 No income found
@@ -205,7 +213,9 @@ export default function IncomeTable({ refreshTrigger, filteredData, onSuccess, o
                     row.income_category
                   )}
                 </TableCell>
-                <TableCell>{row.symbol || "NPR"} {row.total_income.toLocaleString()}</TableCell>
+                <TableCell>
+                  {row.symbol || "NPR"} {row.total_income.toLocaleString()}
+                </TableCell>
                 <TableCell>{row.created_date}</TableCell>
                 <TableCell>
                   {editingSn === row.sn ? (
@@ -216,7 +226,10 @@ export default function IncomeTable({ refreshTrigger, filteredData, onSuccess, o
                       >
                         Save
                       </button>
-                      <button className="text-gray-600 cursor-pointer" onClick={cancelEdit}>
+                      <button
+                        className="text-gray-600 cursor-pointer"
+                        onClick={cancelEdit}
+                      >
                         Cancel
                       </button>
                     </>
@@ -230,7 +243,7 @@ export default function IncomeTable({ refreshTrigger, filteredData, onSuccess, o
                   )}
                   <a
                     href="#"
-                    className="font-medium text-red-600 hover:underline dark:text-red-500"
+                    className="font-medium text-red-600 hover:underline dark:text-red-500 ml-2"
                     onClick={() => handleDelete(row.sn)}
                   >
                     Delete
@@ -238,6 +251,25 @@ export default function IncomeTable({ refreshTrigger, filteredData, onSuccess, o
                 </TableCell>
               </TableRow>
             ))
+          )}
+
+          {/* TOTAL INCOME BAR */}
+          {income.length > 0 && (
+            <TableRow>
+              <TableCell colSpan={6}>
+                <div
+                  className="flex justify-between items-center p-4 text-white font-semibold rounded-lg shadow mt-2"
+                  style={{ backgroundColor: "#5eac24" }}
+                >
+                  <span>Total Income</span>
+                  <span>
+                    {income[income.length - 1].symbol || "NPR"}{" "}
+                    {income[income.length - 1].total_income?.toLocaleString() ||
+                      "0"}
+                  </span>
+                </div>
+              </TableCell>
+            </TableRow>
           )}
         </TableBody>
       </Table>

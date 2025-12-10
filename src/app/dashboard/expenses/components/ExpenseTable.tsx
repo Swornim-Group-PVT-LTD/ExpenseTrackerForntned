@@ -109,10 +109,10 @@ export default function ExpensesTable({
         prev.map((item) =>
           item.sn === sn
             ? {
-              ...item,
-              add_expenses: editForm.add_expenses,
-              expense_category: editForm.expense_category,
-            }
+                ...item,
+                add_expenses: editForm.add_expenses,
+                expense_category: editForm.expense_category,
+              }
             : item
         )
       );
@@ -139,6 +139,7 @@ export default function ExpensesTable({
   return (
     <div className="overflow-x-auto">
       <Table striped>
+        {/* TableHead */}
         <TableHead className="text-lg">
           <TableRow>
             <TableHeadCell>ID</TableHeadCell>
@@ -150,11 +151,12 @@ export default function ExpensesTable({
           </TableRow>
         </TableHead>
 
+        {/* TableBody */}
         <TableBody className="divide-y">
           {loading ? (
             <TableRow>
               <TableCell
-                colSpan={8}
+                colSpan={6}
                 className="text-center font-medium text-gray-500"
               >
                 <ClipLoader size={22} color="#000000" />
@@ -163,7 +165,7 @@ export default function ExpensesTable({
           ) : expenses.length === 0 ? (
             <TableRow>
               <TableCell
-                colSpan={8}
+                colSpan={6}
                 className="text-center font-medium text-gray-500"
               >
                 No expenses found
@@ -175,85 +177,38 @@ export default function ExpensesTable({
                 key={row.id}
                 className="bg-white dark:border-gray-700 dark:bg-gray-800"
               >
-                <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                  {row.id}
+                <TableCell>{row.id}</TableCell>
+                <TableCell>
+                  {row.symbol || "NPR"} {row.add_expenses}
                 </TableCell>
+                <TableCell>{row.expense_category}</TableCell>
                 <TableCell>
                   {row.symbol || "NPR"}{" "}
-                  {editingSn === row.sn ? (
-                    <input
-                      className="p-2 border rounded-md border-gray-300"
-                      value={editForm.add_expenses}
-                      onChange={(e) =>
-                        setEditForm((prev) => ({
-                          ...prev,
-                          add_expenses: Number(e.target.value),
-                        }))
-                      }
-                    />
-                  ) : (
-                    row.add_expenses
-                  )}
-                </TableCell>
-                <TableCell>
-                  {editingSn === row.sn ? (
-                    <select
-                      className="p-2 border rounded-md border-gray-300"
-                      value={editForm.expense_category}
-                      onChange={(e) =>
-                        setEditForm((prev) => ({
-                          ...prev,
-                          expense_category: e.target.value,
-                        }))
-                      }
-                    >
-                      {categories.map((cat) => (
-                        <option key={cat.id} value={cat.expense_category}>
-                          {cat.expense_category}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    row.expense_category
-                  )}
-                </TableCell>
-                <TableCell>
-                  {row.symbol || "NPR"} {row.total_expenses?.toLocaleString() || "0"}
+                  {row.total_expenses?.toLocaleString() || "0"}
                 </TableCell>
                 <TableCell>{row.created_date}</TableCell>
                 <TableCell>
-                  {editingSn === row.sn ? (
-                    <>
-                      <button
-                        className="text-green-600 mr-2 cursor-pointer"
-                        onClick={() => saveEdit(row.sn)}
-                      >
-                        Save
-                      </button>
-                      <button className="text-gray-600 cursor-pointer" onClick={cancelEdit}>
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      className="text-blue-600 cursor-pointer"
-                      onClick={() => startEdit(row)}
-                    >
-                      Edit
-                    </button>
-                  )}
-                  <a
-                    href="#"
-                    className="font-medium text-red-600 hover:underline dark:text-red-500"
-                    onClick={() => {
-                      handleDelete(row.sn);
-                    }}
-                  >
-                    Delete
-                  </a>
+                  <button>Edit</button> <button>Delete</button>
                 </TableCell>
               </TableRow>
             ))
+          )}
+
+          {/* TOTAL EXPENSES BAR */}
+          {expenses.length > 0 && (
+            <TableRow>
+              <TableCell colSpan={6}>
+                <div className="flex justify-between items-center p-4 bg-red-500 text-white font-semibold rounded-lg shadow mt-2">
+                  <span>Total Expenses</span>
+                  <span>
+                    {expenses[expenses.length - 1].symbol || "NPR"}{" "}
+                    {expenses[
+                      expenses.length - 1
+                    ].total_expenses?.toLocaleString() || "0"}
+                  </span>
+                </div>
+              </TableCell>
+            </TableRow>
           )}
         </TableBody>
       </Table>

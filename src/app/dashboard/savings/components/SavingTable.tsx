@@ -144,6 +144,7 @@ export default function SavingTable({
   return (
     <div className="overflow-x-auto">
       <Table striped>
+        {/* TableHead */}
         <TableHead className="text-lg">
           <TableRow>
             <TableHeadCell>ID</TableHeadCell>
@@ -156,6 +157,7 @@ export default function SavingTable({
           </TableRow>
         </TableHead>
 
+        {/* TableBody */}
         <TableBody className="divide-y">
           {loading ? (
             <TableRow>
@@ -215,14 +217,16 @@ export default function SavingTable({
                       }
                     />
                   ) : (
-                    <span>{row.want_to_deduct_from_balance ? "Yes" : "No"}</span>
+                    <span>
+                      {row.want_to_deduct_from_balance ? "Yes" : "No"}
+                    </span>
                   )}
                 </TableCell>
 
                 <TableCell>
                   {editingSn === row.sn ? (
                     <select
-                      className="p-2 border rounded-md border-gray-300 "
+                      className="p-2 border rounded-md border-gray-300"
                       value={editForm.saving_category}
                       onChange={(e) =>
                         setEditForm((prev) => ({
@@ -241,7 +245,10 @@ export default function SavingTable({
                     row.saving_category
                   )}
                 </TableCell>
-                <TableCell>{row.symbol || "NPR"}{" "}{row.total_saving.toLocaleString()}</TableCell>
+
+                <TableCell>
+                  {row.symbol || "NPR"} {row.total_saving.toLocaleString()}
+                </TableCell>
                 <TableCell>{row.created_date}</TableCell>
                 <TableCell>
                   {editingSn === row.sn ? (
@@ -252,7 +259,10 @@ export default function SavingTable({
                       >
                         Save
                       </button>
-                      <button className="text-gray-600 cursor-pointer" onClick={cancelEdit}>
+                      <button
+                        className="text-gray-600 cursor-pointer"
+                        onClick={cancelEdit}
+                      >
                         Cancel
                       </button>
                     </>
@@ -266,7 +276,7 @@ export default function SavingTable({
                   )}
                   <a
                     href="#"
-                    className="font-medium text-red-600 hover:underline dark:text-red-500"
+                    className="font-medium text-red-600 hover:underline dark:text-red-500 ml-2"
                     onClick={() => handleDelete(row.sn)}
                   >
                     Delete
@@ -274,6 +284,25 @@ export default function SavingTable({
                 </TableCell>
               </TableRow>
             ))
+          )}
+
+          {/* TOTAL SAVING BAR */}
+          {saving.length > 0 && (
+            <TableRow>
+              <TableCell colSpan={7}>
+                <div
+                  className="flex justify-between items-center p-4 text-white font-semibold rounded-lg shadow mt-2"
+                  style={{ backgroundColor: "#44eeaa" }}
+                >
+                  <span>Total Saving</span>
+                  <span>
+                    {saving[saving.length - 1].symbol || "NPR"}{" "}
+                    {saving[saving.length - 1].total_saving?.toLocaleString() ||
+                      "0"}
+                  </span>
+                </div>
+              </TableCell>
+            </TableRow>
           )}
         </TableBody>
       </Table>
