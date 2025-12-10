@@ -13,12 +13,14 @@ import {getSavingCategoriesService} from "@/app/services/catalogueServices/savin
 import {SavingCategoryResponse} from "@/app/types/catalolgueType/savingCatalogueType";
 import {getSavingByDateRangeService} from "@/app/services/savingService";
 import { SavingResponse } from "@/app/types/savingType";
+import { downloadService } from "@/app/services/downloadService";
 
 function Saving() {
 
   const [categories, setCategories] = useState<SavingCategoryResponse[]>([]);
   const [currentCategory, setCurrentCategory] = useState<string | null>(null);
   const [filteredData, setFilteredData] = useState<SavingResponse[]>([]);
+  const [allData, setAllData] = useState<SavingResponse[]>([]);
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [currentDateRange, setCurrentDateRange] = useState<{start: string, end: string} | null>(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -90,8 +92,48 @@ function Saving() {
       <SavingLineChart />
       <SavingBarChart />
       </div>
-      <DateFilter fetchService={getSavingByDateRangeService} onFilter={handleFilter} categories={categories}
-        categoryKey="saving_category" />
+      <DateFilter 
+        fetchService={getSavingByDateRangeService} 
+        onFilter={handleFilter} 
+        categories={categories}
+        categoryKey="saving_category"
+        onDownloadPDF={() => {
+          const data = isFilterActive ? filteredData : allData;
+          if (data.length === 0) {
+            toast.warning("No data to download. Please apply filters or wait for data to load.");
+            return;
+          }
+          downloadService.downloadPDF(
+            data,
+            [
+              { header: "ID", field: "id" },
+              { header: "Saving", field: "add_saving" },
+              { header: "Category", field: "saving_category" },
+              { header: "Total Saving", field: "total_saving" },
+              { header: "Date", field: "created_date" },
+            ],
+            "Saving_Report"
+          );
+        }}
+        onDownloadExcel={() => {
+          const data = isFilterActive ? filteredData : allData;
+          if (data.length === 0) {
+            toast.warning("No data to download. Please apply filters or wait for data to load.");
+            return;
+          }
+          downloadService.downloadExcel(
+            data,
+            [
+              { header: "ID", field: "id" },
+              { header: "Saving", field: "add_saving" },
+              { header: "Category", field: "saving_category" },
+              { header: "Total Saving", field: "total_saving" },
+              { header: "Date", field: "created_date" },
+            ],
+            "Saving_Report"
+          );
+        }}
+      />
       
       {isFilterActive && (
         <div className="mb-4 flex items-center gap-2">
@@ -106,7 +148,7 @@ function Saving() {
         </div>
       )}
         
-      <SavingTable refreshTrigger={refreshTrigger} filteredData={isFilterActive ? filteredData : null} onSuccess={handleRefresh}/>
+      <SavingTable refreshTrigger={refreshTrigger} filteredData={isFilterActive ? filteredData : null} onSuccess={handleRefresh} onDataLoad={setAllData}/>
     </div>
   );
 }

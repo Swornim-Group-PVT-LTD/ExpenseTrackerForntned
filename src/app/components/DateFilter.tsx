@@ -7,8 +7,10 @@ import { format } from "path";
 interface DateFilterProps {
   fetchService: Function;
   onFilter: Function;
-  categories: any[]; // pass categories from parent
-  categoryKey: string; // e.g., "income_category"
+  categories: any[];
+  categoryKey: string;
+  onDownloadPDF?: () => void;
+  onDownloadExcel?: () => void;
 }
 
 export default function DateFilter({
@@ -16,6 +18,8 @@ export default function DateFilter({
   onFilter,
   categories,
   categoryKey,
+  onDownloadPDF,
+  onDownloadExcel,
 }: DateFilterProps) {
   const [from, setFrom] = useState<Date | undefined>(undefined);
   const [to, setTo] = useState<Date | undefined>(undefined);
@@ -98,12 +102,14 @@ export default function DateFilter({
         <img
           src="/excel-logo.svg"
           alt="excel_logo"
-          className="w-12 h-12 object-cover cursor-pointer"
+          className="w-12 h-12 object-cover cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={onDownloadExcel}
         />
         <img
           src="/pdf-logo.svg"
-          alt="excel_logo "
-          className="w-12 h-12 object-cover cursor-pointer"
+          alt="pdf_logo"
+          className="w-12 h-12 object-cover cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={onDownloadPDF}
         />
       </div>
     </div>

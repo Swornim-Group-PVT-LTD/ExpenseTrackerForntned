@@ -12,7 +12,7 @@ import { getInvestmentCategoriesService } from "@/app/services/catalogueServices
 import { InvestmentCategoryResponse } from "@/app/types/catalolgueType/investmentCatalogueType";
 import { on } from "events";
 
-export default function InvestmentTable({refreshTrigger,filteredData,onSuccess}: {refreshTrigger: number;filteredData?: InvestmentResponse[] | null;onSuccess: () => void;}) {
+export default function InvestmentTable({refreshTrigger,filteredData,onSuccess,onDataLoad}: {refreshTrigger: number;filteredData?: InvestmentResponse[] | null;onSuccess: () => void;onDataLoad?: (data: InvestmentResponse[]) => void;}) {
   const [investment, setInvestment] = useState<InvestmentResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,6 +35,7 @@ export default function InvestmentTable({refreshTrigger,filteredData,onSuccess}:
       try {
         const data = await getInvestmentService();
         setInvestment(data);
+        onDataLoad && onDataLoad(data);
       } catch (error) {
         console.error("Error fetching Investment:", error);
       } finally {

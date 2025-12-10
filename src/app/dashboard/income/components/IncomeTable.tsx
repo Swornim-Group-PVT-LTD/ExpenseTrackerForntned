@@ -22,10 +22,11 @@ import { getIncomeCategoriesService } from "@/app/services/catalogueServices/inc
 import { IncomeCategoryResponse } from "@/app/types/catalolgueType/incomeCatalogueType";
 
 
-export default function IncomeTable({ refreshTrigger, filteredData, onSuccess }: {
+export default function IncomeTable({ refreshTrigger, filteredData, onSuccess, onDataLoad }: {
   refreshTrigger: number;
   filteredData?: IncomeResponse[] | null;
   onSuccess?: () => void;
+  onDataLoad?: (data: IncomeResponse[]) => void;
 }) {
   const [income, setIncome] = useState<IncomeResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,6 +45,7 @@ export default function IncomeTable({ refreshTrigger, filteredData, onSuccess }:
     try {
       const data = await getIncomeService();
       setIncome(data);
+      onDataLoad && onDataLoad(data);
     } catch (error) {
       console.error("Error fetching income:", error);
     } finally {

@@ -17,12 +17,14 @@ import { ExpenseCategoryResponse } from "@/app/types/catalolgueType/expenseCatal
 
 import { getExpenseByDateRangeService } from "@/app/services/expenseService";
 import { ExpenseResponse } from "@/app/types/expenseType";
+import { downloadService } from "@/app/services/downloadService";
 
 function Expenses() {
 
   
 const [categories, setCategories] = useState<ExpenseCategoryResponse[]>([]);
   const [filteredData,setFilteredData] = useState<ExpenseResponse[]>([]);
+  const [allData, setAllData] = useState<ExpenseResponse[]>([]);
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [currentDateRange, setCurrentDateRange] = useState<{start: string, end: string} | null>(null);
   const [currentCategory, setCurrentCategory] = useState<string | null>(null);
@@ -93,7 +95,48 @@ const [categories, setCategories] = useState<ExpenseCategoryResponse[]>([]);
       <ExpensesLineChart />
       <ExpensesBarChart />
       </div>
-      <DateFilter fetchService={getExpenseByDateRangeService} onFilter={handleFilter} categories={categories} categoryKey="expense_category" />
+      <DateFilter 
+        fetchService={getExpenseByDateRangeService} 
+        onFilter={handleFilter} 
+        categories={categories} 
+        categoryKey="expense_category"
+        onDownloadPDF={() => {
+          const data = isFilterActive ? filteredData : allData;
+          if (data.length === 0) {
+            toast.warning("No data to download. Please apply filters or wait for data to load.");
+            return;
+          }
+          downloadService.downloadPDF(
+            data,
+            [
+              { header: "ID", field: "id" },
+              { header: "Expense", field: "add_expenses" },
+              { header: "Category", field: "expense_category" },
+              { header: "Total Expenses", field: "total_expenses" },
+              { header: "Date", field: "created_date" },
+            ],
+            "Expense_Report"
+          );
+        }}
+        onDownloadExcel={() => {
+          const data = isFilterActive ? filteredData : allData;
+          if (data.length === 0) {
+            toast.warning("No data to download. Please apply filters or wait for data to load.");
+            return;
+          }
+          downloadService.downloadExcel(
+            data,
+            [
+              { header: "ID", field: "id" },
+              { header: "Expense", field: "add_expenses" },
+              { header: "Category", field: "expense_category" },
+              { header: "Total Expenses", field: "total_expenses" },
+              { header: "Date", field: "created_date" },
+            ],
+            "Expense_Report"
+          );
+        }}
+      />
             
             {isFilterActive && (
               <div className="mb-4 flex items-center gap-2">
@@ -107,7 +150,7 @@ const [categories, setCategories] = useState<ExpenseCategoryResponse[]>([]);
                 </button>
               </div>
             )}
-      <ExpenseTable refreshTrigger={refreshTrigger} filteredData={isFilterActive ? filteredData : null} onSuccess={handleRefresh} />
+      <ExpenseTable refreshTrigger={refreshTrigger} filteredData={isFilterActive ? filteredData : null} onSuccess={handleRefresh} onDataLoad={setAllData} />
     </div>
   );
 }

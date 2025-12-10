@@ -4,8 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Home } from "lucide-react";
 import CurrencyCatalogueForm from "./component/currencyCatalogueForm";
-import CurrencyCatalougeTable from "./component/currencyCatalougeTable"; // ✅ FIXED
-
+import CurrencyCatalougeTable from "./component/currencyCatalougeTable"; 
 export default function CurrencyCatalogueUI() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -35,7 +34,7 @@ export default function CurrencyCatalogueUI() {
       <div className="mt-5 mb-10"></div>
 
       {/* Table */}
-      <CurrencyCatalougeTable refreshTrigger={refreshTrigger} /> {/* ✅ FIXED */}
+      <CurrencyCatalougeTable refreshTrigger={refreshTrigger} /> 
     </div>
   );
 }
