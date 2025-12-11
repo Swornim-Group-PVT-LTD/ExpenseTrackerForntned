@@ -11,6 +11,7 @@ import {
   TableHeadCell,
   TableRow,
 } from "flowbite-react";
+import SearchInput from "@/app/components/SearchInput";
 import {
   getExpenseService,
   deleteExpenseService,
@@ -120,14 +121,14 @@ export default function ExpensesTable({
       cancelEdit();
     } catch (err) {
       console.error(err);
-      alert("Failed to update");
+      toast.error("Failed to update expense");
     }
   };
 
-  const handleDelete = (sn: string) => {
+  const handleDelete = async (sn: string) => {
     if (!confirm("Are you sure you want to delete this expense?")) return;
     try {
-      deleteExpenseService(sn);
+      await deleteExpenseService(sn);
       onSuccess && onSuccess();
       toast.success("Expense deleted successfully");
       setExpenses(expenses.filter((expense) => expense.sn !== sn));
@@ -177,18 +178,77 @@ export default function ExpensesTable({
                 key={row.id}
                 className="bg-white dark:border-gray-700 dark:bg-gray-800"
               >
-                <TableCell>{row.id}</TableCell>
-                <TableCell>
-                  {row.symbol || "NPR"} {row.add_expenses}
+                <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                  {row.id}
                 </TableCell>
-                <TableCell>{row.expense_category}</TableCell>
+                <TableCell>
+                  {row.symbol || "NPR"}{" "}
+                  {editingSn === row.sn ? (
+                    <input
+                      className="p-2 border rounded-md border-gray-300"
+                      value={editForm.add_expenses}
+                      onChange={(e) =>
+                        setEditForm((prev) => ({
+                          ...prev,
+                          add_expenses: Number(e.target.value),
+                        }))
+                      }
+                    />
+                  ) : (
+                    row.add_expenses
+                  )}
+                </TableCell>
+                <TableCell>
+                  {editingSn === row.sn ? (
+                    <SearchInput
+                      options={categories.map((cat) => ({
+                        id: cat.id,
+                        value: cat.expense_category,
+                      }))}
+                      value={editForm.expense_category}
+                      onChange={(value) => setEditForm(prev => ({ ...prev, expense_category: value }))}
+                      placeholder="Type expense category..."
+                      className="w-full sm:w-80"
+                    />
+                  ) : (
+                    row.expense_category
+                  )}
+                </TableCell>
                 <TableCell>
                   {row.symbol || "NPR"}{" "}
                   {row.total_expenses?.toLocaleString() || "0"}
                 </TableCell>
                 <TableCell>{row.created_date}</TableCell>
                 <TableCell>
-                  <button>Edit</button> <button>Delete</button>
+                  {editingSn === row.sn ? (
+                    <>
+                      <button
+                        className="text-green-600 mr-2 cursor-pointer"
+                        onClick={() => saveEdit(row.sn)}
+                      >
+                        Save
+                      </button>
+                      <button
+                        className="text-gray-600 cursor-pointer"
+                        onClick={cancelEdit}
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      className="text-blue-600 cursor-pointer"
+                      onClick={() => startEdit(row)}
+                    >
+                      Edit
+                    </button>
+                  )}
+                  <button
+                    className="font-medium text-red-600 hover:underline dark:text-red-500 ml-2"
+                    onClick={() => handleDelete(row.sn)}
+                  >
+                    Delete
+                  </button>
                 </TableCell>
               </TableRow>
             ))
@@ -198,7 +258,10 @@ export default function ExpensesTable({
           {expenses.length > 0 && (
             <TableRow>
               <TableCell colSpan={6}>
-                <div className="flex justify-between items-center p-4 bg-red-500 text-white font-semibold rounded-lg shadow mt-2">
+                <div
+                  className="flex justify-between items-center p-4 text-white font-semibold rounded-lg shadow mt-2"
+                  style={{ backgroundColor: "#ff4d4d" }}
+                >
                   <span>Total Expenses</span>
                   <span>
                     {expenses[expenses.length - 1].symbol || "NPR"}{" "}

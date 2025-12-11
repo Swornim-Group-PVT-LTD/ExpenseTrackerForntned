@@ -135,10 +135,21 @@ export const getIncomeByDateRangeService = async (from?: string, to?: string, ca
       headers: { Authorization: `Bearer ${token}` },
       params,
     });
-    return response.data.data || [];
+    
+    // Safely extract array from response
+    const incomes: IncomeResponse[] = response.data?.data || [];
+    const currencySymbol = response.data?.symbol || "NPR";
+
+    // Attach currency symbol to each income
+    const incomesWithCurrency = incomes.map(income => ({
+      ...income,
+      symbol: currencySymbol
+    }));
+
+    return incomesWithCurrency;
   } catch (error: any) {
     throw new Error(
-      error.response?.data?.message || error.message || "Failed to fetch expenses by date range"
+      error.response?.data?.message || error.message || "Failed to fetch incomes by date range"
     );
   }
 };
