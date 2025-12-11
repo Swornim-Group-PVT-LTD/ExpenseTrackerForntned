@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "flowbite-react";
 
+import SearchInput from "@/app/components/SearchInput";
 import {
   getIncomeService,
   deleteIncomeService,
@@ -193,22 +194,16 @@ export default function IncomeTable({
                 </TableCell>
                 <TableCell>
                   {editingSn === row.sn ? (
-                    <select
-                      className="p-2 border rounded-md border-gray-300"
+                    <SearchInput
+                      options={categories.map((cat) => ({
+                        id: cat.id,
+                        value: cat.income_category,
+                      }))}
                       value={editForm.income_category}
-                      onChange={(e) =>
-                        setEditForm((prev) => ({
-                          ...prev,
-                          income_category: e.target.value,
-                        }))
-                      }
-                    >
-                      {categories.map((cat) => (
-                        <option key={cat.id} value={cat.income_category}>
-                          {cat.income_category}
-                        </option>
-                      ))}
-                    </select>
+                      onChange={(value) => setEditForm(prev => ({ ...prev, income_category: value }))}
+                      placeholder="Type income category..."
+                      className="w-full sm:w-80"
+                    />
                   ) : (
                     row.income_category
                   )}

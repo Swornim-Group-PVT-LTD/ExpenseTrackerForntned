@@ -125,10 +125,21 @@ export const getInvestmentByDateRangeService = async (from?: string, to?: string
       headers: { Authorization: `Bearer ${token}` },
       params,
     });
-    return response.data.data || [];
+    
+    // Safely extract array from response
+    const investments: InvestmentResponse[] = response.data?.data || [];
+    const currencySymbol = response.data?.symbol || "NPR";
+
+    // Attach currency symbol to each investment
+    const investmentsWithCurrency = investments.map(investment => ({
+      ...investment,
+      symbol: currencySymbol
+    }));
+
+    return investmentsWithCurrency;
   } catch (error: any) {
     throw new Error(
-      error.response?.data?.message || error.message || "Failed to fetch expenses by date range"
+      error.response?.data?.message || error.message || "Failed to fetch investments by date range"
     );
   }
 };

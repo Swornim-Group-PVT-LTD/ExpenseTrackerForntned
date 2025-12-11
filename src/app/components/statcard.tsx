@@ -47,7 +47,7 @@ export default function StatCard({
           <select
             name=""
             id=""
-            className="appearance-none w-full  py-1 px-2 text-md font-bold text-[#716A6A] border border-[#574A4A]/50 rounded-lg bg-white cursor-pointer"
+            className="appearance-none w-full  py-1 px-2 text-sm font-medium text-[#716A6A] border border-[#574A4A]/50 rounded-lg bg-white cursor-pointer"
           >
             <option value="yearly">Yearly</option>
             <option value="monthly">Monthly</option>

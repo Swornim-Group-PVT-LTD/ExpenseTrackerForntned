@@ -12,6 +12,8 @@ import {
   TableRow,
 } from "flowbite-react";
 
+import SearchInput from "@/app/components/SearchInput";
+
 import {
   getInvestmentService,
   deleteInvestmentService,
@@ -197,22 +199,14 @@ export default function InvestmentTable({
                 </TableCell>
                 <TableCell>
                   {editingSn === row.sn ? (
-                    <select
-                      className="p-2 border rounded-md border-gray-300"
-                      value={editForm.investment_category}
-                      onChange={(e) =>
-                        setEditForm((prev) => ({
-                          ...prev,
-                          investment_category: e.target.value,
-                        }))
-                      }
-                    >
-                      {categories.map((cat) => (
-                        <option key={cat.id} value={cat.investment_category}>
-                          {cat.investment_category}
-                        </option>
-                      ))}
-                    </select>
+                             
+                              <SearchInput
+                                options={categories.map(cat => ({ id: cat.id, value: cat.investment_category }))}
+                                value={editForm.investment_category}
+                                onChange={(value) => setEditForm(prev => ({ ...prev, investment_category: value }))}
+                                placeholder="Type investment category..."
+                                className="w-full sm:w-80"
+                              />
                   ) : (
                     row.investment_category
                   )}

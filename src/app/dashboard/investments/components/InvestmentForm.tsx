@@ -127,7 +127,7 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
           </span>
         </div>
 
-        {/* ⭐ Input Section */}
+        {/*  Input Section */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
 
           {/* AUTO SYMBOL (from Balance API) */}

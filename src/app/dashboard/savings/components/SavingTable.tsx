@@ -20,6 +20,7 @@ import {
 import { SavingResponse } from "@/app/types/savingType";
 import { SavingCategoryResponse } from "@/app/types/catalolgueType/savingCatalogueType";
 import { getSavingCategoriesService } from "@/app/services/catalogueServices/savingCatalogueService";
+import SearchInput from "@/app/components/SearchInput";
 import { on } from "events";
 
 export default function SavingTable({
@@ -225,22 +226,13 @@ export default function SavingTable({
 
                 <TableCell>
                   {editingSn === row.sn ? (
-                    <select
-                      className="p-2 border rounded-md border-gray-300"
-                      value={editForm.saving_category}
-                      onChange={(e) =>
-                        setEditForm((prev) => ({
-                          ...prev,
-                          saving_category: e.target.value,
-                        }))
-                      }
-                    >
-                      {categories.map((cat) => (
-                        <option key={cat.id} value={cat.saving_category}>
-                          {cat.saving_category}
-                        </option>
-                      ))}
-                    </select>
+                    <SearchInput
+                                options={categories.map(cat => ({ id: cat.id, value: cat.saving_category }))}
+                                value={editForm.saving_category}
+                                onChange={(value) => setEditForm(prev => ({ ...prev, saving_category: value }))}
+                                placeholder="Type saving category..."
+                                className="w-full sm:w-80"
+                              />
                   ) : (
                     row.saving_category
                   )}

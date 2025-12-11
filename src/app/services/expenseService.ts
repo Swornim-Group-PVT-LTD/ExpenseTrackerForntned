@@ -119,7 +119,18 @@ export const getExpenseByDateRangeService = async (from?: string, to?: string, c
       headers: { Authorization: `Bearer ${token}` },
       params,
     });
-    return response.data.data || [];
+    
+    // Safely extract array from response
+    const expenses: ExpenseResponse[] = response.data?.data || [];
+    const currencySymbol = response.data?.symbol || "NPR";
+
+    // Attach currency symbol to each expense
+    const expensesWithCurrency = expenses.map(expense => ({
+      ...expense,
+      symbol: currencySymbol
+    }));
+
+    return expensesWithCurrency;
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || error.message || "Failed to fetch expenses by date range"

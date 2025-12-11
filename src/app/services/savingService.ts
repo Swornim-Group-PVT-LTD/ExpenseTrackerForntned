@@ -128,7 +128,17 @@ export const getSavingByDateRangeService = async (from?: string, to?: string, ca
       params,
     });
 
-    return response.data.data || [];
+    // Safely extract array from response
+    const savings: SavingResponse[] = response.data?.data || [];
+    const currencySymbol = response.data?.symbol || "NPR";
+
+    // Attach currency symbol to each saving
+    const savingsWithCurrency = savings.map(saving => ({
+      ...saving,
+      symbol: currencySymbol
+    }));
+
+    return savingsWithCurrency;
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || error.message || "Failed to fetch savings by date range"
