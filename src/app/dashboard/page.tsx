@@ -6,7 +6,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { useRouter } from "next/navigation";
 
 import StatCard from "@/app/components/statcard";
-import MonthlyBarChart from "@/app/components/MonthlyBarChart";
+import MonthlyBarChart from "@/app/components/DashboardBarChart";
 import ExpensesPieChart from "@/app/components/ExpensePieChart";
 import ExpensesLineChart from "@/app/components/ExpensesLineChart";
 import BalanceCard from "@/app/components/BalanceCard";

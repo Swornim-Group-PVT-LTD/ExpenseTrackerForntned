@@ -1,0 +1,24 @@
+import axios from "axios";
+import BASE_URL from "@/app/urlConfig/urlConfig";
+
+// Helper to get token from cookies
+const getToken = (): string => {
+  const match = document.cookie.match(new RegExp('(^| )access_token=([^;]+)'));
+  if (!match) throw new Error("No access_token found in cookies. Please login first.");
+  return match[2];
+};
+
+// Get Chart Data
+export const dashboardBarChartService = async (filter_type:string): Promise<any> => {
+  try {
+    const token = getToken();
+    const response = await axios.get(`${BASE_URL}/api/dashboard-graph?filter=${filter_type}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to fetch chart data"
+    );
+  }
+};
