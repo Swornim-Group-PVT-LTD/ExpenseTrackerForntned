@@ -14,14 +14,14 @@ interface BalanceCardProps {
 const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
   const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currency,setCurrency]=useState("NPR");
+  const [currency, setCurrency] = useState("NPR");
 
   const router = useRouter();
-  
-    const handleClick = () => {
-      router.push("/dashboard/balance");
-    };
-  
+
+  const handleClick = () => {
+    router.push("/dashboard/balance");
+  };
+
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -48,7 +48,7 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
   }, [refreshTrigger]);
 
   return (
-   <div
+    <div
       onClick={handleClick}
       className="bg-white rounded-lg shadow-md p-3 flex flex-col gap-4 h-36 mt-2 hover:shadow-lg transition-shadow hover:scale-[1.02] hover:cursor-pointer"
     >
@@ -63,14 +63,14 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
             Balance
           </div>
           <div className="text-2xl font-bold text-[#07371B] mb-1">{loading ? (
-              <ClipLoader size={22} color="#000000" />
-            ) : (
-              `${currency} ${balance?.toLocaleString() ?? 0}`
-            )}</div>
+            <ClipLoader size={22} color="#000000" />
+          ) : (
+            `${currency} ${balance?.toLocaleString() ?? 0}`
+          )}</div>
         </div>
       </div>
       <div className="text-xl text-right">
-       
+
         <span className="text-black/70 font-bold">Your Balance</span>
       </div>
     </div>
