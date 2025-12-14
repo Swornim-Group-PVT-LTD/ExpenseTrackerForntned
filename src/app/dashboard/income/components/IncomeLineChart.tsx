@@ -1,19 +1,28 @@
 import React from 'react'
 
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { dailyLineChartService } from '@/app/services/chartService';
+import {useState,useEffect} from 'react';
 
-const ExpensesLineChart = () => {
+const IncomeLineChart = () => {
 
-  const dailySavings = [
-  { day: 1, amount: 50 },
-  { day: 2, amount: 100 },
-  { day: 3, amount: 150 },
-  { day: 4, amount: 200 },
-  { day: 5, amount: 260 },
-  { day: 10, amount: 25 },
-  { day: 20, amount: 230 },
-  // ...
-];
+  const [chartData, setChartData] = useState<{day: string, amount: number}[]>([]);
+
+  useEffect(() => {
+    const fetchChartData = async () => {
+      try {
+        const response = await dailyLineChartService('incomes');
+        const transformedData = response.dates.map((date: string, index: number) => ({
+          day: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          amount: Number(response.totals[index])
+        }));
+        setChartData(transformedData);
+      } catch (error) {
+        console.error('Error fetching income chart data:', error);
+      }
+    };
+    fetchChartData();
+  }, []);
 
   return (
     // <div className='w-full h-64 bg-white rounded-lg my-8 flex justify-center items-center'>
@@ -22,11 +31,10 @@ const ExpensesLineChart = () => {
 
     <div style={{ width: "100%", height: "100%", marginTop: "20px", backgroundColor: "white", borderRadius: "8px" }}>
   <ResponsiveContainer width="100%" height="100%">
-    <LineChart data={dailySavings} margin={{ left: 10, right: 20 }}>
+    <LineChart data={chartData} margin={{ left: 10, right: 20 }}>
       
       {/* Y-Axis */}
       <YAxis
-        ticks={[0, 250, 500]}
         tick={{ fontSize: 12 }}
       />
 
@@ -34,6 +42,7 @@ const ExpensesLineChart = () => {
       <XAxis 
         dataKey="day"
         tick={{ fontSize: 12 }}
+        interval="preserveStartEnd"
       />
 
       <Tooltip />
@@ -55,4 +64,4 @@ const ExpensesLineChart = () => {
   )
 }
 
-export default ExpensesLineChart
+export default IncomeLineChart
