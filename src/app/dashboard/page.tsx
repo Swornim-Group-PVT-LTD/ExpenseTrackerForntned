@@ -20,7 +20,7 @@ import {
 } from "../services/savingService";
 import {
   getTotalIncomeService,
-} from "../services/incomeService";                                                                                                         
+} from "../services/incomeService";
 import {
   getTotalInvestmentService,
 } from "../services/investmentService";
@@ -49,18 +49,18 @@ export default function Dashboard() {
           totalIncome,
           totalInvestment,
         ]: [
-          BalanceResponse[],
-          number,
-          number,
-          number,
-          number
-        ] = await Promise.all([
-          getBalancesService(),
-          getTotalExpenseService(),
-          getTotalSavingService(),
-          getTotalIncomeService(),
-          getTotalInvestmentService(),
-        ]);
+            BalanceResponse[],
+            number,
+            number,
+            number,
+            number
+          ] = await Promise.all([
+            getBalancesService(),
+            getTotalExpenseService(),
+            getTotalSavingService(),
+            getTotalIncomeService(),
+            getTotalInvestmentService(),
+          ]);
 
         // Balance
         const bal = balances?.[0]?.total_balance ?? 0;
@@ -96,8 +96,8 @@ export default function Dashboard() {
   const dashboardData = [
     { title: "Income", value: totalIncome, icon: "/income-logo.svg", labelColor: "#5EAC24" },
     { title: "Expenses", value: totalExpenses, icon: "/expenses-logo.svg", labelColor: "#E63F32" },
-    { title: "Savings", value: totalSaving, icon: "/saving-logo.svg", labelColor: "#4EA890" },
-    { title: "Investments", value: totalInvestment, icon: "/investment-logo.svg", labelColor: "#FFA726" },
+    { title: "Saving", value: totalSaving, icon: "/saving-logo.svg", labelColor: "#4EA890" },
+    { title: "Investment", value: totalInvestment, icon: "/investment-logo.svg", labelColor: "#FFA726" },
   ];
 
   const router = useRouter();
@@ -156,15 +156,7 @@ export default function Dashboard() {
             <StatCard
               key={index}
               icon={item.icon}
-              label={item.title}
-              value={
-                loading ? (
-                  <ClipLoader size={22} color={item.labelColor} />
-                ) : (
-                  formatCurrency(item.value)
-                )
-              }
-              percentage="100%"
+              label={item.title as "income" | "expenses" | "saving" | "investment"}
               labelColor={item.labelColor}
             />
           ))}
