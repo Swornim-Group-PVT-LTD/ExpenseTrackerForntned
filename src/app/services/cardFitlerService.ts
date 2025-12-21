@@ -21,7 +21,7 @@ export const getFilteredCardsDataService = async (
   try {
     const token = getToken();
     
-    const response = await axios.get(`${BASE_URL}/api/${category}?filter_type=${filterType}`, {
+    const response = await axios.get(`${BASE_URL}/api/${category}/total?filter=${filterType}`, {
       headers: { Authorization: `Bearer ${token}` },
       withCredentials: true,
     });

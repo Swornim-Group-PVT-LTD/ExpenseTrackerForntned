@@ -2,12 +2,14 @@ import { ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
+import ClipLoader  from "react-spinners/ClipLoader";
 
 import { getFilteredCardsDataService } from "../services/cardFitlerService";
 
+
 interface StatCardProps {
   icon: string;
-  label: "incomes" | "expenses" | "savings" | "investments";
+  label: "income" | "expenses" | "saving" | "investment";
  
   labelColor: string;
 }
@@ -25,10 +27,30 @@ export default function StatCard({
     router.push(`/dashboard/${label.toLowerCase()}`);
   };
 
+  const getInitialValue = (label: string): FilterType => {
+    
+    switch (label.toLowerCase()) {
+      case "income":
+        return "monthly";
+      case "expenses":
+        return "monthly";
+      case "saving":
+        return "total";
+      case "investment":
+        return "total";
+      default:
+        return "total";
+    }
+  }
 
-  const [filterType, setFilterType] = useState<FilterType>("monthly");
+
+  const [filterType, setFilterType] = useState<FilterType>(() => {
+    const initial = getInitialValue(label);
+    return initial;
+  });
   const [value, setValue] = useState<number>(0);
   const [loading,setLoading]=useState(false);
+  const [currency,setCurrency] = useState("Rs")
 
   useEffect(() => {
     fetchStat();
@@ -37,9 +59,11 @@ export default function StatCard({
   const fetchStat = async () => {
     setLoading(true);
     try{
-      const res = await getFilteredCardsDataService(filterType, label.toLocaleLowerCase());
-      setValue(res.total || 0);
-      console.log(`Fetched ${label} data:`, res);
+      const res = await getFilteredCardsDataService(filterType, label.toLowerCase());
+      const total = res[`total_${label.toLowerCase()}`] ?? 0;
+      setValue(total);
+      
+      setCurrency(res.symbol || "Rs");
     }
     catch(error){
       console.error(`Failed to fetch ${label} data:`, error);
@@ -65,7 +89,11 @@ export default function StatCard({
           <div className="text-xl font-bold mb-1" style={{ color: labelColor }}>
             {label}
           </div>
-          <div className="text-2xl font-bold text-[#07371B] mb-1">{value}</div>
+          <div className="text-2xl font-bold text-[#07371B] mb-1">{loading ? (
+            <ClipLoader size={22} color="#000000" />
+          ) : (
+            `${currency} ${value.toLocaleString()}`
+          )}</div>
         </div>
       </div>
       <div className="text-xl flex justify-between">
