@@ -3,12 +3,14 @@
 import { ChevronDown, Bell, Menu } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useState,useEffect,useRef } from "react";
+import { useRouter } from "next/navigation";
 
 import { Settings, HelpCircle, LogOut } from "lucide-react";
 
 export default function TopNav() {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
+   const router = useRouter();
 
     useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -66,7 +68,7 @@ export default function TopNav() {
           {/* Dropdown */}
           {open && (
             <div className="absolute right-0 top-full mt-2 w-48 bg-[var(--color1)] rounded-lg shadow-lg py-2 z-50">
-              <button className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-[var(--color2)]">
+              <button className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-[var(--color2)]" onClick={() => router.push('/settings')}>
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
               </button>

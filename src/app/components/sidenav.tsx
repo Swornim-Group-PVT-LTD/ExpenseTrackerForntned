@@ -13,45 +13,47 @@ import {
   Folder,
 } from "lucide-react";
 
+import { useTranslation } from "react-i18next";
+
 const dashboardData = [
   {
-    title: "Dashboard",
+    title: "dashboard",
     href: "/dashboard",
     icon: <LayoutDashboard className="h-6 w-6" />,
     color: "bg-red-900",
   },
   {
-    title: "Balance",
+    title: "balance",
     href: "/dashboard/balance",
     icon: <Wallet className="h-6 w-6" />,
     color: "bg-blue-800",
   },
   {
-    title: "Income",
+    title: "income",
     href: "/dashboard/income",
     icon: <ArrowUp className="h-6 w-6" />,
     color: "bg-green-500",
   },
   {
-    title: "Expenses",
+    title: "expenses",
     href: "/dashboard/expenses",
     icon: <ArrowDown className="h-6 w-6" />,
     color: "bg-red-500",
   },
   {
-    title: "Savings",
+    title: "savings",
     href: "/dashboard/savings",
     icon: <PiggyBank className="h-6 w-6" />,
     color: "bg-[var(--color2)]",
   },
   {
-    title: "Investments",
+    title: "investment",
     href: "/dashboard/investments",
     icon: <TrendingUp className="h-6 w-6" />,
     color: "bg-blue-500",
   },
   {
-    title: "Catalogue",
+    title: "catalogue",
     href: "/dashboard/catalogue",
     icon: <Folder className="h-6 w-6" />,
     color: "bg-blue-500",
@@ -59,6 +61,7 @@ const dashboardData = [
 ];
 
 export default function Sidebar() {
+  const { t } = useTranslation();
   const { collapsed, setCollapsed } = useSidebar();
   const pathname = usePathname();
 
@@ -102,7 +105,9 @@ export default function Sidebar() {
                       : "opacity-100 w-auto"
                   }`}
                 >
-                  {item.title}
+                  {t(item.title)}
+                  
+                  {/* {item.title} */}
                 </span>
               </Link>
             );
