@@ -7,7 +7,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } 
 
 
 
-const MonthlyIncomeChart = () => {
+const MonthlyIncomeChart = ({ refreshTrigger }: { refreshTrigger: number }) => {
 
   const [monthlyIncomes, setMonthlyIncomes] = useState<{month: string, amount: number}[]>([]);
 
@@ -29,7 +29,7 @@ const MonthlyIncomeChart = () => {
     };
 
     fetchMonthlyIncomes();
-  }, []);
+  }, [refreshTrigger]);
 
   return (
     <div style={{ width: '100%', height:'100%', marginTop: '20px', backgroundColor: 'white', borderRadius: '8px' }}>

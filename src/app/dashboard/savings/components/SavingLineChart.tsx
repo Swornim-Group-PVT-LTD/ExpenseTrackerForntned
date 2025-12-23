@@ -4,7 +4,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import { dailyLineChartService } from '@/app/services/chartService';
 import {useState,useEffect} from 'react';
 
-const SavingLineChart = () => {
+const SavingLineChart = ({ refreshTrigger }: { refreshTrigger: number }) => {
 
   const [chartData, setChartData] = useState<{day: string, amount: number}[]>([]);
 
@@ -22,7 +22,7 @@ const SavingLineChart = () => {
       }
     };
     fetchChartData();
-  }, []);
+  }, [refreshTrigger]);
 
   return (
     // <div className='w-full h-64 bg-white rounded-lg my-8 flex justify-center items-center'>

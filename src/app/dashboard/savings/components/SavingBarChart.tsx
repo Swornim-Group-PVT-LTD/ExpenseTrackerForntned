@@ -8,7 +8,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } 
 
 
 
-const MonthlySavingsChart = () => {
+const MonthlySavingsChart = ({ refreshTrigger }: { refreshTrigger: number }) => {
   const [monthlySavings, setMonthlySavings] = useState<{month: string, amount: number}[]>([]);
 
     useEffect(() => {
@@ -29,7 +29,7 @@ const MonthlySavingsChart = () => {
     };
 
     fetchMonthlySavings();
-  }, []);
+  }, [refreshTrigger]);
   return (
     <div style={{ width: '100%', height: '100%', marginTop: '20px', backgroundColor: 'white', borderRadius: '8px' }}>
           <ResponsiveContainer width="100%" height="100%">
