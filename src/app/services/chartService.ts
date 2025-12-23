@@ -53,3 +53,19 @@ export const monthlyBarChartService = async (category:string): Promise<any> => {
     );
   }
 };
+
+
+//Get Category-wise Pie Chart Data for expense including date filter
+export const expensePieChartService = async (filter_type:string, startDate?:string, endDate?:string): Promise<any> => {
+  try {
+    const token = getToken();
+    const response = await axios.get(`${BASE_URL}/api/expenses/category-wise?filter_type=${filter_type}&start_date=${startDate}&end_date=${endDate}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to fetch category pie chart data"
+    );
+  }
+};

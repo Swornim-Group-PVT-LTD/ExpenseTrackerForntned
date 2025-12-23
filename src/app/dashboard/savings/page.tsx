@@ -89,8 +89,8 @@ function Saving() {
       </div>
       <div className="grid grid-cols-1 items-center lg:grid-cols-2 gap-4 my-4 h-70">
 
-      <SavingLineChart />
-      <SavingBarChart />
+      <SavingLineChart refreshTrigger={refreshTrigger} />
+      <SavingBarChart refreshTrigger={refreshTrigger} />
       </div>
       <DateFilter 
         fetchService={getSavingByDateRangeService} 

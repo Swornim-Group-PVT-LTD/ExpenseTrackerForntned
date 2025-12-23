@@ -6,7 +6,7 @@ import { dailyLineChartService } from '@/app/services/chartService';
 import {useState,useEffect} from 'react'; 
 
 
-const ExpensesLineChart = () => {
+const ExpensesLineChart = ({ refreshTrigger }: { refreshTrigger: number }) => {
 
   const [chartData, setChartData] = useState<{day: string, amount: number}[]>([]);
 
@@ -24,7 +24,7 @@ const ExpensesLineChart = () => {
       }
     };
     fetchChartData();
-  }, []);
+  }, [refreshTrigger]);
 
   return (
     // <div className='w-full h-64 bg-white rounded-lg my-8 flex justify-center items-center'>

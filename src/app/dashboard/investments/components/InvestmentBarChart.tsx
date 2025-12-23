@@ -5,7 +5,7 @@ import {useState,useEffect} from 'react';
 import { monthlyBarChartService } from '@/app/services/chartService';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
 
-const MonthlyInvestmentChart = () => {
+const MonthlyInvestmentChart = ({ refreshTrigger }: { refreshTrigger: number }) => {
   const [monthlyInvestments, setMonthlyInvestments] = useState<{ month: string, amount: number }[]>([]);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const MonthlyInvestmentChart = () => {
     };
 
     fetchMonthlyInvestments();
-  }, []);
+  }, [refreshTrigger]);
 
   return (
     <div style={{ width: '100%', height: '100%', marginTop: '20px', backgroundColor: 'white', borderRadius: '8px' }}>

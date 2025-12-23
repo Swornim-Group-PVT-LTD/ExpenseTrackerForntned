@@ -96,8 +96,8 @@ function Income() {
       </div>
       <div className="grid grid-cols-1 items-center lg:grid-cols-2 gap-4 my-4 h-70">
 
-        <IncomeLineChart />
-        <IncomeBarChart />
+        <IncomeLineChart refreshTrigger={refreshTrigger} />
+        <IncomeBarChart refreshTrigger={refreshTrigger} />
       </div>
       <DateFilter 
         fetchService={getIncomeByDateRangeService} 

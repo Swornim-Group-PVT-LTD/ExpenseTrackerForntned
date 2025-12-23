@@ -4,7 +4,7 @@ import {useState,useEffect} from 'react';
 import { monthlyBarChartService } from '@/app/services/chartService';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
 
-const MonthlyExpenseChart = () => {
+const MonthlyExpenseChart = ({ refreshTrigger }: { refreshTrigger: number }) => {
   const [monthlyExpenses, setMonthlyExpenses] = useState<{ month: string, amount: number }[]>([]);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const MonthlyExpenseChart = () => {
     };
 
     fetchMonthlyExpenses();
-  }, []);
+  }, [refreshTrigger]);
 
   return (
     <div style={{ width: '100%', height: '100%', marginTop: '20px', backgroundColor: 'white', borderRadius: '8px' }}>
