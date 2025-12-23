@@ -37,3 +37,19 @@ export const dailyLineChartService = async (category:string): Promise<any> => {
     );
   }
 };
+
+
+//get Monthly Bar Chart Data for expense, income, savings, investments
+export const monthlyBarChartService = async (category:string): Promise<any> => {
+  try {
+    const token = getToken();
+    const response = await axios.get(`${BASE_URL}/api/${category}/graph/monthly`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to fetch monthly bar chart data"
+    );
+  }
+};
