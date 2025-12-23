@@ -96,8 +96,8 @@ export default function Dashboard() {
   const dashboardData = [
     { title: "Income", value: totalIncome, icon: "/income-logo.svg", labelColor: "#5EAC24" },
     { title: "Expenses", value: totalExpenses, icon: "/expenses-logo.svg", labelColor: "#E63F32" },
-    { title: "Saving", value: totalSaving, icon: "/saving-logo.svg", labelColor: "#4EA890" },
-    { title: "Investment", value: totalInvestment, icon: "/investment-logo.svg", labelColor: "#FFA726" },
+    { title: "Savings", value: totalSaving, icon: "/saving-logo.svg", labelColor: "#4EA890" },
+    { title: "Investments", value: totalInvestment, icon: "/investment-logo.svg", labelColor: "#FFA726" },
   ];
 
   const router = useRouter();
