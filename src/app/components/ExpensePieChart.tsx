@@ -2,7 +2,7 @@ import { b, div, filter } from "framer-motion/client";
 import { Pie, PieChart, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { expensePieChartService } from "../services/chartService";
 import {useState, useEffect} from 'react';
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Maximize2, X } from "lucide-react";
 
 const data = [
   { name: "Income", value: 60, color: "#5EAC24" },
@@ -15,6 +15,7 @@ export default function ExpensesPieChart() {
 
   const [filter_type, setFilterType] = useState('monthly');
   const [pieChartData, setPieChartData] = useState<{name: string, value: number, color: string}[]>([]);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   const colors = ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40"];
 
@@ -50,9 +51,9 @@ export default function ExpensesPieChart() {
     const fetchPieChartData = async () => {
       try {
         const dateRange = getDateRange(filter_type);
-        console.log('Date range:', dateRange);
+
         const response = await expensePieChartService(filter_type, dateRange.start, dateRange.end);
-        console.log('Pie chart response:', response);
+
         
         if (response.data && response.data.length > 0) {
           const transformedData = response.data.map((item: any, index: number) => ({
@@ -60,7 +61,6 @@ export default function ExpensesPieChart() {
             value: Number(item.total_amount),
             color: colors[index % colors.length]
           }));
-          console.log('Transformed data:', transformedData);
           setPieChartData(transformedData);
         } else {
           // Set fallback data if no data received
@@ -75,6 +75,7 @@ export default function ExpensesPieChart() {
     fetchPieChartData();
   }, [filter_type]);
   return (
+    <>
     <div
       style={{
         width: "100%",
@@ -84,20 +85,29 @@ export default function ExpensesPieChart() {
         padding: "12px",
       }}
     >
-
-       <div className="relative w-32 mb-4" >
-                      <select
-                        value={filter_type}
-                        onChange={(e) => setFilterType(e.target.value)}
-                        className="appearance-none w-full  py-1 px-2 text-sm font-medium text-[#716A6A] border border-[#574A4A]/50 rounded-lg bg-white cursor-pointer"
-                      >
-                        <option value="yearly">Yearly</option>
-                        <option value="monthly">Monthly</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="daily">Daily</option>
-                      </select>
-                      <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-[#716A6A] pointer-events-none" />
-                    </div>
+      <div className="flex justify-between items-center mb-4">
+        <div className="relative w-32">
+          <select
+            value={filter_type}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="appearance-none w-full py-1 px-2 text-sm font-medium text-[#716A6A] border border-[#574A4A]/50 rounded-lg bg-white cursor-pointer"
+          >
+            <option value="yearly">Yearly</option>
+            <option value="monthly">Monthly</option>
+            <option value="weekly">Weekly</option>
+            <option value="daily">Daily</option>
+          </select>
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-[#716A6A] pointer-events-none" />
+        </div>
+        
+        <button
+          onClick={() => setIsFullScreen(true)}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          title="Full Screen View"
+        >
+          <Maximize2 className="w-4 h-4 text-gray-600" />
+        </button>
+      </div>
 
       <ResponsiveContainer width="100%" height={340}>
         <PieChart>
@@ -107,17 +117,63 @@ export default function ExpensesPieChart() {
             cy="50%"
             outerRadius={100}
             dataKey="value"
-            label={(entry) => `${entry.name}: ${entry.value}`}
           >
             {(pieChartData.length > 0 ? pieChartData : data).map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color} />
             ))}
           </Pie>
-
           <Tooltip />
           <Legend />
         </PieChart>
       </ResponsiveContainer>
     </div>
+
+    {/* Full Screen Modal */}
+    {isFullScreen && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 w-[90vw] h-[90vh] max-w-6xl">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-gray-900">Expense Distribution</h2>
+            <button
+              onClick={() => setIsFullScreen(false)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
+          
+          <ResponsiveContainer width="100%" height="90%">
+            <PieChart>
+              <Pie
+                data={pieChartData.length > 0 ? pieChartData : data}
+                cx="50%"
+                cy="50%"
+                outerRadius={200}
+                dataKey="value"
+                label={(entry: any) => {
+                  const currentData = pieChartData.length > 0 ? pieChartData : data;
+                  const total = currentData.reduce((sum, item) => sum + item.value, 0);
+                  const percent = ((Number(entry.value) / total) * 100).toFixed(1);
+                  return `${entry.name}: ${percent}%`;
+                }}
+                labelLine={false}
+              >
+                {(pieChartData.length > 0 ? pieChartData : data).map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value, name) => {
+                const currentData = pieChartData.length > 0 ? pieChartData : data;
+                const total = currentData.reduce((sum, item) => sum + item.value, 0);
+                const percent = ((Number(value) / total) * 100).toFixed(1);
+                return [`${Number(value).toLocaleString()} (${percent}%)`, 'Amount'];
+              }} />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    )}
+    </>
   );
 }

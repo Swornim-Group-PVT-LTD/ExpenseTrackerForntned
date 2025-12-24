@@ -87,10 +87,13 @@ function Saving() {
         <BalanceCard refreshTrigger={refreshTrigger} />
         <SavingForm onSuccess={handleRefresh} />
       </div>
-      <div className="grid grid-cols-1 items-center lg:grid-cols-2 gap-4 my-4 h-70">
-
-      <SavingLineChart refreshTrigger={refreshTrigger} />
-      <SavingBarChart refreshTrigger={refreshTrigger} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4">
+        <div className="h-80">
+          <SavingLineChart refreshTrigger={refreshTrigger} />
+        </div>
+        <div className="h-80">
+          <SavingBarChart refreshTrigger={refreshTrigger} />
+        </div>
       </div>
       <DateFilter 
         fetchService={getSavingByDateRangeService} 

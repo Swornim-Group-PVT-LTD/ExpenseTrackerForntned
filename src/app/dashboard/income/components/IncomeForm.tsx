@@ -138,7 +138,12 @@ const IncomeForm = ({ onSuccess }: IncomeFormProps) => {
           <input
             type="number"
             placeholder="400000"
-            className="flex-1 h-12 px-3 text-sm text-[#716A6A] border border-[#574A4A]/50 rounded outline-none focus:border-[#FFA726]"
+            className="flex-1 h-12 min-h-[48px] px-3 text-md font-bold text-[#716A6A] 
+                   border border-[#574A4A]/50 rounded outline-none 
+                   focus:border-[#FFA726]
+                   [appearance:textfield] 
+                   [&::-webkit-outer-spin-button]:appearance-none 
+                   [&::-webkit-inner-spin-button]:appearance-none"
             value={amount}
             onChange={(e) =>
               setAmount(e.target.value === "" ? "" : Number(e.target.value))

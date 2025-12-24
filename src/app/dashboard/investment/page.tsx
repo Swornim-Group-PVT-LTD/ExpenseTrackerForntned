@@ -86,10 +86,13 @@ function Investment() {
         <BalanceCard refreshTrigger={refreshTrigger}/>
         <InvestmentForm onSuccess={handleRefresh} />
       </div>
-      <div className="grid grid-cols-1 items-center lg:grid-cols-2 gap-4 my-4 h-70">
-
-      <InvestmentLineChart refreshTrigger={refreshTrigger} />
-      <InvestmentBarChart refreshTrigger={refreshTrigger} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4">
+        <div className="h-80">
+          <InvestmentLineChart refreshTrigger={refreshTrigger} />
+        </div>
+        <div className="h-80">
+          <InvestmentBarChart refreshTrigger={refreshTrigger} />
+        </div>
       </div>
       <DateFilter 
         fetchService={getInvestmentByDateRangeService} 

@@ -138,143 +138,152 @@ export default function ExpensesTable({
   };
 
   return (
-    <div className="overflow-x-auto">
-      <Table striped>
-        {/* TableHead */}
-        <TableHead className="text-lg">
-          <TableRow>
-            <TableHeadCell>ID</TableHeadCell>
-            <TableHeadCell>Expenses</TableHeadCell>
-            <TableHeadCell>Remarks</TableHeadCell>
-            <TableHeadCell>Total Expenses</TableHeadCell>
-            <TableHeadCell>Added Date</TableHeadCell>
-            <TableHeadCell>Action</TableHeadCell>
-          </TableRow>
-        </TableHead>
-
-        {/* TableBody */}
-        <TableBody className="divide-y">
-          {loading ? (
-            <TableRow>
-              <TableCell
-                colSpan={6}
-                className="text-center font-medium text-gray-500"
-              >
-                <ClipLoader size={22} color="#000000" />
-              </TableCell>
-            </TableRow>
-          ) : expenses.length === 0 ? (
-            <TableRow>
-              <TableCell
-                colSpan={6}
-                className="text-center font-medium text-gray-500"
-              >
-                No expenses found
-              </TableCell>
-            </TableRow>
-          ) : (
-            expenses.map((row) => (
-              <TableRow
-                key={row.id}
-                className="bg-white dark:border-gray-700 dark:bg-gray-800"
-              >
-                <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                  {row.id}
-                </TableCell>
-                <TableCell>
-                  {row.symbol || "NPR"}{" "}
-                  {editingSn === row.sn ? (
-                    <input
-                      className="p-2 border rounded-md border-gray-300"
-                      value={editForm.add_expenses}
-                      onChange={(e) =>
-                        setEditForm((prev) => ({
-                          ...prev,
-                          add_expenses: Number(e.target.value),
-                        }))
-                      }
-                    />
-                  ) : (
-                    row.add_expenses
-                  )}
-                </TableCell>
-                <TableCell>
-                  {editingSn === row.sn ? (
-                    <SearchInput
-                      options={categories.map((cat) => ({
-                        id: cat.id,
-                        value: cat.expense_category,
-                      }))}
-                      value={editForm.expense_category}
-                      onChange={(value) => setEditForm(prev => ({ ...prev, expense_category: value }))}
-                      placeholder="Type expense category..."
-                      className="w-full sm:w-80"
-                    />
-                  ) : (
-                    row.expense_category
-                  )}
-                </TableCell>
-                <TableCell>
-                  {row.symbol || "NPR"}{" "}
-                  {row.total_expenses?.toLocaleString() || "0"}
-                </TableCell>
-                <TableCell>{row.created_date}</TableCell>
-                <TableCell>
-                  {editingSn === row.sn ? (
-                    <>
-                      <button
-                        className="text-green-600 mr-2 cursor-pointer"
-                        onClick={() => saveEdit(row.sn)}
-                      >
-                        Save
-                      </button>
-                      <button
-                        className="text-gray-600 cursor-pointer"
-                        onClick={cancelEdit}
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      className="text-blue-600 cursor-pointer"
-                      onClick={() => startEdit(row)}
-                    >
-                      Edit
-                    </button>
-                  )}
-                  <button
-                    className="font-medium text-red-600 hover:underline dark:text-red-500 ml-2"
-                    onClick={() => handleDelete(row.sn)}
-                  >
-                    Delete
-                  </button>
-                </TableCell>
+    <div className="overflow-x-auto -mx-4 sm:mx-0">
+      <div className="inline-block min-w-full align-middle">
+        <div className="overflow-hidden">
+          <Table striped className="min-w-[800px]">
+            {/* TableHead */}
+            <TableHead className="text-lg">
+              <TableRow>
+                <TableHeadCell>ID</TableHeadCell>
+                <TableHeadCell>Expenses</TableHeadCell>
+                <TableHeadCell>Remarks</TableHeadCell>
+                <TableHeadCell>Total Expenses</TableHeadCell>
+                <TableHeadCell>Added Date</TableHeadCell>
+                <TableHeadCell>Action</TableHeadCell>
               </TableRow>
-            ))
-          )}
+            </TableHead>
 
-          {/* TOTAL EXPENSES BAR */}
-          {expenses.length > 0 && (
-            <TableRow>
-              <TableCell colSpan={6}>
-                <div
-                  className="flex justify-between items-center p-4 text-white font-semibold rounded-lg shadow mt-2"
-                  style={{ backgroundColor: "#ff4d4d" }}
-                >
-                  <span>Total Expenses</span>
-                  <span>
-                    {expenses[expenses.length - 1].symbol || "NPR"}{" "}
-                    {expenses[
-                      expenses.length - 1
-                    ].total_expenses?.toLocaleString() || "0"}
-                  </span>
-                </div>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            {/* TableBody */}
+            <TableBody className="divide-y">
+              {loading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={6}
+                    className="text-center font-medium text-gray-500"
+                  >
+                    <ClipLoader size={22} color="#000000" />
+                  </TableCell>
+                </TableRow>
+              ) : expenses.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={6}
+                    className="text-center font-medium text-gray-500"
+                  >
+                    No expenses found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                expenses.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                  >
+                    <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                      {row.id}
+                    </TableCell>
+                    <TableCell>
+                      {row.symbol || "NPR"}{" "}
+                      {editingSn === row.sn ? (
+                        <input
+                          className="p-2 border rounded-md border-gray-300"
+                          value={editForm.add_expenses}
+                          onChange={(e) =>
+                            setEditForm((prev) => ({
+                              ...prev,
+                              add_expenses: Number(e.target.value),
+                            }))
+                          }
+                        />
+                      ) : (
+                        row.add_expenses
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {editingSn === row.sn ? (
+                        <SearchInput
+                          options={categories.map((cat) => ({
+                            id: cat.id,
+                            value: cat.expense_category,
+                          }))}
+                          value={editForm.expense_category}
+                          onChange={(value) =>
+                            setEditForm((prev) => ({
+                              ...prev,
+                              expense_category: value,
+                            }))
+                          }
+                          placeholder="Type expense category..."
+                          className="w-full sm:w-80"
+                        />
+                      ) : (
+                        row.expense_category
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {row.symbol || "NPR"}{" "}
+                      {row.total_expenses?.toLocaleString() || "0"}
+                    </TableCell>
+                    <TableCell>{row.created_date}</TableCell>
+                    <TableCell>
+                      {editingSn === row.sn ? (
+                        <>
+                          <button
+                            className="text-green-600 mr-2 cursor-pointer"
+                            onClick={() => saveEdit(row.sn)}
+                          >
+                            Save
+                          </button>
+                          <button
+                            className="text-gray-600 cursor-pointer"
+                            onClick={cancelEdit}
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          className="text-blue-600 cursor-pointer"
+                          onClick={() => startEdit(row)}
+                        >
+                          Edit
+                        </button>
+                      )}
+                      <button
+                        className="font-medium text-red-600 hover:underline dark:text-red-500 ml-2"
+                        onClick={() => handleDelete(row.sn)}
+                      >
+                        Delete
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+
+              {/* TOTAL EXPENSES BAR */}
+              {expenses.length > 0 && (
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <div
+                      className="flex justify-between items-center p-4 text-white font-semibold rounded-lg shadow mt-2"
+                      style={{ backgroundColor: "#ff4d4d" }}
+                    >
+                      <span>Total Expenses</span>
+                      <span>
+                        {expenses[expenses.length - 1].symbol || "NPR"}{" "}
+                        {expenses[
+                          expenses.length - 1
+                        ].total_expenses?.toLocaleString() || "0"}
+                      </span>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
     </div>
   );
 }

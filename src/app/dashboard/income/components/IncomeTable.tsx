@@ -134,8 +134,10 @@ export default function IncomeTable({
   };
 
   return (
-    <div className="overflow-x-auto">
-      <Table striped>
+    <div className="overflow-x-auto -mx-4 sm:mx-0">
+      <div className="inline-block min-w-full py-2 align-middle px-4 sm:px-0">
+        <div className="overflow-hidden">
+      <Table striped className="min-w-[800px]">
         <TableHead className="text-lg">
           <TableRow>
             <TableHeadCell>ID</TableHeadCell>
@@ -268,6 +270,8 @@ export default function IncomeTable({
           )}
         </TableBody>
       </Table>
+    </div>
+    </div>
     </div>
   );
 }
