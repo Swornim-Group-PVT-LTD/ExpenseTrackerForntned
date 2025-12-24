@@ -143,8 +143,10 @@ export default function SavingTable({
   };
 
   return (
-    <div className="overflow-x-auto">
-      <Table striped>
+<div className="overflow-x-auto -mx-4 sm:mx-0">
+  <div className="inline-block min-w-full align-middle">
+    <div className="overflow-hidden">
+      <Table striped className="min-w-[800px]">
         {/* TableHead */}
         <TableHead className="text-lg">
           <TableRow>
@@ -298,6 +300,8 @@ export default function SavingTable({
           )}
         </TableBody>
       </Table>
+    </div>
+    </div>
     </div>
   );
 }
