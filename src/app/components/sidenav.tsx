@@ -42,13 +42,13 @@ const dashboardData = [
   },
   {
     title: "savings",
-    href: "/dashboard/savings",
+    href: "/dashboard/saving",
     icon: <PiggyBank className="h-6 w-6" />,
     color: "bg-[var(--color2)]",
   },
   {
     title: "investment",
-    href: "/dashboard/investments",
+    href: "/dashboard/investment",
     icon: <TrendingUp className="h-6 w-6" />,
     color: "bg-blue-500",
   },
