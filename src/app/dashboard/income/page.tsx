@@ -94,10 +94,13 @@ function Income() {
         <BalanceCard refreshTrigger={refreshTrigger} />
         <IncomeForm onSuccess={handleRefresh} />
       </div>
-      <div className="grid grid-cols-1 items-center lg:grid-cols-2 gap-4 my-4 h-70">
-
-        <IncomeLineChart refreshTrigger={refreshTrigger} />
-        <IncomeBarChart refreshTrigger={refreshTrigger} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4">
+        <div className="h-80">
+          <IncomeLineChart refreshTrigger={refreshTrigger} />
+        </div>
+        <div className="h-80">
+          <IncomeBarChart refreshTrigger={refreshTrigger} />
+        </div>
       </div>
       <DateFilter 
         fetchService={getIncomeByDateRangeService} 
