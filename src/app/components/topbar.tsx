@@ -43,12 +43,21 @@ export default function TopNav() {
   
   return (
     <div className=" text-white  h-18 bg-[#133840] shadow-lg z-40 flex items-center justify-between px-3">
-      <button className="p-4 hover:bg-[#2a2a2a] flex items-center justify-center transition-colors duration-200">
+      {/* Hamburger - Hidden on mobile */}
+      <button className="hidden md:flex p-4 hover:bg-[#2a2a2a] items-center justify-center transition-colors duration-200">
         <Menu className="h-6 w-6" />
       </button>
 
+      {/* Welcome message - Show on mobile, positioned left */}
+      <div className="md:hidden">
+        <span className="text-white text-lg font-bold">
+          Welcome, {user?.first_name}
+        </span>
+      </div>
+
       <div className="flex items-center gap-2 pr-2 md:gap-3">
-        <span className="text-white text-lg font-bold hidden sm:block">
+        {/* Welcome message - Hidden on mobile, shown on desktop */}
+        <span className="text-white text-lg font-bold hidden md:block">
           Welcome, {user?.first_name}
         </span>
 
