@@ -42,7 +42,10 @@ const InvestmentLineChart = ({ refreshTrigger }: { refreshTrigger: number }) => 
       <XAxis 
         dataKey="day"
         tick={{ fontSize: 12 }}
-        interval="preserveStartEnd"
+        interval={0}
+        angle={-45}
+        textAnchor="end"
+        height={60}
       />
 
       <Tooltip />
