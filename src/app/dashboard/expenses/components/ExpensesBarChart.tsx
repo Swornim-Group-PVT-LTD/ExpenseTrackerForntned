@@ -35,6 +35,9 @@ const MonthlyExpenseChart = ({ refreshTrigger }: { refreshTrigger: number }) => 
           {/* Y-Axis (with amount labels) */}
           <YAxis
             tick={{ fontSize: 12 }}
+            tickFormatter={(value) => `${(value / 1000).toFixed(0)}K`}
+            interval={0}
+            tickCount={6}
           />
 
           <XAxis dataKey="month" />
