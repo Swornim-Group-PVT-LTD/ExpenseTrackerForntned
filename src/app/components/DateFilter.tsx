@@ -21,8 +21,8 @@ export default function DateFilter({
   onDownloadPDF,
   onDownloadExcel,
 }: DateFilterProps) {
-  const [from, setFrom] = useState<Date | undefined>(undefined);
-  const [to, setTo] = useState<Date | undefined>(undefined);
+  const [from, setFrom] = useState<Date | undefined>(new Date());
+  const [to, setTo] = useState<Date | undefined>(new Date());
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [error, setError] = useState<string>("");
 
@@ -43,6 +43,7 @@ export default function DateFilter({
 
     const start_date = from ? formatLocalDate(from) : undefined;
     const end_date = to ? formatLocalDate(to) : undefined;
+    console.log("Fetching data from", start_date, "to", end_date, "for category", selectedCategory);
 
     try {
       const response = await fetchService(start_date, end_date, selectedCategory || undefined);
