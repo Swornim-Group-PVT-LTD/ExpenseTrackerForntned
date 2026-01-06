@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Home } from "lucide-react";
+import { Home, ArrowUp, ArrowDown, PiggyBank, TrendingUp } from "lucide-react";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useRouter } from "next/navigation";
 
@@ -94,10 +94,10 @@ export default function Dashboard() {
   }, []);
 
   const dashboardData = [
-    { title: "Income", value: totalIncome, icon: "/income-logo.svg", labelColor: "#5EAC24" },
-    { title: "Expenses", value: totalExpenses, icon: "/expenses-logo.svg", labelColor: "#E63F32" },
-    { title: "Saving", value: totalSaving, icon: "/saving-logo.svg", labelColor: "#4EA890" },
-    { title: "Investment", value: totalInvestment, icon: "/investment-logo.svg", labelColor: "#FFA726" },
+    { title: "Income", value: totalIncome, icon: "/income-logo.svg", labelColor: "#5EAC24", lucideIcon: <ArrowUp className="w-6 h-6" /> },
+    { title: "Expenses", value: totalExpenses, icon: "/expenses-logo.svg", labelColor: "#E63F32", lucideIcon: <ArrowDown className="w-6 h-6" /> },
+    { title: "Saving", value: totalSaving, icon: "/saving-logo.svg", labelColor: "#4EA890", lucideIcon: <PiggyBank className="w-6 h-6" /> },
+    { title: "Investment", value: totalInvestment, icon: "/investment-logo.svg", labelColor: "#FFA726", lucideIcon: <TrendingUp className="w-6 h-6" /> },
   ];
 
   const router = useRouter();
@@ -124,17 +124,43 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
           <h1 className="text-2xl font-bold">Dashboard</h1>
 
-          <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4 h-16">
-            {dashboardData.map((item, index) => (
-              <button
-                key={index}
-                style={{ backgroundColor: item.labelColor }}
-                className="text-white text-lg font-bold py-2 px-3 rounded hover:opacity-90 transition shadow-md cursor-pointer"
-                onClick={() => handleClick(item.title)}
-              >
-                {`Add ${item.title}`}
-              </button>
-            ))}
+          {/* Desktop buttons */}
+          <div className="hidden sm:block lg:col-span-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4 h-16">
+              {dashboardData.map((item, index) => (
+                <button
+                  key={index}
+                  style={{ backgroundColor: item.labelColor }}
+                  className="text-white text-lg font-bold py-2 px-3 rounded hover:opacity-90 transition shadow-md cursor-pointer"
+                  onClick={() => handleClick(item.title)}
+                >
+                  {`Add ${item.title}`}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile circular icons */}
+          <div className="sm:hidden lg:col-span-2">
+            <div className="grid grid-cols-4 gap-3 mb-4">
+              {dashboardData.map((item, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleClick(item.title)}
+                  className="flex flex-col items-center justify-center transition-transform hover:scale-105 cursor-pointer"
+                >
+                  <div 
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md"
+                    style={{ backgroundColor: item.labelColor }}
+                  >
+                    {item.lucideIcon}
+                  </div>
+                  <span className="text-sm mt-1 font-bold text-gray-700">
+                    Add {item.title}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
