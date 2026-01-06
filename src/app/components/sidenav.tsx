@@ -11,7 +11,9 @@ import {
   Menu,
   LayoutDashboard,
   Folder,
+  Plus,
 } from "lucide-react";
+import { useState } from "react";
 
 import { useTranslation } from "react-i18next";
 
@@ -64,6 +66,16 @@ export default function Sidebar() {
   const { t } = useTranslation();
   const { collapsed, setCollapsed } = useSidebar();
   const pathname = usePathname();
+  const [showAddMenu, setShowAddMenu] = useState(false);
+
+  // Separate add categories from other nav items
+  const addCategories = dashboardData.filter(item => 
+    ['income', 'expenses', 'savings', 'investment'].includes(item.title)
+  );
+  
+  const otherNavItems = dashboardData.filter(item => 
+    !['income', 'expenses', 'savings', 'investment'].includes(item.title)
+  );
 
   return (
     <>
@@ -116,8 +128,43 @@ export default function Sidebar() {
       </aside>
 
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-[var(--color1)] text-white flex justify-around items-center h-20 z-50 shadow-lg ">
-        {dashboardData.map((item, i) => {
+      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-[var(--color1)] text-white flex justify-around items-center h-20 z-50 shadow-lg">
+        {/* Add Menu Dropdown */}
+        {showAddMenu && (
+          <div className="absolute bottom-20 left-0 w-full bg-[var(--color1)] border-t border-gray-600 p-4">
+            <div className="grid grid-cols-2 gap-4">
+              {addCategories.map((item, i) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={i}
+                    href={item.href}
+                    onClick={() => setShowAddMenu(false)}
+                    className="flex flex-col items-center justify-center text-xs transition-colors p-2"
+                  >
+                    <div
+                      className={`p-2 rounded-lg flex items-center justify-center ${
+                        isActive ? "border-[var(--color2)] border-2" : item.color
+                      }`}
+                    >
+                      {item.icon}
+                    </div>
+                    <span
+                      className={`text-[10px] mt-1 ${
+                        isActive ? "text-[var(--color2)] font-semibold" : ""
+                      }`}
+                    >
+                      {item.title}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+        
+        {/* Main Nav Items */}
+        {otherNavItems.map((item, i) => {
           const isActive = pathname === item.href;
           return (
             <Link
@@ -127,7 +174,7 @@ export default function Sidebar() {
             >
               <div
                 className={`p-2 rounded-lg flex items-center justify-center ${
-                  isActive ? "border-[var(--color2)]  border-2" : item.color
+                  isActive ? "border-[var(--color2)] border-2" : item.color
                 }`}
               >
                 {item.icon}
@@ -142,6 +189,17 @@ export default function Sidebar() {
             </Link>
           );
         })}
+        
+        {/* Add Button */}
+        <button
+          onClick={() => setShowAddMenu(!showAddMenu)}
+          className="flex flex-col items-center justify-center text-xs transition-colors"
+        >
+          <div className="p-2 rounded-lg flex items-center justify-center bg-green-600">
+            <Plus className="h-6 w-6" />
+          </div>
+          <span className="text-[10px] mt-1">Add</span>
+        </button>
       </nav>
     </>
   );

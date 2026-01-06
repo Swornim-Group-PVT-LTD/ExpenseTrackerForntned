@@ -34,7 +34,7 @@ const MonthlyIncomeChart = ({ refreshTrigger }: { refreshTrigger: number }) => {
   return (
     <div style={{ width: '100%', height:'100%', marginTop: '20px', backgroundColor: 'white', borderRadius: '8px' }}>
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={monthlyIncomes} margin={{ left: 10 }}>
+        <BarChart data={monthlyIncomes} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
 
           {/* Y-Axis (with amount labels) */}
           <YAxis 

@@ -61,7 +61,7 @@ export default function StatCard({
     try{
       const res = await getFilteredCardsDataService(filterType, label.toLowerCase());
       const total = res[`total_${label.toLowerCase()}`] ?? 0;
-      setValue(total);
+      setValue(Number(total));
       
       setCurrency(res.symbol || "Rs");
     }
