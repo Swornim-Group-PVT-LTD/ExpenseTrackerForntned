@@ -96,6 +96,16 @@ export default function InvestmentTable({
 
   // Save update
   const saveEdit = async (sn: string) => {
+    // Validate category
+    const categoryExists = categories.some(
+      (cat) => cat.investment_category.toLowerCase() === editForm.investment_category.toLowerCase()
+    );
+
+    if (!categoryExists) {
+      toast.error("Please select a valid category from the list");
+      return;
+    }
+
     try {
       await updateInvestmentService(sn, {
         add_investment: editForm.add_investment,

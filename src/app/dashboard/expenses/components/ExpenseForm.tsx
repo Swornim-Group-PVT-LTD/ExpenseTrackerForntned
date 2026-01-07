@@ -85,6 +85,16 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
   // 4️⃣ Add Expense
   // ============================================================
   const handleAddExpense = async () => {
+    // Validate category
+    const categoryExists = categories.some(
+      (cat) => cat.expense_category.toLowerCase() === remarks.toLowerCase()
+    );
+
+    if (!categoryExists) {
+      toast.error("Please select a valid category from the list");
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -108,73 +118,72 @@ const ExpenseForm = ({ onSuccess }: ExpenseFormProps) => {
   };
 
   return (
-<div className="col-span-full lg:col-span-3 h-fit">
-  <div className="bg-white rounded-md p-4 w-full h-full flex flex-col gap-4">
+    <div className="col-span-full lg:col-span-3 h-fit">
+      <div className="bg-white rounded-md p-4 w-full h-full flex flex-col gap-4">
 
-    {/* ⭐ Total Expense Display */}
-    <div className="mb-4 p-3 rounded-lg bg-[#ff4d4d] border border-[#E53E3E]/30 flex items-center justify-between">
-      <span className="text-md font-semibold text-white">Total Expense</span>
-      <span className="text-xl font-bold text-white">
-        {currency}{totalExpense?.toLocaleString()}
-      </span>
-    </div>
+        {/* ⭐ Total Expense Display */}
+        <div className="mb-4 p-3 rounded-lg bg-[#ff4d4d] border border-[#E53E3E]/30 flex items-center justify-between">
+          <span className="text-md font-semibold text-white">Total Expense</span>
+          <span className="text-xl font-bold text-white">
+            {currency}{totalExpense?.toLocaleString()}
+          </span>
+        </div>
 
-    {/* ⭐ Input Section */}
-    <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
+        {/* ⭐ Input Section */}
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
 
-      {/* AUTO SYMBOL (from Balance API) */}
-      <div className="relative w-full sm:w-24">
-        <input
-          type="text"
-          className="w-full h-12 px-2 text-md font-bold text-[#716A6A]
+          {/* AUTO SYMBOL (from Balance API) */}
+          <div className="relative w-full sm:w-24">
+            <input
+              type="text"
+              className="w-full h-12 px-2 text-md font-bold text-[#716A6A]
                      border border-[#574A4A]/50 rounded bg-gray-100 cursor-not-allowed"
-          value={currency}
-          disabled
-        />
-      </div>
+              value={currency}
+              disabled
+            />
+          </div>
 
-      {/* Amount input - FIXED with min-height */}
-      <input
-        type="number"
-        inputMode="decimal"
-        placeholder="0"
-        className="flex-1 h-12 min-h-[48px] px-3 text-md font-bold text-[#716A6A] 
+          {/* Amount input - FIXED with min-height */}
+          <input
+            type="number"
+            inputMode="decimal"
+            placeholder="0"
+            className="flex-1 h-12 min-h-[48px] px-3 text-md font-bold text-[#716A6A] 
                    border border-[#574A4A]/50 rounded outline-none 
                    focus:border-[#FFA726]
                    [appearance:textfield] 
                    [&::-webkit-outer-spin-button]:appearance-none 
                    [&::-webkit-inner-spin-button]:appearance-none"
-        value={amount}
-        onChange={(e) =>
-          setAmount(e.target.value === "" ? "" : Number(e.target.value))
-        }
-      />
+            value={amount}
+            onChange={(e) =>
+              setAmount(e.target.value === "" ? "" : Number(e.target.value))
+            }
+          />
 
-      {/* Remarks dropdown */}
-      <SearchInput
-        options={categories.map(cat => ({ id: cat.id, value: cat.expense_category }))}
-        value={remarks}
-        onChange={setRemarks}
-        placeholder="Type expense category..."
-        className="w-full sm:w-80"
-      />
+          {/* Remarks dropdown */}
+          <SearchInput
+            options={categories.map(cat => ({ id: cat.id, value: cat.expense_category }))}
+            value={remarks}
+            onChange={setRemarks}
+            placeholder="Type expense category..."
+            className="w-full sm:w-80"
+          />
 
-      {/* Submit button */}
-      <button
-        onClick={handleAddExpense}
-        disabled={loading}
-        className={`bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold 
+          {/* Submit button */}
+          <button
+            onClick={handleAddExpense}
+            disabled={loading}
+            className={`bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold 
                     text-md px-8 h-12 min-h-[48px] rounded transition-colors 
-                    w-full sm:w-auto cursor-pointer ${
-                      loading ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
-      >
-        {loading ? "Saving..." : "Add"}
-      </button>
-    </div>
+                    w-full sm:w-auto cursor-pointer ${loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+          >
+            {loading ? "Saving..." : "Add"}
+          </button>
+        </div>
 
-  </div>
-</div>
+      </div>
+    </div>
   );
 };
 

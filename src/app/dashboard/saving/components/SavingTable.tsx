@@ -102,6 +102,16 @@ export default function SavingTable({
 
   // Save update
   const saveEdit = async (sn: string) => {
+    // Validate category
+    const categoryExists = categories.some(
+      (cat) => cat.saving_category.toLowerCase() === editForm.saving_category.toLowerCase()
+    );
+
+    if (!categoryExists) {
+      toast.error("Please select a valid category from the list");
+      return;
+    }
+
     try {
       await updateSavingService(sn, {
         add_saving: editForm.add_saving,

@@ -95,6 +95,16 @@ export default function IncomeTable({
 
   // Save update
   const saveEdit = async (sn: string) => {
+    // Validate category
+    const categoryExists = categories.some(
+      (cat) => cat.income_category.toLowerCase() === editForm.income_category.toLowerCase()
+    );
+
+    if (!categoryExists) {
+      toast.error("Please select a valid category from the list");
+      return;
+    }
+
     try {
       await updateIncomeService(sn, {
         add_income: editForm.add_income,
