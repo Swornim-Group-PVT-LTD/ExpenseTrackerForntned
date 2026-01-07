@@ -203,7 +203,7 @@ export default function SavingTable({
                       }
                     />
                   ) : (
-                    row.add_saving
+                    Number(row.add_saving).toLocaleString()
                   )}
                 </TableCell>
 

@@ -64,9 +64,9 @@ export default function BalanceTable({ refreshTrigger }: { refreshTrigger?: numb
                 <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                   {row.sn}
                 </TableCell>
-                <TableCell>{row.currency?.symbol} {row.total_balance?.toLocaleString()}</TableCell>
-                <TableCell>{row.currency?.symbol} {row.add_opening_balance?.toLocaleString()}</TableCell>
-                <TableCell>{row.currency?.symbol} {row.closing_balance?.toLocaleString()}</TableCell>
+                <TableCell>{row.currency?.symbol} {Number(row.total_balance).toLocaleString()}</TableCell>
+                <TableCell>{row.currency?.symbol} {Number(row.add_opening_balance).toLocaleString()}</TableCell>
+                <TableCell>{row.currency?.symbol} {Number(row.closing_balance).toLocaleString()}</TableCell>
                 <TableCell>{row.created_date}</TableCell>
               </TableRow>
             ))

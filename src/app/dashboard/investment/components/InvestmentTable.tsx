@@ -196,7 +196,7 @@ export default function InvestmentTable({
                       }
                     />
                   ) : (
-                    row.add_investment
+                    Number(row.add_investment).toLocaleString()
                   )}
                 </TableCell>
                 <TableCell>

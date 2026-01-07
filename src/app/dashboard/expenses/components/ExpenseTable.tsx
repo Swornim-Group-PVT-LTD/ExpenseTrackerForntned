@@ -197,7 +197,7 @@ export default function ExpensesTable({
                           }
                         />
                       ) : (
-                        row.add_expenses
+                        Number(row.add_expenses).toLocaleString()
                       )}
                     </TableCell>
                     <TableCell>

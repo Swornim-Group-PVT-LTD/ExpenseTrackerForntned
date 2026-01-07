@@ -191,7 +191,7 @@ export default function IncomeTable({
                       }
                     />
                   ) : (
-                    row.add_income
+                    Number(row.add_income).toLocaleString()
                   )}
                 </TableCell>
                 <TableCell>
