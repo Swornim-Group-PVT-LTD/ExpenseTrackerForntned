@@ -86,6 +86,16 @@ const SavingForm = ({ onSuccess }: SavingFormProps) => {
   // 4️⃣ Add Saving
   // ============================================================
   const handleAddSaving = async () => {
+    // Validate category
+    const categoryExists = categories.some(
+      (cat) => cat.saving_category.toLowerCase() === remarks.toLowerCase()
+    );
+
+    if (!categoryExists) {
+      toast.error("Please select a valid category from the list");
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -99,7 +109,7 @@ const SavingForm = ({ onSuccess }: SavingFormProps) => {
 
       toast.success(
         `Saving of ${currency}${amount} added successfully.` +
-          (deductBalance ? " (deducted from balance)" : "")
+        (deductBalance ? " (deducted from balance)" : "")
       );
 
       setAmount(0);
@@ -169,8 +179,7 @@ const SavingForm = ({ onSuccess }: SavingFormProps) => {
             onClick={handleAddSaving}
             disabled={loading}
             className={`bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-8 h-12 rounded transition-colors 
-              disabled:opacity-50 w-full sm:w-auto cursor-pointer ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
+              disabled:opacity-50 w-full sm:w-auto cursor-pointer ${loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
           >
             {loading ? "Saving..." : "Add"}

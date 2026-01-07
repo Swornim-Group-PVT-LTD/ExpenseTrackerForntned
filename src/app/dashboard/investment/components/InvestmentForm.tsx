@@ -93,6 +93,16 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
       return;
     }
 
+    // Validate category
+    const categoryExists = categories.some(
+      (cat) => cat.investment_category.toLowerCase() === category.toLowerCase()
+    );
+
+    if (!categoryExists) {
+      toast.error("Please select a valid category from the list");
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -171,9 +181,8 @@ const InvestmentForm = ({ onSuccess }: InvestmentFormProps) => {
             onClick={handleAddInvestment}
             disabled={loading}
             className={`bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-8 h-12 rounded transition-colors disabled:opacity-50
-            w-full sm:w-auto cursor-pointer ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            w-full sm:w-auto cursor-pointer ${loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
           >
             {loading ? "Saving..." : "Add"}
           </button>
