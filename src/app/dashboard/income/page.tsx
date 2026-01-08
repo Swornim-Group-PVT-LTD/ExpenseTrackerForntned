@@ -102,9 +102,11 @@ function Income() {
           <IncomeBarChart refreshTrigger={refreshTrigger} />
         </div>
       </div>
-      <DateFilter 
-        fetchService={getIncomeByDateRangeService} 
-        onFilter={handleFilter} 
+      <DateFilter
+        initialFrom={new Date(new Date().getFullYear(), new Date().getMonth(), 1)}
+        initialTo={new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)}
+        fetchService={getIncomeByDateRangeService}
+        onFilter={handleFilter}
         categories={categories}
         categoryKey="income_category"
         onDownloadPDF={() => {

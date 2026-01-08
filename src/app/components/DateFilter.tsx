@@ -1,8 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { Datepicker } from "flowbite-react";
 
-import { useState } from "react";
-import { format } from "path";
+import { useState, useEffect } from "react";
 
 interface DateFilterProps {
   fetchService: Function;
@@ -11,6 +10,8 @@ interface DateFilterProps {
   categoryKey: string;
   onDownloadPDF?: () => void;
   onDownloadExcel?: () => void;
+  initialFrom?: Date;
+  initialTo?: Date;
 }
 
 export default function DateFilter({
@@ -20,9 +21,11 @@ export default function DateFilter({
   categoryKey,
   onDownloadPDF,
   onDownloadExcel,
+  initialFrom,
+  initialTo,
 }: DateFilterProps) {
-  const [from, setFrom] = useState<Date | undefined>(new Date());
-  const [to, setTo] = useState<Date | undefined>(new Date());
+  const [from, setFrom] = useState<Date | undefined>(initialFrom || new Date());
+  const [to, setTo] = useState<Date | undefined>(initialTo || new Date());
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [error, setError] = useState<string>("");
 
@@ -54,6 +57,12 @@ export default function DateFilter({
       );
     }
   };
+
+  useEffect(() => {
+    if (initialFrom && initialTo) {
+      handleSearch();
+    }
+  }, []);
 
   return (
     <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">

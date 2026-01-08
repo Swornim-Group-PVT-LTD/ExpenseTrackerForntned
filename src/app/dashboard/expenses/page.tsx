@@ -11,7 +11,7 @@ import DateFilter from "@/app/components/DateFilter";
 import ExpenseTable from "./components/ExpenseTable";
 import ExpensesBarChart from "./components/ExpensesBarChart";
 import { useEffect } from "react";
-import{ toast }from "react-toastify";
+import { toast } from "react-toastify";
 import { getExpenseCategoriesService } from "@/app/services/catalogueServices/expenseCatalogueService";
 import { ExpenseCategoryResponse } from "@/app/types/catalolgueType/expenseCatalogueType";
 
@@ -21,33 +21,33 @@ import { downloadService } from "@/app/services/downloadService";
 
 function Expenses() {
 
-  
-const [categories, setCategories] = useState<ExpenseCategoryResponse[]>([]);
-  const [filteredData,setFilteredData] = useState<ExpenseResponse[]>([]);
+
+  const [categories, setCategories] = useState<ExpenseCategoryResponse[]>([]);
+  const [filteredData, setFilteredData] = useState<ExpenseResponse[]>([]);
   const [allData, setAllData] = useState<ExpenseResponse[]>([]);
   const [isFilterActive, setIsFilterActive] = useState(false);
-  const [currentDateRange, setCurrentDateRange] = useState<{start: string, end: string} | null>(null);
+  const [currentDateRange, setCurrentDateRange] = useState<{ start: string, end: string } | null>(null);
   const [currentCategory, setCurrentCategory] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-      const handleRefresh = async () => {
+  const handleRefresh = async () => {
     setRefreshTrigger(prev => prev + 1);
     if (isFilterActive) {
-      try{
+      try {
         const response = await getExpenseByDateRangeService(
-        currentDateRange?.start,
-        currentDateRange?.end,
-        currentCategory || undefined
-      );
-      setFilteredData(response);
-      }catch(error){
+          currentDateRange?.start,
+          currentDateRange?.end,
+          currentCategory || undefined
+        );
+        setFilteredData(response);
+      } catch (error) {
         console.error('Failed to re-apply filter:', error);
       }
     }
   };
 
   const handleFilter = (
-    data: ExpenseResponse[], 
-    startDate?: string, 
+    data: ExpenseResponse[],
+    startDate?: string,
     endDate?: string,
     category?: string  // NEW
   ) => {
@@ -56,28 +56,28 @@ const [categories, setCategories] = useState<ExpenseCategoryResponse[]>([]);
     setCurrentDateRange(startDate && endDate ? { start: startDate, end: endDate } : null);
     setCurrentCategory(category || null);  // NEW state
   }
-      
-      const clearFilter = () => {
-        setFilteredData([]);
-         setIsFilterActive(false);
-         setCurrentDateRange(null);
-      };
 
-      // Fetch income categories once
-        useEffect(() => {
-          const fetchCategories = async () => {
-            try {
-              const data = await getExpenseCategoriesService();
-              setCategories(data);
-              
-            } catch (err) {
-             
-              toast.error("Failed to fetch expense categories");
-            }
-          };
-      
-          fetchCategories();
-        }, []);
+  const clearFilter = () => {
+    setFilteredData([]);
+    setIsFilterActive(false);
+    setCurrentDateRange(null);
+  };
+
+  // Fetch income categories once
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getExpenseCategoriesService();
+        setCategories(data);
+
+      } catch (err) {
+
+        toast.error("Failed to fetch expense categories");
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <div className="">
@@ -87,8 +87,8 @@ const [categories, setCategories] = useState<ExpenseCategoryResponse[]>([]);
       </div>
       <h1 className="text-2xl font-bold mb-4">Add Expenses</h1>
       <div className="grid grid-cols-1 items-center lg:grid-cols-4 gap-4">
-        <BalanceCard refreshTrigger={refreshTrigger}/>
-        <ExpenseForm onSuccess={handleRefresh}/>
+        <BalanceCard refreshTrigger={refreshTrigger} />
+        <ExpenseForm onSuccess={handleRefresh} />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4">
         <div className="h-80">
@@ -98,10 +98,12 @@ const [categories, setCategories] = useState<ExpenseCategoryResponse[]>([]);
           <ExpensesBarChart refreshTrigger={refreshTrigger} />
         </div>
       </div>
-      <DateFilter 
-        fetchService={getExpenseByDateRangeService} 
-        onFilter={handleFilter} 
-        categories={categories} 
+      <DateFilter
+        initialFrom={new Date(new Date().getFullYear(), new Date().getMonth(), 1)}
+        initialTo={new Date()}
+        fetchService={getExpenseByDateRangeService}
+        onFilter={handleFilter}
+        categories={categories}
         categoryKey="expense_category"
         onDownloadPDF={() => {
           const data = isFilterActive ? filteredData : allData;
@@ -140,19 +142,19 @@ const [categories, setCategories] = useState<ExpenseCategoryResponse[]>([]);
           );
         }}
       />
-            
-            {isFilterActive && (
-              <div className="mb-4 flex items-center gap-2">
-                
-                <span className="text-sm text-gray-600">Showing {filteredData.length} filtered results</span>
-                <button 
-                  onClick={clearFilter}
-                  className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded"
-                >
-                  Show All
-                </button>
-              </div>
-            )}
+
+      {isFilterActive && (
+        <div className="mb-4 flex items-center gap-2">
+
+          <span className="text-sm text-gray-600">Showing {filteredData.length} filtered results</span>
+          <button
+            onClick={clearFilter}
+            className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded"
+          >
+            Show All
+          </button>
+        </div>
+      )}
       <ExpenseTable refreshTrigger={refreshTrigger} filteredData={isFilterActive ? filteredData : null} onSuccess={handleRefresh} onDataLoad={setAllData} />
     </div>
   );
