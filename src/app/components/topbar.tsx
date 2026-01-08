@@ -2,17 +2,19 @@
 
 import { ChevronDown, Bell, Menu } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useState,useEffect,useRef } from "react";
+import { useSidebar } from "@/context/SidebarContext";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { Settings, HelpCircle, LogOut } from "lucide-react";
 
 export default function TopNav() {
-
+  const { collapsed } = useSidebar();
   const dropdownRef = useRef<HTMLDivElement>(null);
-   const router = useRouter();
+  const router = useRouter();
 
-    useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -26,9 +28,9 @@ export default function TopNav() {
   }, []);
 
   const [open, setOpen] = useState(false);
-  
 
-  const { user,logout } = useAuth();
+
+  const { user, logout } = useAuth();
 
   const handleLogout = () => {
     // Clear the access token cookie
@@ -40,13 +42,20 @@ export default function TopNav() {
     // Redirect to login page
     window.location.href = "/authentication/login";
   }
-  
+
   return (
-    <div className=" text-white  h-18 bg-[#133840] shadow-lg z-40 flex items-center justify-between px-3">
-      {/* Hamburger - Hidden on mobile */}
-      <button className="hidden md:flex p-4 hover:bg-[#2a2a2a] items-center justify-center transition-colors duration-200">
-        <Menu className="h-6 w-6" />
-      </button>
+    <div className={`text-white h-18 bg-[#133840] shadow-lg z-40 flex items-center justify-between px-3 fixed top-0 right-0 left-0 transition-all duration-500 ${collapsed ? 'md:ml-20' : 'md:ml-64'
+      }`}>
+      {/* Logo - Hidden on mobile */}
+      <Link href="/dashboard" className="hidden md:flex items-center gap-2 hover:opacity-80 transition-opacity">
+        <img
+          src="/app-logo.png"
+          alt="Expense Tracker"
+          className="h-12 object-contain"
+        />
+      </Link>
+
+
 
       {/* Welcome message - Show on mobile, positioned left */}
       <div className="md:hidden">
@@ -61,7 +70,7 @@ export default function TopNav() {
           Welcome, {user?.first_name}
         </span>
 
-        <div className="relative flex items-center gap-1 " onClick={() => setOpen(!open)}  ref={dropdownRef}>
+        <div className="relative flex items-center gap-1 " onClick={() => setOpen(!open)} ref={dropdownRef}>
           <div className="relative" >
             <div className="w-12 h-12 rounded-full bg-[#EFF0F3] flex items-center justify-center" >
               <img
@@ -86,10 +95,10 @@ export default function TopNav() {
                 Help & Support
               </button>
 
-                <button onClick={handleLogout} className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-[var(--color2)]">
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Logout
-                </button>
+              <button onClick={handleLogout} className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-[var(--color2)]">
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </button>
 
             </div>
           )}
