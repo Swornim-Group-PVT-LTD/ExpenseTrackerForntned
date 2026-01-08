@@ -11,7 +11,7 @@ import BASE_URL from "@/app/urlConfig/urlConfig";
 const Register = () => {
 
   const router = useRouter();
-  
+
   const [formData, setFormData] = useState({
     first_name: "",
     middle_name: "",
@@ -23,7 +23,7 @@ const Register = () => {
     address: "",
   });
 
-  const {login} = useAuth();
+  const { login } = useAuth();
 
   const [message, setMessage] = useState("");
 
@@ -38,13 +38,13 @@ const Register = () => {
     try {
       const res = await axios.post(`${BASE_URL}/api/register`, formData);
       const token = res.data.access_token;
-      const userData =  res.data.user;
+      const userData = res.data.user;
 
       login(userData);
       document.cookie = `access_token=${token}; path=/; Secure; SameSite=Strict`;
-      
+
       setMessage(res.data.message);
-      
+
       router.push("/dashboard");
     } catch (error: any) {
       setMessage(`${error.response?.data?.message || "Registration failed"}`);
@@ -54,7 +54,14 @@ const Register = () => {
   return (
     <div className="flex items-center justify-center min-h-screen  bg-gray-50 dark:bg-gray-900 px-5  sm-px-0 pt-10 sm:pt-0">
       <div className="bg-[var(--color1)] shadow-xl rounded-xl p-8 w-full max-w-xl text-white">
-        <h2 className=" text-2xl font-bold mb-6 text-center">Register</h2>
+        <div className="flex flex-col items-center mb-6">
+          <img
+            src="/app-logo.png"
+            alt="Expense Tracker"
+            className="h-20 object-contain mb-4"
+          />
+          <h2 className=" text-2xl font-bold text-center">Register</h2>
+        </div>
         <form onSubmit={handleRegister} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
