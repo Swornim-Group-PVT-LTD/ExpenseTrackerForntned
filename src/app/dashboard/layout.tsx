@@ -22,7 +22,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
   const { collapsed } = useSidebar();
 
   return (
-    <div className={`bg-[#F0F2F5] dark:bg-gray-900 min-h-screen p-4 pb-28 md:p-6 pt-20 transition-all duration-500 ${collapsed ? 'md:ml-20' : 'md:ml-64'
+    <div className={`bg-[#F0F2F5] dark:bg-gray-900 min-h-screen p-4 pb-28 md:p-6 pt-16 md:pt-16 transition-all duration-500 ${collapsed ? 'md:ml-20' : 'md:ml-64'
       }`}>
       {children}
     </div>
