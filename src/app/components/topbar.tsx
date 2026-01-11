@@ -44,14 +44,14 @@ export default function TopNav() {
   }
 
   return (
-    <div className={`text-white h-18 bg-[#133840] shadow-lg z-40 flex items-center justify-between px-3 fixed top-0 right-0 left-0 transition-all duration-500 ${collapsed ? 'md:ml-20' : 'md:ml-64'
+    <div className={`text-white h-16 bg-[#133840] shadow-lg z-40 flex items-center justify-between px-3 fixed top-0 right-0 left-0 transition-all duration-500 ${collapsed ? 'md:ml-20' : 'md:ml-64'
       }`}>
       {/* Logo - Hidden on mobile */}
       <Link href="/dashboard" className="hidden md:flex items-center gap-2 hover:opacity-80 transition-opacity">
         <img
           src="/app-logo.png"
           alt="Expense Tracker"
-          className="h-12 object-contain"
+          className="h-10 object-contain"
         />
       </Link>
 
@@ -72,11 +72,11 @@ export default function TopNav() {
 
         <div className="relative flex items-center gap-1 " onClick={() => setOpen(!open)} ref={dropdownRef}>
           <div className="relative" >
-            <div className="w-12 h-12 rounded-full bg-[#EFF0F3] flex items-center justify-center" >
+            <div className="w-10 h-10 rounded-full bg-[#EFF0F3] flex items-center justify-center" >
               <img
                 src="/user.svg"
                 alt="User"
-                className="w-8 h-8 object-cover"
+                className="w-6 h-6 object-cover"
               />
             </div>
             <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full "></div>

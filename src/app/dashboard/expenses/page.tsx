@@ -10,6 +10,8 @@ import ExpensesLineChart from "./components/ExpensesLineChart";
 import DateFilter from "@/app/components/DateFilter";
 import ExpenseTable from "./components/ExpenseTable";
 import ExpensesBarChart from "./components/ExpensesBarChart";
+import ThresholdForm from "./components/ThresholdForm";
+import ViewThresholdModal from "./components/ViewThresholdModal";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { getExpenseCategoriesService } from "@/app/services/catalogueServices/expenseCatalogueService";
@@ -29,6 +31,10 @@ function Expenses() {
   const [currentDateRange, setCurrentDateRange] = useState<{ start: string, end: string } | null>(null);
   const [currentCategory, setCurrentCategory] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [isAddThresholdOpen, setIsAddThresholdOpen] = useState(false);
+  const [isViewThresholdOpen, setIsViewThresholdOpen] = useState(false);
+  const [thresholdRefreshTrigger, setThresholdRefreshTrigger] = useState(0);
+
   const handleRefresh = async () => {
     setRefreshTrigger(prev => prev + 1);
     if (isFilterActive) {
@@ -63,6 +69,10 @@ function Expenses() {
     setCurrentDateRange(null);
   };
 
+  const handleThresholdSuccess = () => {
+    setThresholdRefreshTrigger(prev => prev + 1);
+  };
+
   // Fetch income categories once
   useEffect(() => {
     const fetchCategories = async () => {
@@ -85,7 +95,38 @@ function Expenses() {
         <Home className="w-4 h-4" />
         <span>/Add Expenses</span>
       </div>
-      <h1 className="text-2xl font-bold mb-4">Add Expenses</h1>
+
+      
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+        <h1 className="text-2xl font-bold">Add Expenses</h1>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setIsAddThresholdOpen(true)}
+            className="bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-semibold px-4 py-2 rounded transition-colors"
+          >
+            Add Threshold
+          </button>
+          <button
+            onClick={() => setIsViewThresholdOpen(true)}
+            className="bg-[#133840] hover:bg-[#133840]/90 text-white font-semibold px-4 py-2 rounded transition-colors"
+          >
+            View Threshold
+          </button>
+        </div>
+      </div>
+
+      {/* Threshold Modals */}
+      <ThresholdForm
+        isOpen={isAddThresholdOpen}
+        onClose={() => setIsAddThresholdOpen(false)}
+        onSuccess={handleThresholdSuccess}
+      />
+      <ViewThresholdModal
+        isOpen={isViewThresholdOpen}
+        onClose={() => setIsViewThresholdOpen(false)}
+        refreshTrigger={thresholdRefreshTrigger}
+      />
+
       <div className="grid grid-cols-1 items-center lg:grid-cols-4 gap-4">
         <BalanceCard refreshTrigger={refreshTrigger} />
         <ExpenseForm onSuccess={handleRefresh} />
