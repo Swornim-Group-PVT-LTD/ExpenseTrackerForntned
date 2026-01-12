@@ -31,11 +31,13 @@ export default function ExpensesTable({
   filteredData,
   onSuccess,
   onDataLoad,
+  isFilterActive,
 }: {
   refreshTrigger: number;
   filteredData?: ExpenseResponse[] | null;
   onSuccess: () => void;
   onDataLoad?: (data: ExpenseResponse[]) => void;
+  isFilterActive: boolean;
 }) {
   const [expenses, setExpenses] = useState<ExpenseResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,15 +74,15 @@ export default function ExpensesTable({
   };
 
   useEffect(() => {
-    // Only fetch all data if no filter is active
-    if (filteredData) {
-      setExpenses(filteredData);
+    // If filter is active, use filteredData (even if empty) and DO NOT fetch all
+    if (isFilterActive) {
+      setExpenses(filteredData || []);
       setLoading(false);
     } else {
       fetchExpenses();
     }
     fetchCategories();
-  }, [refreshTrigger, filteredData]);
+  }, [refreshTrigger, filteredData, isFilterActive]);
 
   // Start editing a row
   const startEdit = (item: any) => {
