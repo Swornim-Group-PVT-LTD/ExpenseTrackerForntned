@@ -24,7 +24,7 @@ function Income() {
 
   const [filteredData, setFilteredData] = useState<IncomeResponse[]>([]);
   const [allData, setAllData] = useState<IncomeResponse[]>([]);
-  const [isFilterActive, setIsFilterActive] = useState(false);
+  const [isFilterActive, setIsFilterActive] = useState(true);
   const [currentDateRange, setCurrentDateRange] = useState<{ start: string, end: string } | null>(null);
   const [currentCategory, setCurrentCategory] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -159,7 +159,7 @@ function Income() {
           </button>
         </div>
       )}
-      <IncomeTable refreshTrigger={refreshTrigger} filteredData={isFilterActive ? filteredData : null} onSuccess={handleRefresh} onDataLoad={setAllData} />
+      <IncomeTable refreshTrigger={refreshTrigger} filteredData={isFilterActive ? filteredData : null} onSuccess={handleRefresh} onDataLoad={setAllData} isFilterActive={isFilterActive} />
     </div>
   );
 }

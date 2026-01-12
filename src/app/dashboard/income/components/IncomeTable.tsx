@@ -27,11 +27,13 @@ export default function IncomeTable({
   filteredData,
   onSuccess,
   onDataLoad,
+  isFilterActive,
 }: {
   refreshTrigger: number;
   filteredData?: IncomeResponse[] | null;
   onSuccess?: () => void;
   onDataLoad?: (data: IncomeResponse[]) => void;
+  isFilterActive: boolean;
 }) {
   const [income, setIncome] = useState<IncomeResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,15 +70,15 @@ export default function IncomeTable({
   };
 
   useEffect(() => {
-    // Only fetch all data if no filter is active
-    if (filteredData) {
-      setIncome(filteredData);
+    // If filter is active, use filteredData (even if currently loading/empty, parent controls it)
+    if (isFilterActive) {
+      setIncome(filteredData || []);
       setLoading(false);
     } else {
       fetchIncome();
     }
     fetchCategories();
-  }, [refreshTrigger, filteredData]);
+  }, [refreshTrigger, filteredData, isFilterActive]);
 
   // Start editing a row
   const startEdit = (item: any) => {
