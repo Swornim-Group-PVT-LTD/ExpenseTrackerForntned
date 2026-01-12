@@ -64,6 +64,18 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
     // Save update
     const saveEdit = async (sn: string) => {
         try {
+            // Check if trying to enable this threshold when another one is already enabled
+            if (editForm.isEnable) {
+                const otherEnabledThreshold = thresholds.find(
+                    t => t.sn !== sn && t.isEnable === true
+                );
+
+                if (otherEnabledThreshold) {
+                    toast.error("Cannot enable this threshold. Another threshold is already enabled. Please disable it first.");
+                    return;
+                }
+            }
+
             await updateThresholdService(sn, editForm);
             console.log(editForm);
             toast.success("Threshold updated successfully");
@@ -203,12 +215,23 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
                                                         <select
                                                             className="p-2 border rounded-md border-gray-300 w-full"
                                                             value={editForm.isEnable ? "enabled" : "disabled"}
-                                                            onChange={(e) =>
+                                                            onChange={(e) => {
+                                                                const newValue = e.target.value === "enabled";
+                                                                // Check if trying to enable when another is already enabled
+                                                                if (newValue) {
+                                                                    const otherEnabled = thresholds.find(
+                                                                        t => t.sn !== threshold.sn && t.isEnable === true
+                                                                    );
+                                                                    if (otherEnabled) {
+                                                                        toast.warning("Another threshold is already enabled. Disable it first.");
+                                                                        return;
+                                                                    }
+                                                                }
                                                                 setEditForm((prev) => ({
                                                                     ...prev,
-                                                                    isEnable: e.target.value === "enabled",
+                                                                    isEnable: newValue,
                                                                 }))
-                                                            }
+                                                            }}
                                                         >
                                                             <option value="enabled">Enabled</option>
                                                             <option value="disabled">Disabled</option>
@@ -365,12 +388,23 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
                                                     <select
                                                         className="w-32 p-1 text-sm border rounded"
                                                         value={editForm.isEnable ? "enabled" : "disabled"}
-                                                        onChange={(e) =>
+                                                        onChange={(e) => {
+                                                            const newValue = e.target.value === "enabled";
+                                                            // Check if trying to enable when another is already enabled
+                                                            if (newValue) {
+                                                                const otherEnabled = thresholds.find(
+                                                                    t => t.sn !== threshold.sn && t.isEnable === true
+                                                                );
+                                                                if (otherEnabled) {
+                                                                    toast.warning("Another threshold is already enabled. Disable it first.");
+                                                                    return;
+                                                                }
+                                                            }
                                                             setEditForm((prev) => ({
                                                                 ...prev,
-                                                                isEnable: e.target.value === "enabled",
+                                                                isEnable: newValue,
                                                             }))
-                                                        }
+                                                        }}
                                                     >
                                                         <option value="enabled">Enabled</option>
                                                         <option value="disabled">Disabled</option>
