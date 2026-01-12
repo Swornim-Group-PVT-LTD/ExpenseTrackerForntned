@@ -31,7 +31,7 @@ const ThresholdForm = ({ isOpen, onClose, onSuccess }: ThresholdFormProps) => {
             const payload: AddThresholdPayload = {
                 expense_threshold_amount: Number(amount),
                 frequency: frequency,
-                isEnabled: isEnabled,
+                isEnable: isEnabled,
             };
 
             await addThresholdService(payload);
@@ -62,14 +62,19 @@ const ThresholdForm = ({ isOpen, onClose, onSuccess }: ThresholdFormProps) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div
+            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={(e) => {
+                if (e.target === e.currentTarget) handleClose();
+            }}
+        >
             <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl">
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b">
                     <h2 className="text-xl font-bold text-gray-800">Add Expense Threshold</h2>
                     <button
                         onClick={handleClose}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                        className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
                     >
                         <X className="w-6 h-6" />
                     </button>
@@ -77,7 +82,7 @@ const ThresholdForm = ({ isOpen, onClose, onSuccess }: ThresholdFormProps) => {
 
                 {/* Form */}
                 <div className="p-6">
-                    <div className="flex flex-col lg:flex-row gap-4 items-end">
+                    <div className="flex flex-col lg:flex-row gap-4 lg:items-end">
                         {/* Threshold Amount */}
                         <div className="flex-1 min-w-0">
                             <label className="block text-sm font-semibold text-gray-700 mb-2 whitespace-nowrap">

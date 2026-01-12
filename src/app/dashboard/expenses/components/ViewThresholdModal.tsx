@@ -19,7 +19,7 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
     const [editForm, setEditForm] = useState({
         expense_threshold_amount: 0,
         frequency: "Monthly" as "Monthly" | "Yearly",
-        isEnabled: true,
+        isEnable: true,
     });
 
     const fetchThresholds = async () => {
@@ -27,6 +27,7 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
             setLoading(true);
             const data = await getThresholdsService();
             setThresholds(data);
+            console.log(data);
         } catch (error: any) {
             toast.error(error.message || "Failed to fetch thresholds");
         } finally {
@@ -46,7 +47,7 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
         setEditForm({
             expense_threshold_amount: threshold.expense_threshold_amount,
             frequency: threshold.frequency,
-            isEnabled: threshold.isEnabled,
+            isEnable: threshold.isEnable,
         });
     };
 
@@ -56,7 +57,7 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
         setEditForm({
             expense_threshold_amount: 0,
             frequency: "Monthly",
-            isEnabled: true,
+            isEnable: true,
         });
     };
 
@@ -64,6 +65,7 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
     const saveEdit = async (sn: string) => {
         try {
             await updateThresholdService(sn, editForm);
+            console.log(editForm);
             toast.success("Threshold updated successfully");
             setThresholds((prev) =>
                 prev.map((item) =>
@@ -72,7 +74,7 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
                             ...item,
                             expense_threshold_amount: editForm.expense_threshold_amount,
                             frequency: editForm.frequency,
-                            isEnabled: editForm.isEnabled,
+                            isEnable: editForm.isEnable,
                         }
                         : item
                 )
@@ -113,14 +115,19 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div
+            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={(e) => {
+                if (e.target === e.currentTarget) onClose();
+            }}
+        >
             <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[80vh] flex flex-col">
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b">
                     <h2 className="text-xl font-bold text-gray-800">View Expense Thresholds</h2>
                     <button
                         onClick={onClose}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                        className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
                     >
                         <X className="w-6 h-6" />
                     </button>
@@ -137,27 +144,187 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
                             <p className="text-gray-500">No thresholds found. Add one to get started!</p>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full border-collapse">
-                                <thead>
-                                    <tr className="bg-gray-100">
-                                        <th className="border border-gray-300 px-4 py-2 text-left">ID</th>
-                                        <th className="border border-gray-300 px-4 py-2 text-left">Amount</th>
-                                        <th className="border border-gray-300 px-4 py-2 text-left">Frequency</th>
-                                        <th className="border border-gray-300 px-4 py-2 text-left">Status</th>
-                                        <th className="border border-gray-300 px-4 py-2 text-left">Created Date</th>
-                                        <th className="border border-gray-300 px-4 py-2 text-center">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {thresholds.map((threshold) => (
-                                        <tr key={threshold.id} className="hover:bg-gray-50">
-                                            <td className="border border-gray-300 px-4 py-2">{threshold.id}</td>
-                                            <td className="border border-gray-300 px-4 py-2 font-semibold">
+                        <>
+                            {/* Desktop Table View */}
+                            <div className="hidden lg:block overflow-x-auto">
+                                <table className="w-full border-collapse">
+                                    <thead>
+                                        <tr className="bg-gray-100">
+                                            <th className="border border-gray-300 px-4 py-2 text-left">ID</th>
+                                            <th className="border border-gray-300 px-4 py-2 text-left">Amount</th>
+                                            <th className="border border-gray-300 px-4 py-2 text-left">Frequency</th>
+                                            <th className="border border-gray-300 px-4 py-2 text-left">Status</th>
+                                            <th className="border border-gray-300 px-4 py-2 text-left">Created Date</th>
+                                            <th className="border border-gray-300 px-4 py-2 text-center">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {thresholds.map((threshold) => (
+                                            <tr key={threshold.id} className="hover:bg-gray-50">
+                                                <td className="border border-gray-300 px-4 py-2">{threshold.id}</td>
+                                                <td className="border border-gray-300 px-4 py-2 font-semibold">
+                                                    {editingSn === threshold.sn ? (
+                                                        <input
+                                                            type="number"
+                                                            className="p-2 border rounded-md border-gray-300 w-full"
+                                                            value={editForm.expense_threshold_amount}
+                                                            onChange={(e) =>
+                                                                setEditForm((prev) => ({
+                                                                    ...prev,
+                                                                    expense_threshold_amount: Number(e.target.value),
+                                                                }))
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        Number(threshold.expense_threshold_amount).toLocaleString()
+                                                    )}
+                                                </td>
+                                                <td className="border border-gray-300 px-4 py-2">
+                                                    {editingSn === threshold.sn ? (
+                                                        <select
+                                                            className="p-2 border rounded-md border-gray-300 w-full capitalize"
+                                                            value={editForm.frequency}
+                                                            onChange={(e) =>
+                                                                setEditForm((prev) => ({
+                                                                    ...prev,
+                                                                    frequency: e.target.value as "Monthly" | "Yearly",
+                                                                }))
+                                                            }
+                                                        >
+                                                            <option value="Monthly">Monthly</option>
+                                                            <option value="Yearly">Yearly</option>
+                                                        </select>
+                                                    ) : (
+                                                        <span className="capitalize">{threshold.frequency}</span>
+                                                    )}
+                                                </td>
+                                                <td className="border border-gray-300 px-4 py-2">
+                                                    {editingSn === threshold.sn ? (
+                                                        <select
+                                                            className="p-2 border rounded-md border-gray-300 w-full"
+                                                            value={editForm.isEnable ? "enabled" : "disabled"}
+                                                            onChange={(e) =>
+                                                                setEditForm((prev) => ({
+                                                                    ...prev,
+                                                                    isEnable: e.target.value === "enabled",
+                                                                }))
+                                                            }
+                                                        >
+                                                            <option value="enabled">Enabled</option>
+                                                            <option value="disabled">Disabled</option>
+                                                        </select>
+                                                    ) : (
+                                                        <span
+                                                            className={`px-2 py-1 rounded text-xs font-semibold ${threshold.isEnable
+                                                                ? "bg-green-100 text-green-800"
+                                                                : "bg-red-100 text-red-800"
+                                                                }`}
+                                                        >
+                                                            {threshold.isEnable ? "Enabled" : "Disabled"}
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td className="border border-gray-300 px-4 py-2">
+                                                    {formatDate(threshold.create_date)}
+                                                </td>
+                                                <td className="border border-gray-300 px-4 py-2 text-center">
+                                                    {editingSn === threshold.sn ? (
+                                                        <>
+                                                            <button
+                                                                className="text-green-600 hover:text-green-800 font-medium mr-2 cursor-pointer"
+                                                                onClick={() => saveEdit(threshold.sn)}
+                                                            >
+                                                                Save
+                                                            </button>
+                                                            <button
+                                                                className="text-gray-600 hover:text-gray-800 font-medium cursor-pointer"
+                                                                onClick={cancelEdit}
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <button
+                                                                onClick={() => startEdit(threshold)}
+                                                                className="text-blue-600 hover:text-blue-800 transition-colors mr-2"
+                                                                title="Edit"
+                                                            >
+                                                                <Edit className="w-5 h-5 inline" />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDelete(threshold.sn)}
+                                                                className="text-red-500 hover:text-red-700 transition-colors"
+                                                                title="Delete"
+                                                            >
+                                                                <Trash2 className="w-5 h-5 inline" />
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* Mobile Card View */}
+                            <div className="lg:hidden space-y-4">
+                                {thresholds.map((threshold) => (
+                                    <div
+                                        key={threshold.id}
+                                        className="bg-white rounded-lg shadow-sm p-4 border border-gray-100 flex flex-col gap-3"
+                                    >
+                                        {/* Row 1: ID and Actions */}
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-sm font-bold text-gray-800">
+                                                ID {threshold.id}
+                                            </span>
+                                            <div className="flex gap-2 text-xs font-bold">
+                                                {editingSn === threshold.sn ? (
+                                                    <>
+                                                        <button
+                                                            onClick={() => saveEdit(threshold.sn)}
+                                                            className="text-green-600 hover:underline"
+                                                        >
+                                                            Save
+                                                        </button>
+                                                        <span className="text-gray-300">/</span>
+                                                        <button
+                                                            onClick={cancelEdit}
+                                                            className="text-gray-500 hover:underline"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <button
+                                                            onClick={() => startEdit(threshold)}
+                                                            className="text-blue-600 hover:underline"
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                        <span className="text-gray-300">/</span>
+                                                        <button
+                                                            onClick={() => handleDelete(threshold.sn)}
+                                                            className="text-red-600 hover:underline"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Row 2: Content */}
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-sm text-gray-500">Amount:</span>
                                                 {editingSn === threshold.sn ? (
                                                     <input
                                                         type="number"
-                                                        className="p-2 border rounded-md border-gray-300 w-full"
+                                                        className="w-32 p-1 text-sm border rounded focus:ring-1 focus:ring-[#FFAA00]"
                                                         value={editForm.expense_threshold_amount}
                                                         onChange={(e) =>
                                                             setEditForm((prev) => ({
@@ -167,13 +334,15 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
                                                         }
                                                     />
                                                 ) : (
-                                                    threshold.expense_threshold_amount.toLocaleString()
+                                                    <span className="font-semibold">{Number(threshold.expense_threshold_amount).toLocaleString()}</span>
                                                 )}
-                                            </td>
-                                            <td className="border border-gray-300 px-4 py-2">
+                                            </div>
+
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-sm text-gray-500">Frequency:</span>
                                                 {editingSn === threshold.sn ? (
                                                     <select
-                                                        className="p-2 border rounded-md border-gray-300 w-full capitalize"
+                                                        className="w-32 p-1 text-sm border rounded"
                                                         value={editForm.frequency}
                                                         onChange={(e) =>
                                                             setEditForm((prev) => ({
@@ -186,18 +355,20 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
                                                         <option value="Yearly">Yearly</option>
                                                     </select>
                                                 ) : (
-                                                    <span className="capitalize">{threshold.frequency}</span>
+                                                    <span className="font-semibold capitalize">{threshold.frequency}</span>
                                                 )}
-                                            </td>
-                                            <td className="border border-gray-300 px-4 py-2">
+                                            </div>
+
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-sm text-gray-500">Status:</span>
                                                 {editingSn === threshold.sn ? (
                                                     <select
-                                                        className="p-2 border rounded-md border-gray-300 w-full"
-                                                        value={editForm.isEnabled ? "enabled" : "disabled"}
+                                                        className="w-32 p-1 text-sm border rounded"
+                                                        value={editForm.isEnable ? "enabled" : "disabled"}
                                                         onChange={(e) =>
                                                             setEditForm((prev) => ({
                                                                 ...prev,
-                                                                isEnabled: e.target.value === "enabled",
+                                                                isEnable: e.target.value === "enabled",
                                                             }))
                                                         }
                                                     >
@@ -206,58 +377,24 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
                                                     </select>
                                                 ) : (
                                                     <span
-                                                        className={`px-2 py-1 rounded text-xs font-semibold ${threshold.isEnabled
+                                                        className={`px-2 py-0.5 rounded text-xs font-semibold ${threshold.isEnable
                                                             ? "bg-green-100 text-green-800"
                                                             : "bg-red-100 text-red-800"
                                                             }`}
                                                     >
-                                                        {threshold.isEnabled ? "Enabled" : "Disabled"}
+                                                        {threshold.isEnable ? "Enabled" : "Disabled"}
                                                     </span>
                                                 )}
-                                            </td>
-                                            <td className="border border-gray-300 px-4 py-2">
-                                                {formatDate(threshold.created_date)}
-                                            </td>
-                                            <td className="border border-gray-300 px-4 py-2 text-center">
-                                                {editingSn === threshold.sn ? (
-                                                    <>
-                                                        <button
-                                                            className="text-green-600 hover:text-green-800 font-medium mr-2 cursor-pointer"
-                                                            onClick={() => saveEdit(threshold.sn)}
-                                                        >
-                                                            Save
-                                                        </button>
-                                                        <button
-                                                            className="text-gray-600 hover:text-gray-800 font-medium cursor-pointer"
-                                                            onClick={cancelEdit}
-                                                        >
-                                                            Cancel
-                                                        </button>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <button
-                                                            onClick={() => startEdit(threshold)}
-                                                            className="text-blue-600 hover:text-blue-800 transition-colors mr-2"
-                                                            title="Edit"
-                                                        >
-                                                            <Edit className="w-5 h-5 inline" />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleDelete(threshold.sn)}
-                                                            className="text-red-500 hover:text-red-700 transition-colors"
-                                                            title="Delete"
-                                                        >
-                                                            <Trash2 className="w-5 h-5 inline" />
-                                                        </button>
-                                                    </>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                            </div>
+
+                                            <div className="flex justify-between items-center text-xs text-gray-400 mt-1">
+                                                <span>Created: {formatDate(threshold.create_date)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
                     )}
                 </div>
             </div>
