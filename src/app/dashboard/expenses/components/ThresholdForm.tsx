@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import { X } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { X, AlertCircle } from "lucide-react";
 import { toast } from "react-toastify";
-import { addThresholdService } from "@/app/services/thresholdService";
+import { addThresholdService, getThresholdsService } from "@/app/services/thresholdService";
 import { AddThresholdPayload } from "@/app/types/thresholdType";
 
 interface ThresholdFormProps {
@@ -17,11 +17,44 @@ const ThresholdForm = ({ isOpen, onClose, onSuccess }: ThresholdFormProps) => {
     const [frequency, setFrequency] = useState<"Monthly" | "Yearly">("Monthly");
     const [isEnabled, setIsEnabled] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [hasEnabledThreshold, setHasEnabledThreshold] = useState(false);
+    const [checkingThresholds, setCheckingThresholds] = useState(false);
+
+    // Check for existing enabled thresholds when modal opens
+    useEffect(() => {
+        const checkEnabledThresholds = async () => {
+            if (!isOpen) return;
+
+            try {
+                setCheckingThresholds(true);
+                const thresholds = await getThresholdsService();
+                const hasEnabled = thresholds.some(t => t.isEnable === true);
+                setHasEnabledThreshold(hasEnabled);
+
+                // If there's already an enabled threshold, set this one to disabled
+                if (hasEnabled) {
+                    setIsEnabled(false);
+                }
+            } catch (error) {
+                console.error("Failed to check thresholds:", error);
+            } finally {
+                setCheckingThresholds(false);
+            }
+        };
+
+        checkEnabledThresholds();
+    }, [isOpen]);
 
     const handleSubmit = async () => {
         // Validation
         if (!amount || amount <= 0) {
             toast.error("Please enter a valid threshold amount");
+            return;
+        }
+
+        // Check if trying to enable when another threshold is already enabled
+        if (isEnabled && hasEnabledThreshold) {
+            toast.error("Cannot enable this threshold. Another threshold is already enabled. Please disable the existing one first.");
             return;
         }
 
@@ -31,7 +64,7 @@ const ThresholdForm = ({ isOpen, onClose, onSuccess }: ThresholdFormProps) => {
             const payload: AddThresholdPayload = {
                 expense_threshold_amount: Number(amount),
                 frequency: frequency,
-                isEnabled: isEnabled,
+                isEnable: isEnabled,
             };
 
             await addThresholdService(payload);
@@ -42,6 +75,7 @@ const ThresholdForm = ({ isOpen, onClose, onSuccess }: ThresholdFormProps) => {
             setAmount("");
             setFrequency("Monthly");
             setIsEnabled(true);
+            setHasEnabledThreshold(false);
 
             onSuccess && onSuccess();
             onClose();
@@ -56,20 +90,26 @@ const ThresholdForm = ({ isOpen, onClose, onSuccess }: ThresholdFormProps) => {
         setAmount("");
         setFrequency("Monthly");
         setIsEnabled(true);
+        setHasEnabledThreshold(false);
         onClose();
     };
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div
+            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={(e) => {
+                if (e.target === e.currentTarget) handleClose();
+            }}
+        >
             <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl">
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b">
                     <h2 className="text-xl font-bold text-gray-800">Add Expense Threshold</h2>
                     <button
                         onClick={handleClose}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                        className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
                     >
                         <X className="w-6 h-6" />
                     </button>
@@ -77,7 +117,22 @@ const ThresholdForm = ({ isOpen, onClose, onSuccess }: ThresholdFormProps) => {
 
                 {/* Form */}
                 <div className="p-6">
-                    <div className="flex flex-col lg:flex-row gap-4 items-end">
+                    {/* Warning Message */}
+                    {hasEnabledThreshold && (
+                        <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-3">
+                            <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                            <div className="flex-1">
+                                <h4 className="text-sm font-semibold text-amber-800 mb-1">
+                                    Enabled Threshold Already Exists
+                                </h4>
+                                <p className="text-sm text-amber-700">
+                                    Only one threshold can be enabled at a time. To enable this threshold, please disable the existing enabled threshold first from the View Thresholds section.
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="flex flex-col lg:flex-row gap-4 lg:items-end">
                         {/* Threshold Amount */}
                         <div className="flex-1 min-w-0">
                             <label className="block text-sm font-semibold text-gray-700 mb-2 whitespace-nowrap">
@@ -123,14 +178,15 @@ const ThresholdForm = ({ isOpen, onClose, onSuccess }: ThresholdFormProps) => {
                                 Enable Threshold
                             </label>
                             <div className="flex items-center h-12">
-                                <label className="relative inline-flex items-center cursor-pointer">
+                                <label className={`relative inline-flex items-center ${hasEnabledThreshold ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}>
                                     <input
                                         type="checkbox"
                                         className="sr-only peer"
                                         checked={isEnabled}
                                         onChange={(e) => setIsEnabled(e.target.checked)}
+                                        disabled={hasEnabledThreshold}
                                     />
-                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#FFA726]/30 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FFAA00]"></div>
+                                    <div className={`w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#FFA726]/30 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FFAA00] ${hasEnabledThreshold ? 'peer-disabled:opacity-60' : ''}`}></div>
                                     <span className="ms-3 text-sm font-medium text-gray-700 whitespace-nowrap">
                                         {isEnabled ? "Enabled" : "Disabled"}
                                     </span>

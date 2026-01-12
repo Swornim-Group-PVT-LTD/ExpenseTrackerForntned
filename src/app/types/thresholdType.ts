@@ -1,7 +1,7 @@
 export interface AddThresholdPayload {
     expense_threshold_amount: number;
     frequency: "Monthly" | "Yearly";
-    isEnabled: boolean;
+    isEnable: boolean;
 }
 
 export interface ThresholdResponse {
@@ -10,6 +10,6 @@ export interface ThresholdResponse {
     customerid: string;
     expense_threshold_amount: number;
     frequency: "Monthly" | "Yearly";
-    isEnabled: boolean;
-    created_date: string;
+    isEnable: boolean;
+    create_date: string;
 }

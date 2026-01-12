@@ -102,13 +102,13 @@ function Expenses() {
         <div className="flex gap-2">
           <button
             onClick={() => setIsAddThresholdOpen(true)}
-            className="bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-semibold px-4 py-2 rounded transition-colors"
+            className="bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-semibold px-4 py-2 rounded transition-colors cursor-pointer"
           >
             Add Threshold
           </button>
           <button
             onClick={() => setIsViewThresholdOpen(true)}
-            className="bg-[#133840] hover:bg-[#133840]/90 text-white font-semibold px-4 py-2 rounded transition-colors"
+            className="bg-[#133840] hover:bg-[#133840]/90 text-white font-semibold px-4 py-2 rounded transition-colors cursor-pointer"
           >
             View Threshold
           </button>

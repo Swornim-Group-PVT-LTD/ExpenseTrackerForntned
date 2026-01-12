@@ -27,7 +27,11 @@ export const addThresholdService = async (
                 withCredentials: true,
             }
         );
-        return response.data;
+        const data = response.data as any;
+        return {
+            ...response.data,
+            isEnable: data.isEnable === 1 || data.isEnable === "1" || data.isEnable === true || data.isEnable === "true"
+        };
     } catch (error: any) {
         throw new Error(error.response?.data?.message || error.message || "Failed to add threshold");
     }
@@ -41,7 +45,11 @@ export const getThresholdsService = async (): Promise<ThresholdResponse[]> => {
             headers: { Authorization: `Bearer ${token}` },
         });
 
-        const thresholds: ThresholdResponse[] = response.data?.data || [];
+        const thresholds: ThresholdResponse[] = (response.data?.data || []).map((item: any) => ({
+            ...item,
+            // Convert to boolean: handles 1, "1", true, "true" as true
+            isEnable: item.isEnable === 1 || item.isEnable === "1" || item.isEnable === true || item.isEnable === "true"
+        }));
 
         // Sort by id descending to show newest first
         if (thresholds.length > 0) {
@@ -60,7 +68,7 @@ export const getThresholdsService = async (): Promise<ThresholdResponse[]> => {
 export const deleteThresholdService = async (sn: string): Promise<void> => {
     try {
         const token = getToken();
-        await axios.delete(`${BASE_URL}/api/expense-threshold/delete/${sn}`, {
+        await axios.delete(`${BASE_URL}/api/expense-thresholds/${sn}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
     } catch (error: any) {
@@ -75,7 +83,7 @@ export const updateThresholdService = async (sn: string, payload: AddThresholdPa
     try {
         const token = getToken();
         const response = await axios.put<ThresholdResponse>(
-            `${BASE_URL}/api/expense-thresholds/update/${sn}`,
+            `${BASE_URL}/api/expense-thresholds/${sn}`,
             payload,
             {
                 headers: {
@@ -85,7 +93,11 @@ export const updateThresholdService = async (sn: string, payload: AddThresholdPa
                 withCredentials: true,
             }
         );
-        return response.data;
+        const data = response.data as any;
+        return {
+            ...response.data,
+            isEnable: data.isEnable === 1 || data.isEnable === "1" || data.isEnable === true || data.isEnable === "true"
+        };
     } catch (error: any) {
         throw new Error(error.response?.data?.message || error.message || "Failed to update threshold");
     }
