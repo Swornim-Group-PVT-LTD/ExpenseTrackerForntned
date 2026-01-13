@@ -1,7 +1,7 @@
 // services/thresholdService.ts
 import axios from "axios";
 import BASE_URL from "@/app/urlConfig/urlConfig";
-import { AddThresholdPayload, ThresholdResponse } from "../types/thresholdType";
+import { AddThresholdPayload, CompareExpenseAndThresholdResponse, ThresholdResponse } from "../types/thresholdType";
 
 // Helper to get token from cookies
 const getToken = (): string => {
@@ -100,5 +100,22 @@ export const updateThresholdService = async (sn: string, payload: AddThresholdPa
         };
     } catch (error: any) {
         throw new Error(error.response?.data?.message || error.message || "Failed to update threshold");
+    }
+};
+
+
+
+//Compare threshold with expenses
+export const compareThresholdWithExpensesService = async (sn: string): Promise<CompareExpenseAndThresholdResponse> => {
+    try {
+        const token = getToken();
+        const response = await axios.get(`${BASE_URL}/api/expense-threshold/compare/${sn}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data;
+    } catch (error: any) {
+        throw new Error(
+            error.response?.data?.message || error.message || "Failed to compare threshold with expenses"
+        );
     }
 };

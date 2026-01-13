@@ -15,7 +15,7 @@ interface ThresholdFormProps {
 const ThresholdForm = ({ isOpen, onClose, onSuccess }: ThresholdFormProps) => {
     const [amount, setAmount] = useState<number | "">("");
     const [frequency, setFrequency] = useState<"Monthly" | "Yearly">("Monthly");
-    const [isEnabled, setIsEnabled] = useState(true);
+    const [isEnabled, setIsEnabled] = useState(false);
     const [loading, setLoading] = useState(false);
     const [hasEnabledThreshold, setHasEnabledThreshold] = useState(false);
     const [checkingThresholds, setCheckingThresholds] = useState(false);

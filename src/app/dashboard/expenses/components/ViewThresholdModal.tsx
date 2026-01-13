@@ -270,14 +270,14 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
                                                         <>
                                                             <button
                                                                 onClick={() => startEdit(threshold)}
-                                                                className="text-blue-600 hover:text-blue-800 transition-colors mr-2"
+                                                                className="text-blue-600 hover:text-blue-800 transition-colors mr-2 cursor-pointer"
                                                                 title="Edit"
                                                             >
                                                                 <Edit className="w-5 h-5 inline" />
                                                             </button>
                                                             <button
                                                                 onClick={() => handleDelete(threshold.sn)}
-                                                                className="text-red-500 hover:text-red-700 transition-colors"
+                                                                className="text-red-500 hover:text-red-700 transition-colors cursor-pointer"
                                                                 title="Delete"
                                                             >
                                                                 <Trash2 className="w-5 h-5 inline" />
