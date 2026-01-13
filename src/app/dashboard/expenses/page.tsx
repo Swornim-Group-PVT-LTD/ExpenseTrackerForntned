@@ -27,7 +27,7 @@ function Expenses() {
   const [categories, setCategories] = useState<ExpenseCategoryResponse[]>([]);
   const [filteredData, setFilteredData] = useState<ExpenseResponse[]>([]);
   const [allData, setAllData] = useState<ExpenseResponse[]>([]);
-  const [isFilterActive, setIsFilterActive] = useState(false);
+  const [isFilterActive, setIsFilterActive] = useState(true);
   const [currentDateRange, setCurrentDateRange] = useState<{ start: string, end: string } | null>(null);
   const [currentCategory, setCurrentCategory] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -96,7 +96,7 @@ function Expenses() {
         <span>/Add Expenses</span>
       </div>
 
-      
+
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
         <h1 className="text-2xl font-bold">Add Expenses</h1>
         <div className="flex gap-2">
@@ -196,7 +196,7 @@ function Expenses() {
           </button>
         </div>
       )}
-      <ExpenseTable refreshTrigger={refreshTrigger} filteredData={isFilterActive ? filteredData : null} onSuccess={handleRefresh} onDataLoad={setAllData} />
+      <ExpenseTable refreshTrigger={refreshTrigger} filteredData={isFilterActive ? filteredData : null} onSuccess={handleRefresh} onDataLoad={setAllData} isFilterActive={isFilterActive} />
     </div>
   );
 }
