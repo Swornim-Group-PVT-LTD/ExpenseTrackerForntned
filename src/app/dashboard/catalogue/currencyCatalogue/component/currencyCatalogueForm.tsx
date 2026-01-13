@@ -66,19 +66,18 @@ export default function CurrencyCatalogueForm({
   };
 
   const inputClass = (field: string) =>
-    `w-full px-3 py-2 border rounded-md ${
-      errors[field] ? "border-red-500" : "border-gray-300"
+    `w-full px-3 py-2 border rounded-md ${errors[field] ? "border-red-500" : "border-gray-300"
     }`;
 
   return (
-    <div className="p-6 bg-gray-50 rounded-md max-w-full mt-6 overflow-x-auto">
+    <div className="p-6 bg-gray-50 rounded-md max-w-full mt-6">
       {errors.form && (
         <p className="text-red-500 mb-2 font-medium">{errors.form}</p>
       )}
 
-      <div className="flex gap-4 items-end">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Catalogue */}
-        <div className="flex-1 min-w-[150px]">
+        <div className="lg:col-span-1">
           <label className="block mb-1 text-gray-700">Catalogue</label>
           <input
             type="text"
@@ -89,7 +88,7 @@ export default function CurrencyCatalogueForm({
         </div>
 
         {/* Country*/}
-        <div className="flex-1 min-w-[150px]">
+        <div className="lg:col-span-1">
           <label className="block mb-1 text-gray-700">Country</label>
           <input
             type="text"
@@ -104,7 +103,7 @@ export default function CurrencyCatalogueForm({
         </div>
 
         {/* Symbol */}
-        <div className="flex-1 min-w-[150px]">
+        <div className="lg:col-span-1">
           <label className="block mb-1 text-gray-700">Symbol</label>
           <input
             type="text"
@@ -119,7 +118,7 @@ export default function CurrencyCatalogueForm({
         </div>
 
         {/* Code */}
-        <div className="flex-1 min-w-[150px]">
+        <div className="lg:col-span-1">
           <label className="block mb-1 text-gray-700">Code</label>
           <input
             type="text"
@@ -134,13 +133,12 @@ export default function CurrencyCatalogueForm({
         </div>
 
         {/* Submit Button */}
-        <div className="flex-none">
+        <div className="md:col-span-2 lg:col-span-1 flex items-end">
           <button
             onClick={handleAdd}
             disabled={loading}
-            className={`px-6 py-2 bg-yellow-400 text-white font-semibold rounded-md hover:bg-yellow-600 transition cursor-pointer ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            className={`w-full px-6 py-2 bg-yellow-400 text-white font-semibold rounded-md hover:bg-yellow-600 transition cursor-pointer ${loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
           >
             {loading ? "Adding..." : "Add"}
           </button>
