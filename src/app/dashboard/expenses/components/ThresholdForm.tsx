@@ -28,11 +28,15 @@ const ThresholdForm = ({ isOpen, onClose, onSuccess }: ThresholdFormProps) => {
             try {
                 setCheckingThresholds(true);
                 const thresholds = await getThresholdsService();
-                const hasEnabled = thresholds.some(t => t.isEnable === true);
-                setHasEnabledThreshold(hasEnabled);
 
-                // If there's already an enabled threshold, set this one to disabled
-                if (hasEnabled) {
+                // Check if there's an enabled threshold of the SAME frequency
+                const hasEnabledSameFrequency = thresholds.some(
+                    t => t.isEnable === true && t.frequency === frequency
+                );
+                setHasEnabledThreshold(hasEnabledSameFrequency);
+
+                // If there's already an enabled threshold of the same frequency, set this one to disabled
+                if (hasEnabledSameFrequency) {
                     setIsEnabled(false);
                 }
             } catch (error) {
@@ -43,7 +47,7 @@ const ThresholdForm = ({ isOpen, onClose, onSuccess }: ThresholdFormProps) => {
         };
 
         checkEnabledThresholds();
-    }, [isOpen]);
+    }, [isOpen, frequency]); // Re-check when frequency changes
 
     const handleSubmit = async () => {
         // Validation
@@ -52,9 +56,9 @@ const ThresholdForm = ({ isOpen, onClose, onSuccess }: ThresholdFormProps) => {
             return;
         }
 
-        // Check if trying to enable when another threshold is already enabled
+        // Check if trying to enable when another threshold of the same frequency is already enabled
         if (isEnabled && hasEnabledThreshold) {
-            toast.error("Cannot enable this threshold. Another threshold is already enabled. Please disable the existing one first.");
+            toast.error(`Cannot enable this ${frequency.toLowerCase()} threshold. Another ${frequency.toLowerCase()} threshold is already enabled. Please disable it first.`);
             return;
         }
 
@@ -123,10 +127,10 @@ const ThresholdForm = ({ isOpen, onClose, onSuccess }: ThresholdFormProps) => {
                             <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                             <div className="flex-1">
                                 <h4 className="text-sm font-semibold text-amber-800 mb-1">
-                                    Enabled Threshold Already Exists
+                                    Enabled {frequency} Threshold Already Exists
                                 </h4>
                                 <p className="text-sm text-amber-700">
-                                    Only one threshold can be enabled at a time. To enable this threshold, please disable the existing enabled threshold first from the View Thresholds section.
+                                    Only one {frequency.toLowerCase()} threshold can be enabled at a time. To enable this threshold, please disable the existing {frequency.toLowerCase()} threshold first from the View Thresholds section. Note: You can have one monthly and one yearly threshold enabled simultaneously.
                                 </p>
                             </div>
                         </div>

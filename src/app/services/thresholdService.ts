@@ -106,10 +106,10 @@ export const updateThresholdService = async (sn: string, payload: AddThresholdPa
 
 
 //Compare threshold with expenses
-export const compareThresholdWithExpensesService = async (sn: string): Promise<CompareExpenseAndThresholdResponse> => {
+export const compareThresholdWithExpensesService = async (filterType: string): Promise<CompareExpenseAndThresholdResponse> => {
     try {
         const token = getToken();
-        const response = await axios.get(`${BASE_URL}/api/expense-threshold/compare/${sn}`, {
+        const response = await axios.get(`${BASE_URL}/api/expense-threshold/compare?filter=${filterType}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;

@@ -12,6 +12,7 @@ import ExpenseTable from "./components/ExpenseTable";
 import ExpensesBarChart from "./components/ExpensesBarChart";
 import ThresholdForm from "./components/ThresholdForm";
 import ViewThresholdModal from "./components/ViewThresholdModal";
+import ExpenseThreshold from "./components/ThresholdCompariosion";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { getExpenseCategoriesService } from "@/app/services/catalogueServices/expenseCatalogueService";
@@ -131,6 +132,12 @@ function Expenses() {
         <BalanceCard refreshTrigger={refreshTrigger} />
         <ExpenseForm onSuccess={handleRefresh} />
       </div>
+
+      {/* Threshold Comparison Section */}
+      <div className="my-4">
+        <ExpenseThreshold refreshTrigger={refreshTrigger + thresholdRefreshTrigger} />
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4">
         <div className="h-80">
           <ExpensesLineChart refreshTrigger={refreshTrigger} />
