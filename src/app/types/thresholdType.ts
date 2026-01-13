@@ -13,3 +13,17 @@ export interface ThresholdResponse {
     isEnable: boolean;
     create_date: string;
 }
+
+export interface CompareExpenseAndThresholdResponse {
+    message: string;
+    filter: string;
+    threshold_amount: number;
+    total_expenses: number;
+    remaining_amount: number;
+    exceeded_amount: number;
+    percent_used: number;
+    warning: string;
+    currency: string;
+    symbol: string;
+    threshold_sn: string;
+}

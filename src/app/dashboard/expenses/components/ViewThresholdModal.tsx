@@ -64,14 +64,14 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
     // Save update
     const saveEdit = async (sn: string) => {
         try {
-            // Check if trying to enable this threshold when another one is already enabled
+            // Check if trying to enable this threshold when another one of the SAME frequency is already enabled
             if (editForm.isEnable) {
                 const otherEnabledThreshold = thresholds.find(
-                    t => t.sn !== sn && t.isEnable === true
+                    t => t.sn !== sn && t.isEnable === true && t.frequency === editForm.frequency
                 );
 
                 if (otherEnabledThreshold) {
-                    toast.error("Cannot enable this threshold. Another threshold is already enabled. Please disable it first.");
+                    toast.error(`Cannot enable this ${editForm.frequency.toLowerCase()} threshold. Another ${editForm.frequency.toLowerCase()} threshold is already enabled. Please disable it first.`);
                     return;
                 }
             }
@@ -217,13 +217,13 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
                                                             value={editForm.isEnable ? "enabled" : "disabled"}
                                                             onChange={(e) => {
                                                                 const newValue = e.target.value === "enabled";
-                                                                // Check if trying to enable when another is already enabled
+                                                                // Check if trying to enable when another of the SAME frequency is already enabled
                                                                 if (newValue) {
                                                                     const otherEnabled = thresholds.find(
-                                                                        t => t.sn !== threshold.sn && t.isEnable === true
+                                                                        t => t.sn !== threshold.sn && t.isEnable === true && t.frequency === editForm.frequency
                                                                     );
                                                                     if (otherEnabled) {
-                                                                        toast.warning("Another threshold is already enabled. Disable it first.");
+                                                                        toast.warning(`Another ${editForm.frequency.toLowerCase()} threshold is already enabled. Disable it first.`);
                                                                         return;
                                                                     }
                                                                 }
@@ -270,14 +270,14 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
                                                         <>
                                                             <button
                                                                 onClick={() => startEdit(threshold)}
-                                                                className="text-blue-600 hover:text-blue-800 transition-colors mr-2"
+                                                                className="text-blue-600 hover:text-blue-800 transition-colors mr-2 cursor-pointer"
                                                                 title="Edit"
                                                             >
                                                                 <Edit className="w-5 h-5 inline" />
                                                             </button>
                                                             <button
                                                                 onClick={() => handleDelete(threshold.sn)}
-                                                                className="text-red-500 hover:text-red-700 transition-colors"
+                                                                className="text-red-500 hover:text-red-700 transition-colors cursor-pointer"
                                                                 title="Delete"
                                                             >
                                                                 <Trash2 className="w-5 h-5 inline" />
@@ -390,13 +390,13 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
                                                         value={editForm.isEnable ? "enabled" : "disabled"}
                                                         onChange={(e) => {
                                                             const newValue = e.target.value === "enabled";
-                                                            // Check if trying to enable when another is already enabled
+                                                            // Check if trying to enable when another of the SAME frequency is already enabled
                                                             if (newValue) {
                                                                 const otherEnabled = thresholds.find(
-                                                                    t => t.sn !== threshold.sn && t.isEnable === true
+                                                                    t => t.sn !== threshold.sn && t.isEnable === true && t.frequency === editForm.frequency
                                                                 );
                                                                 if (otherEnabled) {
-                                                                    toast.warning("Another threshold is already enabled. Disable it first.");
+                                                                    toast.warning(`Another ${editForm.frequency.toLowerCase()} threshold is already enabled. Disable it first.`);
                                                                     return;
                                                                 }
                                                             }
