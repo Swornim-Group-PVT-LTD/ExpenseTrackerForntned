@@ -18,3 +18,13 @@ export interface BalanceResponse {
     symbol: string;
   }
 }
+
+
+export interface MonthlyRemainingBalanceResponse {
+  message: string;
+  year: number;
+  data: {
+    month: string;
+    remaining_balance: number;
+  }[];
+}

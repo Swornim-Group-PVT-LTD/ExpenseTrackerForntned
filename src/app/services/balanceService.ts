@@ -1,7 +1,7 @@
 // services/balanceService.ts
 import axios from "axios";
 import BASE_URL from "@/app/urlConfig/urlConfig";
-import { AddBalancePayload, BalanceResponse } from "../types/balanceType";
+import { AddBalancePayload, BalanceResponse, MonthlyRemainingBalanceResponse } from "../types/balanceType";
 
 // Helper to get token from cookies
 const getToken = (): string => {
@@ -44,6 +44,26 @@ export const getBalancesService = async (): Promise<BalanceResponse[]> => {
 
     // Return only the data array, not the full object
     return response.data.data as BalanceResponse[];
+
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || error.message || "Failed to fetch balances"
+    );
+  }
+};
+
+
+// Get monthly remaining balance for the chart
+export const getMonthlyRemainingBalanceService = async (): Promise<MonthlyRemainingBalanceResponse> => {
+  try {
+    const token = getToken();
+
+    const response = await axios.get(`${BASE_URL}/api/balances/monthly-remaining`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // Return the full response object matching the interface
+    return response.data as MonthlyRemainingBalanceResponse;
 
   } catch (error: any) {
     throw new Error(
