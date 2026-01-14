@@ -179,7 +179,7 @@ const ExpenseThreshold: React.FC<ExpenseThresholdProps> = ({ refreshTrigger = 0 
                     {/* Spent Section */}
                     {percentUsed > 0 && (
                         <div
-                            className="bg-green-600 flex items-center justify-center px-2 sm:px-4 py-3 transition-all duration-500 relative group cursor-pointer"
+                            className="bg-red-600 flex items-center justify-center px-2 sm:px-4 py-3 transition-all duration-500 relative group cursor-pointer"
                             style={{ width: `${percentUsed}%` }}
                             title={`Spent: ${data.symbol} ${((Number(data.total_expenses)) || 0).toLocaleString()} (${percentUsed.toFixed(1)}%)`}
                         >
@@ -192,7 +192,7 @@ const ExpenseThreshold: React.FC<ExpenseThresholdProps> = ({ refreshTrigger = 0 
                             </div>
 
                             {/* Label - only show if section is wide enough */}
-                            {percentUsed >= 20 && (
+                            {percentUsed >= 5 && (
                                 <span className="text-white font-bold text-sm sm:text-base text-center">
                                     {percentUsed.toFixed(1)}%
                                 </span>
@@ -203,7 +203,7 @@ const ExpenseThreshold: React.FC<ExpenseThresholdProps> = ({ refreshTrigger = 0 
                     {/* Remaining Section */}
                     {!isExceeded && percentRemaining > 0 && (
                         <div
-                            className="bg-red-600 flex items-center justify-center px-2 sm:px-4 py-3 transition-all duration-500 relative group cursor-pointer"
+                            className="bg-green-600 flex items-center justify-center px-2 sm:px-4 py-3 transition-all duration-500 relative group cursor-pointer"
                             style={{ width: `${percentRemaining}%` }}
                             title={`Remaining: ${data.symbol} ${((Number(data.remaining_amount)) || 0).toLocaleString()} (${percentRemaining.toFixed(1)}%)`}
                         >
@@ -216,7 +216,7 @@ const ExpenseThreshold: React.FC<ExpenseThresholdProps> = ({ refreshTrigger = 0 
                             </div>
 
                             {/* Label - only show if section is wide enough */}
-                            {percentRemaining >= 20 && (
+                            {percentRemaining >= 5 && (
                                 <span className="text-white font-bold text-sm sm:text-base text-center">
                                     {percentRemaining.toFixed(1)}%
                                 </span>
@@ -228,7 +228,7 @@ const ExpenseThreshold: React.FC<ExpenseThresholdProps> = ({ refreshTrigger = 0 
                 {/* Summary Row Below Progress Bar */}
                 <div className="flex flex-col sm:flex-row justify-between gap-2 text-sm">
                     <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-green-600 rounded"></div>
+                        <div className="w-3 h-3 bg-red-600 rounded"></div>
                         <span className="text-gray-700">
                             <span className="font-semibold">Spent:</span> {data.symbol} {((Number(data.total_expenses)) || 0).toLocaleString()}
                             <span className="text-gray-500 ml-1">({percentUsed.toFixed(1)}%)</span>
@@ -236,7 +236,7 @@ const ExpenseThreshold: React.FC<ExpenseThresholdProps> = ({ refreshTrigger = 0 
                     </div>
                     {!isExceeded && (
                         <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 bg-red-600 rounded"></div>
+                            <div className="w-3 h-3 bg-green-600 rounded"></div>
                             <span className="text-gray-700">
                                 <span className="font-semibold">Remaining:</span> {data.symbol} {((Number(data.remaining_amount)) || 0).toLocaleString()}
                                 <span className="text-gray-500 ml-1">({percentRemaining.toFixed(1)}%)</span>
