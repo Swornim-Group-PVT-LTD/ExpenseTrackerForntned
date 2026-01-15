@@ -126,6 +126,7 @@ function Expenses() {
         isOpen={isViewThresholdOpen}
         onClose={() => setIsViewThresholdOpen(false)}
         refreshTrigger={thresholdRefreshTrigger}
+        onSuccess={handleThresholdSuccess}
       />
 
       <div className="grid grid-cols-1 items-center lg:grid-cols-4 gap-4">

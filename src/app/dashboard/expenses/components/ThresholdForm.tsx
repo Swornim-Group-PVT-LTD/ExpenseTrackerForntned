@@ -176,22 +176,21 @@ const ThresholdForm = ({ isOpen, onClose, onSuccess }: ThresholdFormProps) => {
                             </select>
                         </div>
 
-                        {/* Enable/Disable Switch */}
+                        {/* Enable/Disable Checkbox */}
                         <div className="flex-1 min-w-0">
                             <label className="block text-sm font-semibold text-gray-700 mb-2 whitespace-nowrap">
                                 Enable Threshold
                             </label>
                             <div className="flex items-center h-12">
-                                <label className={`relative inline-flex items-center ${hasEnabledThreshold ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}>
+                                <label className={`flex items-center gap-2 ${hasEnabledThreshold ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}>
                                     <input
                                         type="checkbox"
-                                        className="sr-only peer"
+                                        className="w-5 h-5 text-[#FFAA00] bg-gray-100 border-gray-300 rounded focus:ring-[#FFA726] focus:ring-2"
                                         checked={isEnabled}
                                         onChange={(e) => setIsEnabled(e.target.checked)}
                                         disabled={hasEnabledThreshold}
                                     />
-                                    <div className={`w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#FFA726]/30 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FFAA00] ${hasEnabledThreshold ? 'peer-disabled:opacity-60' : ''}`}></div>
-                                    <span className="ms-3 text-sm font-medium text-gray-700 whitespace-nowrap">
+                                    <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
                                         {isEnabled ? "Enabled" : "Disabled"}
                                     </span>
                                 </label>

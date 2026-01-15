@@ -10,9 +10,10 @@ interface ViewThresholdModalProps {
     isOpen: boolean;
     onClose: () => void;
     refreshTrigger?: number;
+    onSuccess?: () => void;
 }
 
-const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdModalProps) => {
+const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger, onSuccess }: ViewThresholdModalProps) => {
     const [thresholds, setThresholds] = useState<ThresholdResponse[]>([]);
     const [loading, setLoading] = useState(false);
     const [editingSn, setEditingSn] = useState<string | null>(null);
@@ -92,6 +93,7 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
                 )
             );
             cancelEdit();
+            onSuccess && onSuccess(); // Trigger parent refresh
         } catch (error: any) {
             toast.error(error.message || "Failed to update threshold");
         }
@@ -106,6 +108,7 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
             await deleteThresholdService(sn);
             toast.success("Threshold deleted successfully");
             fetchThresholds(); // Refresh the list
+            onSuccess && onSuccess(); // Trigger parent refresh
         } catch (error: any) {
             toast.error(error.message || "Failed to delete threshold");
         }
@@ -212,30 +215,34 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
                                                 </td>
                                                 <td className="border border-gray-300 px-4 py-2">
                                                     {editingSn === threshold.sn ? (
-                                                        <select
-                                                            className="p-2 border rounded-md border-gray-300 w-full"
-                                                            value={editForm.isEnable ? "enabled" : "disabled"}
-                                                            onChange={(e) => {
-                                                                const newValue = e.target.value === "enabled";
-                                                                // Check if trying to enable when another of the SAME frequency is already enabled
-                                                                if (newValue) {
-                                                                    const otherEnabled = thresholds.find(
-                                                                        t => t.sn !== threshold.sn && t.isEnable === true && t.frequency === editForm.frequency
-                                                                    );
-                                                                    if (otherEnabled) {
-                                                                        toast.warning(`Another ${editForm.frequency.toLowerCase()} threshold is already enabled. Disable it first.`);
-                                                                        return;
+                                                        <label className="relative inline-flex items-center cursor-pointer">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="sr-only peer"
+                                                                checked={editForm.isEnable}
+                                                                onChange={(e) => {
+                                                                    const newValue = e.target.checked;
+                                                                    // Check if trying to enable when another of the SAME frequency is already enabled
+                                                                    if (newValue) {
+                                                                        const otherEnabled = thresholds.find(
+                                                                            t => t.sn !== threshold.sn && t.isEnable === true && t.frequency === editForm.frequency
+                                                                        );
+                                                                        if (otherEnabled) {
+                                                                            toast.warning(`Another ${editForm.frequency.toLowerCase()} threshold is already enabled. Disable it first.`);
+                                                                            return;
+                                                                        }
                                                                     }
-                                                                }
-                                                                setEditForm((prev) => ({
-                                                                    ...prev,
-                                                                    isEnable: newValue,
-                                                                }))
-                                                            }}
-                                                        >
-                                                            <option value="enabled">Enabled</option>
-                                                            <option value="disabled">Disabled</option>
-                                                        </select>
+                                                                    setEditForm((prev) => ({
+                                                                        ...prev,
+                                                                        isEnable: newValue,
+                                                                    }))
+                                                                }}
+                                                            />
+                                                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#FFA726]/30 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FFAA00]"></div>
+                                                            <span className="ms-3 text-sm font-medium text-gray-700">
+                                                                {editForm.isEnable ? "Enabled" : "Disabled"}
+                                                            </span>
+                                                        </label>
                                                     ) : (
                                                         <span
                                                             className={`px-2 py-1 rounded text-xs font-semibold ${threshold.isEnable
@@ -385,30 +392,34 @@ const ViewThresholdModal = ({ isOpen, onClose, refreshTrigger }: ViewThresholdMo
                                             <div className="flex justify-between items-center">
                                                 <span className="text-sm text-gray-500">Status:</span>
                                                 {editingSn === threshold.sn ? (
-                                                    <select
-                                                        className="w-32 p-1 text-sm border rounded"
-                                                        value={editForm.isEnable ? "enabled" : "disabled"}
-                                                        onChange={(e) => {
-                                                            const newValue = e.target.value === "enabled";
-                                                            // Check if trying to enable when another of the SAME frequency is already enabled
-                                                            if (newValue) {
-                                                                const otherEnabled = thresholds.find(
-                                                                    t => t.sn !== threshold.sn && t.isEnable === true && t.frequency === editForm.frequency
-                                                                );
-                                                                if (otherEnabled) {
-                                                                    toast.warning(`Another ${editForm.frequency.toLowerCase()} threshold is already enabled. Disable it first.`);
-                                                                    return;
+                                                    <label className="relative inline-flex items-center cursor-pointer">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="sr-only peer"
+                                                            checked={editForm.isEnable}
+                                                            onChange={(e) => {
+                                                                const newValue = e.target.checked;
+                                                                // Check if trying to enable when another of the SAME frequency is already enabled
+                                                                if (newValue) {
+                                                                    const otherEnabled = thresholds.find(
+                                                                        t => t.sn !== threshold.sn && t.isEnable === true && t.frequency === editForm.frequency
+                                                                    );
+                                                                    if (otherEnabled) {
+                                                                        toast.warning(`Another ${editForm.frequency.toLowerCase()} threshold is already enabled. Disable it first.`);
+                                                                        return;
+                                                                    }
                                                                 }
-                                                            }
-                                                            setEditForm((prev) => ({
-                                                                ...prev,
-                                                                isEnable: newValue,
-                                                            }))
-                                                        }}
-                                                    >
-                                                        <option value="enabled">Enabled</option>
-                                                        <option value="disabled">Disabled</option>
-                                                    </select>
+                                                                setEditForm((prev) => ({
+                                                                    ...prev,
+                                                                    isEnable: newValue,
+                                                                }))
+                                                            }}
+                                                        />
+                                                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#FFA726]/30 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FFAA00]"></div>
+                                                        <span className="ms-3 text-xs font-medium text-gray-700">
+                                                            {editForm.isEnable ? "Enabled" : "Disabled"}
+                                                        </span>
+                                                    </label>
                                                 ) : (
                                                     <span
                                                         className={`px-2 py-0.5 rounded text-xs font-semibold ${threshold.isEnable
