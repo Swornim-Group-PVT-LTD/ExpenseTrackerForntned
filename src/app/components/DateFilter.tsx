@@ -1,5 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { Datepicker } from "flowbite-react";
+import { toast } from "react-toastify";
+import SearchInput from "@/app/components/SearchInput";
 
 import { useState, useEffect } from "react";
 
@@ -42,6 +44,18 @@ export default function DateFilter({
     if (from && to && from > to) {
       setError("'From' date cannot be later than 'To' date.");
       return;
+    }
+
+    // Validate category if provided
+    if (selectedCategory && selectedCategory.trim() !== "") {
+      const categoryExists = categories.some(
+        (cat) => cat[categoryKey].toLowerCase() === selectedCategory.toLowerCase()
+      );
+
+      if (!categoryExists) {
+        toast.error("Please select a valid category from the list");
+        return;
+      }
     }
 
     const start_date = from ? formatLocalDate(from) : undefined;
@@ -115,24 +129,16 @@ export default function DateFilter({
             </div>
           </div>
 
-          {/* Category Dropdown */}
+          {/* Category Search Input */}
           <div className="flex flex-col gap-1.5 flex-1 lg:max-w-xs">
             <span className="text-sm font-semibold text-[#716A6A]">Category</span>
-            <div className="relative">
-              <select
-                className="appearance-none w-full h-[42px] px-3 text-sm font-medium text-[#716A6A] border border-gray-200 rounded-lg bg-white cursor-pointer focus:ring-1 focus:ring-[#FFAA00] focus:border-[#FFAA00]"
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                <option value="">All Categories</option>
-                {categories?.map((cat) => (
-                  <option key={cat.id} value={cat[categoryKey]}>
-                    {cat[categoryKey]}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#716A6A] pointer-events-none" />
-            </div>
+            <SearchInput
+              options={categories?.map(cat => ({ id: cat.id, value: cat[categoryKey] })) || []}
+              value={selectedCategory}
+              onChange={setSelectedCategory}
+              placeholder="All Categories"
+              className="w-full"
+            />
           </div>
 
           {/* Search Button */}
