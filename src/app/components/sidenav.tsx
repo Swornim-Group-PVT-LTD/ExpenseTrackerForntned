@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   Folder,
   Plus,
+  FileText,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -59,6 +60,12 @@ const dashboardData = [
     href: "/dashboard/catalogue",
     icon: <Folder className="h-6 w-6" />,
     color: "bg-blue-500",
+  },
+  {
+    title: "statement",
+    href: "/dashboard/statement",
+    icon: <FileText className="h-6 w-6" />,
+    color: "bg-purple-500",
   },
 ];
 
