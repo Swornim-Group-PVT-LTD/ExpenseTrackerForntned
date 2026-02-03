@@ -121,13 +121,13 @@ export default function StatementTable({
                   groupedData.map((group, groupIndex) => (
                     <React.Fragment key={`group-${group.date}-${groupIndex}`}>
                       {/* Date Header Row */}
-                      <TableRow className="bg-yellow-50 border-t-2 border-yellow-200">
+                      <TableRow className="bg-[var(--color1)] border-t-2 border-[var(--color2)] text-white">
                         <TableCell colSpan={5} className="py-3">
                           <div className="flex items-center gap-2">
-                            <span className="inline-flex items-center justify-center w-8 h-8 bg-[var(--color2)] text-white rounded-full text-sm font-bold">
+                            <span className="inline-flex items-center justify-center w-8 h-8 bg-white text-white rounded-full text-sm font-bold">
                               📅
                             </span>
-                            <span className="text-base font-bold text-gray-800">
+                            <span className="text-base font-bold">
                               Date: {formatDate(group.date)}
                             </span>
                           </div>

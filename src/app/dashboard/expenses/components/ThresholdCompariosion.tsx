@@ -249,11 +249,11 @@ const ExpenseThreshold: React.FC<ExpenseThresholdProps> = ({ refreshTrigger = 0 
             {/* Warning Message */}
             {data.warning && (
                 <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-                    <p className="text-yellow-800 text-sm">{data.warning}</p>
+                    <p className="text-yellow-800 text-sm">You have exceeded your monthly expense threshold by <strong>{data.exceeded_amount}</strong>. Please adjust your spending!</p>
                 </div>
             )}
 
-           
+
         </div>
     );
 };
