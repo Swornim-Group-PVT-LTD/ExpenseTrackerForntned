@@ -155,15 +155,13 @@ export default function StatementTable({
                             {formatDate(entry.date)}
                           </TableCell>
                           <TableCell>
-                            <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
                               <span className="font-medium text-gray-900">{entry.description}</span>
-                              <span className="text-xs text-gray-500 mt-1">
-                                <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${entry.type.toLowerCase() === 'income'
-                                  ? 'bg-green-100 text-green-800'
-                                  : 'bg-red-100 text-red-800'
-                                  }`}>
-                                  {entry.type}
-                                </span>
+                              <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${entry.type.toLowerCase() === 'income'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-red-100 text-red-800'
+                                }`}>
+                                {entry.type}
                               </span>
                             </div>
                           </TableCell>
@@ -175,7 +173,7 @@ export default function StatementTable({
                           </TableCell>
                           <TableCell className={`text-right font-bold ${entry.balance >= 0 ? 'text-green-700' : 'text-red-700'
                             }`}>
-                            {formatAmount(entry.balance)}
+                            {entry.type.toLowerCase() === 'expense' && entry.balance !== 0 ? '- ' : ''}{formatAmount(entry.balance)}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -257,13 +255,15 @@ export default function StatementTable({
                   {/* Type Badge and Description */}
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex-1">
-                      <p className="font-semibold text-gray-900 text-sm">{entry.description}</p>
-                      <span className={`inline-flex px-2 py-1 rounded-full text-xs font-semibold mt-2 ${entry.type.toLowerCase() === 'income'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                        }`}>
-                        {entry.type}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-gray-900 text-sm">{entry.description}</p>
+                        <span className={`inline-flex px-2 py-1 rounded-full text-xs font-semibold ${entry.type.toLowerCase() === 'income'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                          }`}>
+                          {entry.type}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
@@ -285,7 +285,7 @@ export default function StatementTable({
                       <p className="text-xs text-gray-500 mb-1">Balance</p>
                       <p className={`text-sm font-bold ${entry.balance >= 0 ? 'text-green-700' : 'text-red-700'
                         }`}>
-                        {formatAmount(entry.balance)}
+                        {entry.type.toLowerCase() === 'expense' && entry.balance !== 0 ? '- ' : ''}{formatAmount(entry.balance)}
                       </p>
                     </div>
                   </div>
