@@ -30,18 +30,20 @@ export default function DateFilter({
   const [to, setTo] = useState<Date | undefined>(initialTo || new Date());
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [useDateRange, setUseDateRange] = useState<boolean>(false); // disabled by default
 
   const formatLocalDate = (d: Date) =>
-    d ? new Date(d.getTime() - d.getTimezoneOffset() * 60000)
-      .toISOString()
-      .split("T")[0]
+    d
+      ? new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+          .toISOString()
+          .split("T")[0]
       : "";
 
   const handleSearch = async () => {
     setError("");
 
     // Validate date range if both dates are provided
-    if (from && to && from > to) {
+    if (useDateRange && from && to && from > to) {
       setError("'From' date cannot be later than 'To' date.");
       return;
     }
@@ -49,7 +51,8 @@ export default function DateFilter({
     // Validate category if provided
     if (selectedCategory && selectedCategory.trim() !== "") {
       const categoryExists = categories.some(
-        (cat) => cat[categoryKey].toLowerCase() === selectedCategory.toLowerCase()
+        (cat) =>
+          cat[categoryKey].toLowerCase() === selectedCategory.toLowerCase(),
       );
 
       if (!categoryExists) {
@@ -58,16 +61,27 @@ export default function DateFilter({
       }
     }
 
-    const start_date = from ? formatLocalDate(from) : undefined;
-    const end_date = to ? formatLocalDate(to) : undefined;
-    console.log("Fetching data from", start_date, "to", end_date, "for category", selectedCategory);
+    const start_date = useDateRange && from ? formatLocalDate(from) : undefined;
+    const end_date = useDateRange && to ? formatLocalDate(to) : undefined;
+    console.log(
+      "Fetching data from",
+      start_date,
+      "to",
+      end_date,
+      "for category",
+      selectedCategory,
+    );
 
     try {
-      const response = await fetchService(start_date, end_date, selectedCategory || undefined);
+      const response = await fetchService(
+        start_date,
+        end_date,
+        selectedCategory || undefined,
+      );
       onFilter(response, start_date, end_date, selectedCategory);
     } catch (err: any) {
       setError(
-        err.message || "Failed to fetch data for the selected date range."
+        err.message || "Failed to fetch data for the selected date range.",
       );
     }
   };
@@ -101,14 +115,34 @@ export default function DateFilter({
           )}
         </div>
 
+        {/* Date range enable/disable checkbox */}
+        <div className="flex items-center gap-2 -mb-1">
+          <input
+            id="useDateRange"
+            type="checkbox"
+            checked={useDateRange}
+            onChange={(e) => setUseDateRange(e.target.checked)}
+            className="w-4 h-4 accent-[#FFAA00] cursor-pointer"
+          />
+          <label
+            htmlFor="useDateRange"
+            className="text-sm font-semibold text-[#716A6A] cursor-pointer select-none"
+          >
+            Filter by date range
+          </label>
+        </div>
+
         {/* Filter Controls */}
         <div className="flex flex-col lg:flex-row items-stretch lg:items-end gap-4">
           {/* From Date */}
           <div className="flex flex-col gap-1.5 flex-1">
             <span className="text-sm font-semibold text-[#716A6A]">From</span>
-            <div className="relative">
+            <div
+              className={`relative ${!useDateRange ? "opacity-50 pointer-events-none" : ""}`}
+            >
               <Datepicker
                 value={from}
+                disabled={!useDateRange}
                 onChange={(date: Date | null) => {
                   setFrom(date || undefined);
                 }}
@@ -119,9 +153,12 @@ export default function DateFilter({
           {/* To Date */}
           <div className="flex flex-col gap-1.5 flex-1">
             <span className="text-sm font-semibold text-[#716A6A]">To</span>
-            <div className="relative">
+            <div
+              className={`relative ${!useDateRange ? "opacity-50 pointer-events-none" : ""}`}
+            >
               <Datepicker
                 value={to}
+                disabled={!useDateRange}
                 onChange={(date: Date | null) => {
                   setTo(date || undefined);
                 }}
@@ -131,9 +168,16 @@ export default function DateFilter({
 
           {/* Category Search Input */}
           <div className="flex flex-col gap-1.5 flex-1 lg:max-w-xs">
-            <span className="text-sm font-semibold text-[#716A6A]">Category</span>
+            <span className="text-sm font-semibold text-[#716A6A]">
+              Category
+            </span>
             <SearchInput
-              options={categories?.map(cat => ({ id: cat.id, value: cat[categoryKey] })) || []}
+              options={
+                categories?.map((cat) => ({
+                  id: cat.id,
+                  value: cat[categoryKey],
+                })) || []
+              }
               value={selectedCategory}
               onChange={setSelectedCategory}
               placeholder="All Categories"
