@@ -102,7 +102,7 @@ export default function BalanceForm({ onSuccess }: { onSuccess?: () => void }) {
             value={currencyId ?? ""}
             onChange={(e) => {
               const selected = currencyList.find(
-                (item) => item.id === Number(e.target.value)
+                (item) => item.id === Number(e.target.value),
               );
 
               if (selected) {
@@ -135,9 +135,9 @@ export default function BalanceForm({ onSuccess }: { onSuccess?: () => void }) {
         {/* Submit Button */}
         <button
           onClick={handleAddBalance}
-          disabled={loading}
+          disabled={loading || balanceExists}
           className="bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-6 h-12 rounded 
-                     transition-colors disabled:opacity-50 cursor-pointer"
+                     transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
         >
           {loading ? "Saving..." : "Add"}
         </button>
