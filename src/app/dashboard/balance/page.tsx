@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React from "react";
 import { useState } from "react";
@@ -13,10 +13,10 @@ import { Home } from "lucide-react";
 
 const page = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const handleRefresh = () => setRefreshTrigger(prev => prev + 1);
+  const handleRefresh = () => setRefreshTrigger((prev) => prev + 1);
   return (
     <div>
-      <div className="flex items-center gap-1 text-md mb-4">
+      <div className="flex items-center gap-1 text-md mb-1 md:mb-4">
         <Home className="w-4 h-4" />
         <span>/Add Balance</span>
       </div>

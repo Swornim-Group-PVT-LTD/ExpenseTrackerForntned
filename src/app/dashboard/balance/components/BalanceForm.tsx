@@ -92,7 +92,7 @@ export default function BalanceForm({ onSuccess }: { onSuccess?: () => void }) {
   };
 
   return (
-    <div className="bg-white rounded-md p-4 mb-4 w-lg">
+    <div className="bg-white rounded-md p-4 mb-4 w-full max-w-lg">
       <div className="flex gap-2 items-center">
         {/* Currency Dropdown */}
         <div className="relative">
