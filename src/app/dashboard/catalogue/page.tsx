@@ -1,7 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Wallet, ArrowUp, ArrowDown, PiggyBank, Home, Info } from "lucide-react";
+import {
+  Wallet,
+  ArrowUp,
+  ArrowDown,
+  PiggyBank,
+  Home,
+  Info,
+} from "lucide-react";
 
 const catalogues = [
   {
@@ -28,7 +35,7 @@ const catalogues = [
     path: "catalogue/investmentCatalogue",
     bgClass: "bg-blue-500",
   },
-    {
+  {
     label: "Add Currency Catalogue",
     icon: <Wallet size={32} />,
     path: "catalogue/currencyCatalogue",
@@ -40,10 +47,10 @@ export default function CatalogueUI() {
   const router = useRouter();
 
   return (
-    <div className="p-4">
+    <div>
       {/* Breadcrumb & Title */}
       <div className="mb-4">
-        <div className="flex items-center gap-1 text-md mb-2">
+        <div className="flex items-center gap-1 text-md mb-1 md:mb-4">
           <Home className="w-4 h-4" />
           <span>/Catalogue</span>
         </div>
@@ -59,7 +66,9 @@ export default function CatalogueUI() {
             onClick={() => router.push(item.path)}
           >
             <div className="mb-4 text-white">{item.icon}</div>
-            <span className="text-center font-medium text-white">{item.label}</span>
+            <span className="text-center font-medium text-white">
+              {item.label}
+            </span>
           </div>
         ))}
       </div>
@@ -68,8 +77,9 @@ export default function CatalogueUI() {
       <div className="flex items-start gap-4 bg-yellow-100 border-l-4 border-yellow-400 p-6 rounded-lg mt-6">
         <Info className="w-6 h-6 text-yellow-600 mt-1" />
         <p className="text-yellow-800">
-          <strong>Note:</strong> From this page you can create your new custom remarks that will appear in a dropdown. 
-          So no need to type remarks, you can simply select from the dropdown.
+          <strong>Note:</strong> From this page you can create your new custom
+          remarks that will appear in a dropdown. So no need to type remarks,
+          you can simply select from the dropdown.
         </p>
       </div>
     </div>

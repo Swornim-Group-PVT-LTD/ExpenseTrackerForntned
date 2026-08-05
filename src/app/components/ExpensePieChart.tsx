@@ -96,15 +96,16 @@ export default function ExpensesPieChart() {
     };
     fetchPieChartData();
   }, [filter_type]);
+
   return (
     <>
       <div
+        className="w-full min-h-[340px] sm:min-h-[400px]"
         style={{
-          width: "100%",
-          height: 400,
           backgroundColor: "white",
           borderRadius: "12px",
           padding: "12px",
+          overflow: "visible",
         }}
       >
         <div className="flex justify-between items-center mb-4">
@@ -132,27 +133,43 @@ export default function ExpensesPieChart() {
         </div>
 
         {pieChartData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={340}>
-            <PieChart>
-              <Pie
-                data={pieChartData}
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                dataKey="value"
-              >
-                {pieChartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip
-                formatter={(value) => [
-                  `${currency} ${Number(value).toLocaleString()}`,
-                ]}
-              />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+          <>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={pieChartData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  dataKey="value"
+                >
+                  {pieChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  formatter={(value) => [
+                    `${currency} ${Number(value).toLocaleString()}`,
+                  ]}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-2">
+              {pieChartData.map((entry) => (
+                <div
+                  key={entry.name}
+                  className="flex items-center gap-1.5 text-sm"
+                >
+                  <span
+                    className="w-3 h-3 rounded-full inline-block"
+                    style={{ backgroundColor: entry.color }}
+                  />
+                  <span className="text-gray-700">{entry.name}</span>
+                </div>
+              ))}
+            </div>
+          </>
         ) : (
           <div className="flex items-center justify-center h-[340px]">
             <p className="text-gray-500 text-lg">No data found</p>
@@ -162,10 +179,10 @@ export default function ExpensesPieChart() {
 
       {/* Full Screen Modal */}
       {isFullScreen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-[90vw] h-[90vh] max-w-6xl">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-gray-900">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-6">
+          <div className="bg-white rounded-lg p-4 sm:p-6 w-full h-full sm:w-[90vw] sm:h-[90vh] max-w-6xl flex flex-col overflow-hidden">
+            <div className="flex justify-between items-center mb-4 shrink-0">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">
                 Expense Distribution
               </h2>
               <button
@@ -177,49 +194,51 @@ export default function ExpensesPieChart() {
             </div>
 
             {pieChartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="90%">
-                <PieChart>
-                  <Pie
-                    data={pieChartData}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={200}
-                    dataKey="value"
-                    label={(entry: any) => {
-                      const total = pieChartData.reduce(
-                        (sum, item) => sum + item.value,
-                        0,
-                      );
-                      const percent = (
-                        (Number(entry.value) / total) *
-                        100
-                      ).toFixed(1);
-                      return `${entry.name}: ${percent}%`;
-                    }}
-                    labelLine={false}
-                  >
-                    {pieChartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    formatter={(value, name) => {
-                      const total = pieChartData.reduce(
-                        (sum, item) => sum + item.value,
-                        0,
-                      );
-                      const percent = ((Number(value) / total) * 100).toFixed(
-                        1,
-                      );
-                      return [
-                        `${Number(value).toLocaleString()} (${percent}%)`,
-                        "Amount",
-                      ];
-                    }}
-                  />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
+              <div className="flex-1 min-h-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={pieChartData}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius="70%"
+                      dataKey="value"
+                      label={(entry: any) => {
+                        const total = pieChartData.reduce(
+                          (sum, item) => sum + item.value,
+                          0,
+                        );
+                        const percent = (
+                          (Number(entry.value) / total) *
+                          100
+                        ).toFixed(1);
+                        return `${percent}%`;
+                      }}
+                      labelLine={false}
+                    >
+                      {pieChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value, name) => {
+                        const total = pieChartData.reduce(
+                          (sum, item) => sum + item.value,
+                          0,
+                        );
+                        const percent = ((Number(value) / total) * 100).toFixed(
+                          1,
+                        );
+                        return [
+                          `${Number(value).toLocaleString()} (${percent}%)`,
+                          "Amount",
+                        ];
+                      }}
+                    />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
             ) : (
               <div className="flex items-center justify-center h-full">
                 <p className="text-gray-500 text-xl">No data found</p>
