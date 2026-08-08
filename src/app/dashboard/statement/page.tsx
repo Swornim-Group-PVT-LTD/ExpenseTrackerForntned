@@ -7,7 +7,11 @@ import { toast } from "react-toastify";
 import SimpleDateFilter from "./components/SimpleDateFilter";
 import StatementTable from "./components/StatementTable";
 import { getStatementByDateRangeService } from "@/app/services/statementService";
-import { StatementEntry, StatementResponse, CurrencyInfo } from "@/app/types/statementType";
+import {
+  StatementEntry,
+  StatementResponse,
+  CurrencyInfo,
+} from "@/app/types/statementType";
 import { downloadService } from "@/app/services/downloadService";
 
 function StatementOfAccount() {
@@ -15,7 +19,7 @@ function StatementOfAccount() {
   const [currency, setCurrency] = useState<CurrencyInfo>({
     country: "Nepal",
     currency: "NPR",
-    symbol: "रु"
+    symbol: "रु",
   });
   const [openingBalance, setOpeningBalance] = useState<number>(0);
   const [closingBalance, setClosingBalance] = useState<number>(0);
@@ -23,10 +27,10 @@ function StatementOfAccount() {
   const handleFilter = async (
     data: any,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
   ) => {
     // The data parameter will be the full StatementResponse from the service
-    if (data && typeof data === 'object' && 'data' in data) {
+    if (data && typeof data === "object" && "data" in data) {
       const response = data as StatementResponse;
       setStatementData(response.data || []);
       setCurrency(response.currency);
@@ -37,19 +41,19 @@ function StatementOfAccount() {
 
   // Prepare data for download (flatten the structure)
   const prepareDownloadData = () => {
-    return statementData.map(entry => ({
+    return statementData.map((entry) => ({
       date: entry.date,
       description: entry.description,
       type: entry.type,
       credit: entry.credit,
       debit: entry.debit,
-      balance: entry.balance
+      balance: entry.balance,
     }));
   };
 
   return (
     <div className="">
-      <div className="flex items-center gap-1 text-md mb-4">
+      <div className="flex items-center gap-1 text-md mb-1 md:mb-4">
         <Home className="w-4 h-4" />
         <span>/Statement of Account</span>
       </div>
@@ -59,13 +63,17 @@ function StatementOfAccount() {
       </div>
 
       <SimpleDateFilter
-        initialFrom={new Date(new Date().getFullYear(), new Date().getMonth(), 1)}
+        initialFrom={
+          new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+        }
         initialTo={new Date()}
         fetchService={getStatementByDateRangeService}
         onFilter={handleFilter}
         onDownloadPDF={() => {
           if (statementData.length === 0) {
-            toast.warning("No data to download. Please apply filters or wait for data to load.");
+            toast.warning(
+              "No data to download. Please apply filters or wait for data to load.",
+            );
             return;
           }
           const downloadData = prepareDownloadData();
@@ -79,12 +87,14 @@ function StatementOfAccount() {
               { header: "Debit", field: "debit" },
               { header: "Balance", field: "balance" },
             ],
-            "Statement_of_Account"
+            "Statement_of_Account",
           );
         }}
         onDownloadExcel={() => {
           if (statementData.length === 0) {
-            toast.warning("No data to download. Please apply filters or wait for data to load.");
+            toast.warning(
+              "No data to download. Please apply filters or wait for data to load.",
+            );
             return;
           }
           const downloadData = prepareDownloadData();
@@ -98,7 +108,7 @@ function StatementOfAccount() {
               { header: "Debit", field: "debit" },
               { header: "Balance", field: "balance" },
             ],
-            "Statement_of_Account"
+            "Statement_of_Account",
           );
         }}
       />

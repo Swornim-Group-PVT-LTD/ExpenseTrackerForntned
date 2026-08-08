@@ -12,18 +12,10 @@ import ExpensesLineChart from "@/app/components/ExpensesLineChart";
 import BalanceCard from "@/app/components/BalanceCard";
 
 import { getBalancesService } from "../services/balanceService";
-import {
-  getTotalExpenseService,
-} from "../services/expenseService";
-import {
-  getTotalSavingService,
-} from "../services/savingService";
-import {
-  getTotalIncomeService,
-} from "../services/incomeService";
-import {
-  getTotalInvestmentService,
-} from "../services/investmentService";
+import { getTotalExpenseService } from "../services/expenseService";
+import { getTotalSavingService } from "../services/savingService";
+import { getTotalIncomeService } from "../services/incomeService";
+import { getTotalInvestmentService } from "../services/investmentService";
 
 import { BalanceResponse } from "../types/balanceType";
 
@@ -36,7 +28,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [currency, setCurrency] = useState<string>("");
 
-  const [refreshTrigger, setRefreshTrigger] = useState(0)
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -48,13 +40,8 @@ export default function Dashboard() {
           totalSaving,
           totalIncome,
           totalInvestment,
-        ]: [
-            BalanceResponse[],
-            number,
-            number,
-            number,
-            number
-          ] = await Promise.all([
+        ]: [BalanceResponse[], number, number, number, number] =
+          await Promise.all([
             getBalancesService(),
             getTotalExpenseService(),
             getTotalSavingService(),
@@ -94,10 +81,34 @@ export default function Dashboard() {
   }, []);
 
   const dashboardData = [
-    { title: "Income", value: totalIncome, icon: "/income-logo.svg", labelColor: "#5EAC24", lucideIcon: <ArrowUp className="w-6 h-6" /> },
-    { title: "Expenses", value: totalExpenses, icon: "/expenses-logo.svg", labelColor: "#E63F32", lucideIcon: <ArrowDown className="w-6 h-6" /> },
-    { title: "Saving", value: totalSaving, icon: "/saving-logo.svg", labelColor: "#4EA890", lucideIcon: <PiggyBank className="w-6 h-6" /> },
-    { title: "Investment", value: totalInvestment, icon: "/investment-logo.svg", labelColor: "#FFA726", lucideIcon: <TrendingUp className="w-6 h-6" /> },
+    {
+      title: "Income",
+      value: totalIncome,
+      icon: "/income-logo.svg",
+      labelColor: "#5EAC24",
+      lucideIcon: <ArrowUp className="w-6 h-6" />,
+    },
+    {
+      title: "Expenses",
+      value: totalExpenses,
+      icon: "/expenses-logo.svg",
+      labelColor: "#E63F32",
+      lucideIcon: <ArrowDown className="w-6 h-6" />,
+    },
+    {
+      title: "Saving",
+      value: totalSaving,
+      icon: "/saving-logo.svg",
+      labelColor: "#4EA890",
+      lucideIcon: <PiggyBank className="w-6 h-6" />,
+    },
+    {
+      title: "Investment",
+      value: totalInvestment,
+      icon: "/investment-logo.svg",
+      labelColor: "#FFA726",
+      lucideIcon: <TrendingUp className="w-6 h-6" />,
+    },
   ];
 
   const router = useRouter();
@@ -113,13 +124,12 @@ export default function Dashboard() {
 
   return (
     <main>
-      <div className="flex items-center gap-1 text-md mb-4">
+      <div className="flex items-center gap-1 text-md mb-1 md:mb-4">
         <Home className="w-4 h-4" />
         <span>/Dashboard</span>
       </div>
 
       <div className="space-y-3 md:space-y-4">
-
         {/* Header + Add buttons */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
           <h1 className="text-2xl font-bold">Dashboard</h1>
@@ -149,13 +159,13 @@ export default function Dashboard() {
                   onClick={() => handleClick(item.title)}
                   className="flex flex-col items-center justify-center transition-transform hover:scale-105 cursor-pointer"
                 >
-                  <div 
+                  <div
                     className="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md"
                     style={{ backgroundColor: item.labelColor }}
                   >
                     {item.lucideIcon}
                   </div>
-                  <span className="text-sm mt-1 font-bold text-gray-700">
+                  <span className="text-sm mt-1 font-bold text-gray-700 hidden sm:block">
                     Add {item.title}
                   </span>
                 </button>
@@ -166,7 +176,6 @@ export default function Dashboard() {
 
         {/* Balance + Line Chart */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-
           <div className="lg:col-span-1">
             <BalanceCard refreshTrigger={refreshTrigger} />
           </div>
@@ -182,7 +191,9 @@ export default function Dashboard() {
             <StatCard
               key={index}
               icon={item.icon}
-              label={item.title as "income" | "expenses" | "saving" | "investment"}
+              label={
+                item.title as "income" | "expenses" | "saving" | "investment"
+              }
               labelColor={item.labelColor}
             />
           ))}

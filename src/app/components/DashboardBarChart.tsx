@@ -14,17 +14,15 @@ import { ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { dashboardBarChartService } from "../services/chartService";
-
-
+import { useCurrency } from "@/app/context/CurrencyContext";
 
 interface DashboardBarChartProps {
-  name: string,
-  value: number,
-  color: string
+  name: string;
+  value: number;
+  color: string;
 }
 
 export default function DashboardBarChart() {
-
   const [filterType, setFilterType] = useState("monthly");
   const [chartData, setChartData] = useState<DashboardBarChartProps[]>([
     { name: "Income", value: 0, color: "#5EAC24" },
@@ -33,19 +31,28 @@ export default function DashboardBarChart() {
     { name: "Saving", value: 0, color: "#4EAABB" },
   ]);
 
+  const { currency } = useCurrency();
+
   useEffect(() => {
     const fetchChartData = async () => {
       try {
         const response = await dashboardBarChartService(filterType);
         const transformedData = [
           { name: "Income", value: Number(response.income), color: "#5EAC24" },
-          { name: "Expenses", value: Number(response.expenses), color: "#FF6384" },
-          { name: "Investment", value: Number(response.investment), color: "#EE8B44" },
+          {
+            name: "Expenses",
+            value: Number(response.expenses),
+            color: "#FF6384",
+          },
+          {
+            name: "Investment",
+            value: Number(response.investment),
+            color: "#EE8B44",
+          },
           { name: "Saving", value: Number(response.saving), color: "#4EAABB" },
         ];
         setChartData(transformedData);
-      }
-      catch (error) {
+      } catch (error) {
         console.error("Error fetching chart data:", error);
       }
     };
@@ -62,7 +69,7 @@ export default function DashboardBarChart() {
         padding: "16px",
       }}
     >
-      <div className="relative w-32 mb-4" >
+      <div className="relative w-32 mb-4">
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
@@ -83,7 +90,7 @@ export default function DashboardBarChart() {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
+          <Tooltip formatter={(value) => [`${currency}. ${value}`]} />
 
           <Bar dataKey="value">
             {chartData?.map((entry, index) => (
