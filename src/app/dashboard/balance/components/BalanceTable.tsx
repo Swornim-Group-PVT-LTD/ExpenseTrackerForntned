@@ -2,13 +2,30 @@
 
 import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
-import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "flowbite-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeadCell,
+  TableRow,
+} from "flowbite-react";
 import { getBalancesService } from "../../../services/balanceService";
 import { BalanceResponse } from "../../../types/balanceType";
 
-export default function BalanceTable({ refreshTrigger }: { refreshTrigger?: number }) {
+import { useBalanceVisibility } from "@/app/context/BalanceHideShowContext";
+import { useCurrency } from "@/app/context/CurrencyContext";
+import { maskAmount } from "@/app/utils/maskAmount";
+
+export default function BalanceTable({
+  refreshTrigger,
+}: {
+  refreshTrigger?: number;
+}) {
   const [balances, setBalances] = useState<BalanceResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const { isVisible } = useBalanceVisibility();
+  const { currency } = useCurrency();
 
   useEffect(() => {
     const fetchBalances = async () => {
@@ -53,7 +70,10 @@ export default function BalanceTable({ refreshTrigger }: { refreshTrigger?: numb
               </TableRow>
             ) : balances.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center font-medium text-gray-500">
+                <TableCell
+                  colSpan={5}
+                  className="text-center font-medium text-gray-500"
+                >
                   No balances found
                 </TableCell>
               </TableRow>
@@ -66,9 +86,27 @@ export default function BalanceTable({ refreshTrigger }: { refreshTrigger?: numb
                   <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                     {row.sn}
                   </TableCell>
-                  <TableCell>{row.currency?.symbol} {Number(row.total_balance).toLocaleString()}</TableCell>
-                  <TableCell>{row.currency?.symbol} {Number(row.add_opening_balance).toLocaleString()}</TableCell>
-                  <TableCell>{row.currency?.symbol} {Number(row.closing_balance).toLocaleString()}</TableCell>
+                  <TableCell>
+                    {maskAmount(
+                      row.total_balance,
+                      isVisible,
+                      row.currency?.symbol,
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {maskAmount(
+                      row.add_opening_balance,
+                      isVisible,
+                      row.currency?.symbol,
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {maskAmount(
+                      row.closing_balance,
+                      isVisible,
+                      row.currency?.symbol,
+                    )}
+                  </TableCell>
                   <TableCell>{row.created_date}</TableCell>
                 </TableRow>
               ))
@@ -95,26 +133,34 @@ export default function BalanceTable({ refreshTrigger }: { refreshTrigger?: numb
             >
               {/* Row 1: ID and Date */}
               <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider">
-                <span className="text-gray-800">
-                  ID {row.sn}
-                </span>
-                <span className="text-gray-500">
-                  {row.created_date}
-                </span>
+                <span className="text-gray-800">ID {row.sn}</span>
+                <span className="text-gray-500">{row.created_date}</span>
               </div>
 
               {/* Row 2: Opening Balance and Total Balance */}
               <div className="flex justify-between items-center">
                 <div className="flex flex-col">
-                  <span className="text-[10px] text-gray-400 font-semibold uppercase">Opening</span>
+                  <span className="text-[10px] text-gray-400 font-semibold uppercase">
+                    Opening
+                  </span>
                   <span className="text-sm font-bold text-gray-700">
-                    {row.currency?.symbol} {Number(row.add_opening_balance).toLocaleString()}
+                    {maskAmount(
+                      row.add_opening_balance,
+                      isVisible,
+                      row.currency?.symbol,
+                    )}
                   </span>
                 </div>
                 <div className="flex flex-col items-end">
-                  <span className="text-[10px] text-gray-400 font-semibold uppercase">Total Balance</span>
+                  <span className="text-[10px] text-gray-400 font-semibold uppercase">
+                    Total Balance
+                  </span>
                   <span className="text-sm font-bold text-gray-800">
-                    {row.currency?.symbol} {Number(row.total_balance).toLocaleString()}
+                    {maskAmount(
+                      row.total_balance,
+                      isVisible,
+                      row.currency?.symbol,
+                    )}
                   </span>
                 </div>
               </div>
@@ -122,9 +168,15 @@ export default function BalanceTable({ refreshTrigger }: { refreshTrigger?: numb
               {/* Row 3: Closing Balance */}
               <div className="flex justify-end pt-1 border-t border-gray-50">
                 <div className="flex flex-col items-end">
-                  <span className="text-[10px] text-gray-400 font-semibold uppercase">Closing</span>
+                  <span className="text-[10px] text-gray-400 font-semibold uppercase">
+                    Closing
+                  </span>
                   <span className="text-sm font-bold text-[#FFAA00]">
-                    {row.currency?.symbol} {Number(row.closing_balance).toLocaleString()}
+                    {maskAmount(
+                      row.closing_balance,
+                      isVisible,
+                      row.currency?.symbol,
+                    )}
                   </span>
                 </div>
               </div>

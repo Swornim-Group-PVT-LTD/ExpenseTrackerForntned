@@ -7,6 +7,10 @@ import { BalanceResponse } from "@/app/types/balanceType";
 import StatCard from "@/app/components/statcard";
 import { useRouter } from "next/navigation";
 
+import { useBalanceVisibility } from "@/app/context/BalanceHideShowContext";
+import { maskAmount } from "@/app/utils/maskAmount";
+import { Eye, EyeOff } from "lucide-react";
+
 interface BalanceCardProps {
   refreshTrigger: number;
 }
@@ -15,6 +19,7 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
   const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [currency, setCurrency] = useState("NPR");
+  const { isVisible, toggleVisibility } = useBalanceVisibility();
 
   const router = useRouter();
 
@@ -22,6 +27,10 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
     router.push("/dashboard/balance");
   };
 
+  const handleToggleVisibility = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleVisibility();
+  };
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -31,7 +40,7 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
 
         if (balances.length > 0) {
           const latestBalance = Number(
-            balances[balances.length - 1].total_balance || 0
+            balances[balances.length - 1].total_balance || 0,
           );
           setCurrency(balances[balances.length - 1].currency?.symbol || "NPR");
           setBalance(latestBalance);
@@ -46,6 +55,13 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
 
     fetchBalance();
   }, [refreshTrigger]);
+
+  const renderBalanceValue = () => {
+    if (loading) {
+      return <ClipLoader size={22} color="#000000" />;
+    }
+    return maskAmount(balance ?? 0, isVisible, currency);
+  };
 
   return (
     <div
@@ -62,15 +78,25 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
           <div className="text-xl font-bold mb-1" style={{ color: "#000000" }}>
             Balance
           </div>
-          <div className="text-2xl font-bold text-[#07371B] mb-1">{loading ? (
-            <ClipLoader size={22} color="#000000" />
-          ) : (
-            `${currency} ${balance?.toLocaleString() ?? 0}`
-          )}</div>
+
+          <div className="text-2xl font-bold text-[#07371B] mb-1 flex items-center gap-2">
+            <button
+              onClick={handleToggleVisibility}
+              aria-label={isVisible ? "Hide balance" : "Show balance"}
+              title={isVisible ? "Hide balance" : "Show balance"}
+              className="text-[#07371B]/60 hover:text-[#07371B] transition-colors cursor-pointer shrink-0"
+            >
+              {isVisible ? (
+                <Eye size={18} className="md:w-5 md:h-5" />
+              ) : (
+                <EyeOff size={18} className="md:w-5 md:h-5" />
+              )}
+            </button>
+            {renderBalanceValue()}
+          </div>
         </div>
       </div>
       <div className="text-xl text-right">
-
         <span className="text-black/70 font-bold">Your Balance</span>
       </div>
     </div>
@@ -78,6 +104,3 @@ const BalanceCard = ({ refreshTrigger }: BalanceCardProps) => {
 };
 
 export default BalanceCard;
-
-
-

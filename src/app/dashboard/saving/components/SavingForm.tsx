@@ -12,6 +12,8 @@ import { SavingCategoryResponse } from "@/app/types/catalolgueType/savingCatalog
 
 import { getBalancesService } from "@/app/services/balanceService";
 import { BalanceResponse } from "@/app/types/balanceType";
+import { useBalanceVisibility } from "@/app/context/BalanceHideShowContext";
+import { maskAmount } from "@/app/utils/maskAmount";
 
 interface SavingFormProps {
   onSuccess?: () => void;
@@ -25,6 +27,7 @@ const SavingForm = ({ onSuccess }: SavingFormProps) => {
   const [deductBalance, setDeductBalance] = useState(false);
   const [categories, setCategories] = useState<SavingCategoryResponse[]>([]);
   const [totalSaving, setTotalSaving] = useState<number>(0);
+  const { isVisible } = useBalanceVisibility();
 
   // ============================================================
   // 1️⃣ Fetch currency symbol from Balance API
@@ -88,7 +91,7 @@ const SavingForm = ({ onSuccess }: SavingFormProps) => {
   const handleAddSaving = async () => {
     // Validate category
     const categoryExists = categories.some(
-      (cat) => cat.saving_category.toLowerCase() === remarks.toLowerCase()
+      (cat) => cat.saving_category.toLowerCase() === remarks.toLowerCase(),
     );
 
     if (!categoryExists) {
@@ -109,7 +112,7 @@ const SavingForm = ({ onSuccess }: SavingFormProps) => {
 
       toast.success(
         `Saving of ${currency}${amount} added successfully.` +
-        (deductBalance ? " (deducted from balance)" : "")
+          (deductBalance ? " (deducted from balance)" : ""),
       );
 
       setAmount(0);
@@ -126,18 +129,16 @@ const SavingForm = ({ onSuccess }: SavingFormProps) => {
   return (
     <div className="col-span-full lg:col-span-3 h-fit">
       <div className="bg-white rounded-md p-4 w-full flex flex-col gap-4">
-
         {/* ⭐ Total Saving Display */}
         <div className="mb-4 p-3 rounded-lg bg-[#44eeaa] border border-[#38A169]/30 flex items-center justify-between">
           <span className="text-md font-semibold text-white">Total Saving</span>
           <span className="text-xl font-bold text-white">
-            {currency}{totalSaving?.toLocaleString()}
+            {maskAmount(totalSaving, isVisible, currency)}
           </span>
         </div>
 
         {/* ⭐ Input Row */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
-
           {/* AUTO SYMBOL (from Balance API) */}
           <div className="relative w-full sm:w-24">
             <input
@@ -167,7 +168,10 @@ const SavingForm = ({ onSuccess }: SavingFormProps) => {
 
           {/* Remarks Selector */}
           <SearchInput
-            options={categories.map(cat => ({ id: cat.id, value: cat.saving_category }))}
+            options={categories.map((cat) => ({
+              id: cat.id,
+              value: cat.saving_category,
+            }))}
             value={remarks}
             onChange={setRemarks}
             placeholder="Type saving category..."
@@ -179,7 +183,8 @@ const SavingForm = ({ onSuccess }: SavingFormProps) => {
             onClick={handleAddSaving}
             disabled={loading}
             className={`bg-[#FFAA00] hover:bg-[#FFAA00]/90 text-white font-bold text-md px-8 h-12 rounded transition-colors 
-              disabled:opacity-50 w-full sm:w-auto cursor-pointer ${loading ? "opacity-50 cursor-not-allowed" : ""
+              disabled:opacity-50 w-full sm:w-auto cursor-pointer ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
           >
             {loading ? "Saving..." : "Add"}
@@ -199,7 +204,6 @@ const SavingForm = ({ onSuccess }: SavingFormProps) => {
             Deduct From Balance
           </label>
         </div>
-
       </div>
     </div>
   );
